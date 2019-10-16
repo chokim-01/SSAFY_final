@@ -1,6 +1,6 @@
-/* Click -> open inject.js */
 var sslData;
 var httpStatus;
+
 /* New tab, url changed */
 chrome.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
     let url = tab.url;
