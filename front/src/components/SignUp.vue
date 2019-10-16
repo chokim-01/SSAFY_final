@@ -4,29 +4,42 @@
       <template v-slot:activator="{ on }">
         <v-btn color="green darken-1" v-on="on" text>Sign Up</v-btn>
       </template>
+
       <v-card>
-        <v-card-title class="headline">Sign Up Below</v-card-title>
+        <v-card-title class="headline">
+          <span>Sign Up Below</span>
+        </v-card-title>
+
         <v-card-text>
-          <v-text-field label="Name" type="text" :rules="[rule.required]" required v-model="name"></v-text-field>
+          <v-text-field label="Name" type="text" v-model="name" :rules="[rule.required]" required />
+
           <v-text-field
             label="Email"
             type="email"
-            required
-            :rules="[rule.required, rule.email]"
             v-model="email"
-          ></v-text-field>
+            :rules="[rule.required, rule.email]"
+            required
+          />
+
           <v-text-field
             label="Password"
             type="password"
-            required
-            :rules="[rule.required, rule.minLength(0), rule.maxLength(20)]"
             v-model="password"
-          ></v-text-field>
+            :rules="[rule.required, rule.minLength(0), rule.maxLength(20)]"
+            required
+          />
         </v-card-text>
+
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="darken-1" text @click="clear()">close</v-btn>
-          <v-btn color="darken-1" text @click="signUp()">sign_up</v-btn>
+          <v-spacer />
+
+          <v-btn color="darken-1" text @click="clear()">
+            <span>close</span>
+          </v-btn>
+
+          <v-btn color="darken-1" text @click="signUp()">
+            <span>sign_up</span>
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -52,7 +65,6 @@ export default {
     }
   },
   methods: {
-    
     clear () {
       this.name = ""
       this.email = ""

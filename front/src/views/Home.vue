@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <v-container>
-      <v-row justify="center" align-content>
+      <v-row justify="center">
         <v-btn>
           <span>Add to Chrome</span>
         </v-btn>

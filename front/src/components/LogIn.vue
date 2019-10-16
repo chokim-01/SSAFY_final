@@ -1,34 +1,44 @@
 <template>
-  <div align-center justify-end>
-    <v-dialog v-model="dialog" persistent max-width="500">
+  <div>
+    <v-dialog v-model="dialog" persistent max-width="500px">
       <template v-slot:activator="{ on }">
         <v-btn text v-on="on">Log In</v-btn>
       </template>
-      <v-card max-width="496" class="text-center">
-        <v-card-title class="headline">Log In Below</v-card-title>
+
+      <v-card class="text-center">
+        <v-card-title class="headline">
+          <span>Log In Below</span>
+        </v-card-title>
+
         <v-card-text>
           <v-flex xs12>
-            <v-text-field label="Email*" required v-model="email"></v-text-field>
+            <v-text-field label="Email*" v-model="email" required />
           </v-flex>
+
           <v-flex xs12>
             <v-text-field
               label="Password*"
               type="password"
-              required
               v-model="password"
               @keyup.enter="loginWithEmail"
-            ></v-text-field>
+              required
+            />
           </v-flex>
+
           <v-flex xs12>
-            <v-btn rounded color="green" dark @click="loginWithEmail">
-              <v-icon size="25" class="mr-2">mdi-email</v-icon>email 로그인
+            <v-btn @click="loginWithEmail" rounded color="green" dark>
+              <v-icon class="mr-2">mdi-email</v-icon>
+              <span>email 로그인</span>
             </v-btn>
           </v-flex>
         </v-card-text>
-        <v-divider></v-divider>
+
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="dialog = false">close</v-btn>
+          <v-spacer />
+          <v-btn @click="dialog = false" color="green darken-1" text>
+            <span>close</span>
+          </v-btn>
+
           <SignUp />
         </v-card-actions>
       </v-card>
@@ -39,7 +49,7 @@
 <script>
 
 export default {
-  name: "LogIn",
+  name: "logIn",
       components: {
         SignUp: () => import("./SignUp.vue"),
       },
@@ -59,3 +69,11 @@ export default {
   
 }
 </script>
+<style>
+.headline {
+  justify-content: center;
+}
+.emailbtn {
+  color: green;
+}
+</style>

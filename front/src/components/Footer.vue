@@ -1,5 +1,10 @@
 <template>
-  <v-footer app color="indigo" style="justify-content:center;">
+  <v-footer class="footer" color="indigo">
     <span class="white--text">&copy; Interrupt of Threat</span>
   </v-footer>
 </template>
+<style>
+.footer {
+  justify-content: center;
+}
+</style>

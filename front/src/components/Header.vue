@@ -3,7 +3,9 @@
     <v-toolbar-title class="headline text-uppercase" xs12>
       <span>Previewer</span>
     </v-toolbar-title>
-    <v-spacer></v-spacer>
+
+    <v-spacer />
+
     <LogIn />
   </v-app-bar>
 </template>
