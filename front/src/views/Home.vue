@@ -1,13 +1,18 @@
 <template>
-  <HelloWorld />
+  <div class="home">
+    <v-container>
+      <v-row justify="center">
+        <v-btn>
+          <span>Add to Chrome</span>
+        </v-btn>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 
 <script>
-import HelloWorld from '../components/HelloWorld';
-
 export default {
   components: {
-    HelloWorld,
-  },
-};
+  }
+}
 </script>
