@@ -1,0 +1,23 @@
+background script jquery not working.
+
+popup.html -> background jquery working.
+
+
+structure
+	btn click
+manifest.json => popup.html => background.js => inject.js
+
+	background
+background.js 
+
+	
+Listener
+
+browserAction.onClicked => extension btn clicked
+
+onUpdated => tab status changed ( check https, url )
+
+runtime.onConnect => Maybe communication with inject.js
+
+webRequest.onBeforeRequest => catch request, blocking request
+	return cancel : make request fail

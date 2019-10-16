@@ -13,15 +13,17 @@ cors = CORS(app, resources={
 # Get certificate info
 @app.route("/api/get/ssl", methods=["POST"])
 def getCertificate():
+    parsed_uri = request.get_data().decode('utf-8')
 
-    url = request.form.get("data")
+    # replace url, need host url . ex) www.google.com
+    replace_url = parsed_uri.replace("http://","").replace("https://","")
+    host_url_end = replace_url.find("/")
+    host_url = replace_url[:host_url_end]
 
-    cert = ssl.get_server_certificate(url,443)
+    # certificate request
+    cert = ssl.get_server_certificate((host_url,443))
     x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)
     ssl_info = x509.get_subject().get_components()
-
-    for i in ssl_info:
-        print(i)
 
     return jsonify(ssl_info)
 
