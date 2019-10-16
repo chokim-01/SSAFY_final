@@ -1,43 +1,38 @@
 /* Click -> open inject.js */
-chrome.browserAction.onClicked.addListener(
-    function (tab) {
-        console.log("Start section");
-        chrome.tabs.executeScript(tab.id, {
-        file: 'inject.js'
-    });
-});
-
+var sslData;
+var httpStatus;
 /* New tab, url changed */
 chrome.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
-    var url = tab.url;
-    var findstr = "https://"
-    var check_url = url.indexOf("http")
+    let url = tab.url;
+    let findstr = "https://";
+    let check_url = url.indexOf("http");
+
     if(url !== undefined && check_url != -1 && changeInfo.status == "complete") {
       console.log("tab changed");
 
       // Check https
       if(url.indexOf(findstr) == -1) {
           console.log("No https");
+          httpStatus = "http";
+          // Set icon warn state
           chrome.browserAction.setIcon({
               path: { "19": "/Icons/icon_warn.png"},
               tabId: tabId
           });
       } else {
-      // Check SSL
+        httpStatus = "https";
+        // Check SSL
         await $.ajax({
             type: "POST",
             url: "http://localhost:5000/api/get/ssl",
             data: url,
-            dataType: "html",
             success: function(data){
-              alert("Find ssl");
-              console.log(data);
-
+              sslData = data;
+              // Set icon secure state
               chrome.browserAction.setIcon({
                   path: { "19": "/Icons/icon_secure.png"},
                   tabId: tabId
               });
-
             },
             error: function(error) {
               console.log(error);
@@ -45,15 +40,6 @@ chrome.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
         });
       }
     }
-});
-
-/* Maybe, Communication with js */
-chrome.runtime.onConnect.addListener(function(port) {
-    console.log("Call onConnect");
-    port.onMessage.addListener(function(Message) {
-        console.log(Message);
-        console.log(port);
-    });
 });
 
 /* The Web Request API */
@@ -74,3 +60,12 @@ chrome.webRequest.onBeforeRequest.addListener(
     {urls: ["<all_urls>"]},
     ["blocking", "requestBody"]
 );
+
+/* call by inject.js, call ssl data send to inject.js */
+chrome.extension.onConnect.addListener(function (port) {
+    port.onMessage.addListener(function (message) {
+        if (message == "Request Modified Value") {
+            port.postMessage([httpStatus, sslData]);
+        }
+    });
+});

@@ -25,6 +25,9 @@ def getCertificate():
     x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)
     ssl_info = x509.get_subject().get_components()
 
+    result = dict()
+    for i in ssl_info:
+        result[i[0].decode('utf-8')] = i[1].decode('utf-8')
     return jsonify(ssl_info)
 
 def main():
