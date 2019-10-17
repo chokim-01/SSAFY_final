@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <!-- Pishing Site List Data Table-->
-    <v-data-table :headers="headers" :items="pishingsitelist"></v-data-table>
+    <v-data-table :headers="headers" :items="pishingsitelist" />
   </v-container>
 </template>
 
@@ -10,12 +10,12 @@ export default {
     data: () => ({
         headers:[
             {
-                text:'url',
-                value:'url'
+                text:"url",
+                value:"url"
             },
             {
-                text:'result',
-                value:'result'
+                text:"result",
+                value:"result"
             }
         ],
         pishingsitelist:[

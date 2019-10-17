@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <!-- PaymentList Data Table -->
-    <v-data-table :headers="headers" :items="paymentlist"></v-data-table>
+    <v-data-table :headers="headers" :items="paymentlist" />
   </v-container>
 </template>
 
@@ -10,16 +10,16 @@ export default {
     data: () => ({
         headers:[
             {
-                text:'name',
-                value:'username'
+                text:"name",
+                value:"username"
             },
             {
-                text:'grade',
-                value:'paymentgrade'
+                text:"grade",
+                value:"paymentgrade"
             },
             {
-                text:'date',
-                value:'paymentdate'
+                text:"date",
+                value:"paymentdate"
             }
         ],
         //test data

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <!-- Today Request List Data Table -->
-    <v-data-table :headers="headers" :items="todayRequestList"></v-data-table>
+    <v-data-table :headers="headers" :items="todayRequestList" />
   </v-container>
 </template>
 
@@ -10,16 +10,16 @@ export default {
     data: () => ({
         headers:[
             {
-                text:'name',
-                value:'username'
+                text:"name",
+                value:"username"
             },
             {
-                text:'url',
-                value:'requestUrl'
+                text:"url",
+                value:"requestUrl"
             },
             {
-                text:'admission',
-                value:'admission'
+                text:"admission",
+                value:"admission"
             }
         ],
         todayRequestList:[

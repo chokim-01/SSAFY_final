@@ -5,6 +5,7 @@
         <v-card-title class="headline grey lighten-2 justify-center" primary-title>
           <span>결제</span>
         </v-card-title>
+
         <!-- Payment Grade List -->
         <v-layout>
           <!-- basic Grade -->
@@ -23,6 +24,7 @@
               </v-flex>
             </v-card>
           </v-flex>
+
           <!-- pro Grade -->
           <v-flex md4>
             <v-card>
@@ -39,6 +41,7 @@
               </v-flex>
             </v-card>
           </v-flex>
+
           <!-- premium Grade -->
           <v-flex md4>
             <v-card>
