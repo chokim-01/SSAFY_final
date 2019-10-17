@@ -4,7 +4,7 @@
       <v-layout row wrap>
         <!-- UserList Widget -->
         <v-flex d-flex lg3 sm6 xs12>
-          <v-flex @click="getclick('userlist')">
+          <v-flex @click="getClick('userlist')">
             <widget
               icon="mdi-account"
               title="User List"
@@ -17,7 +17,7 @@
 
         <!-- Today Request Widget -->
         <v-flex d-flex lg3 sm6 xs12>
-          <v-flex @click="getclick('todayrequest')">
+          <v-flex @click="getClick('todayrequest')">
             <widget
               icon="mdi-calendar-blank"
               title="Today Request"
@@ -30,7 +30,7 @@
 
         <!-- Payment List Widget -->
         <v-flex d-flex lg3 sm6 xs12>
-          <v-flex @click="getclick('paymentlist')">
+          <v-flex @click="getClick('paymentlist')">
             <widget
               icon="mdi-cash"
               title="Payment List"
@@ -43,7 +43,7 @@
 
         <!-- Pishing Site Widget -->
         <v-flex d-flex lg3 sm6 xs12>
-          <v-flex @click="getclick('pishingsitelist')">
+          <v-flex @click="getClick('pishingsitelist')">
             <widget
               icon="mdi-view-list"
               title="Pishing Site"
@@ -58,22 +58,22 @@
 
     <!-- Data Table -->
     <!-- User List -->
-    <v-layout>
+    <!-- <v-layout v-show="widgetSelect==='userlist'">
       <UserList />
-    </v-layout>
+    </v-layout>-->
 
     <!-- Payment List -->
-    <v-layout>
+    <v-layout v-show="widgetSelect==='payment'">
       <PaymentList />
     </v-layout>
 
     <!-- Today Request List -->
-    <v-layout>
+    <v-layout v-show="widgetSelect==='todayrequest'">
       <TodayRequestList />
     </v-layout>
 
     <!-- Pishing Site List -->
-    <v-layout>
+    <v-layout v-show="widgetSelect==='pishing'">
       <PishingSiteList />
     </v-layout>
   </v-container>
@@ -82,14 +82,23 @@
 <script>
 export default{
     components :{
-        UserList : () => import('@/components/UserList'),
+        // UserList : () => import('@/components/UserList'),
         TodayRequestList : () => import('@/components/TodayRequestList'),
         PaymentList : () => import('@/components/PaymentList'),
         PishingSiteList : () => import('@/components/PishingSiteList'),
         widget : () => import('@/components/Widget')
     },
     data: ()=> ({
-    })
+      widgetSelect : "userlist"
+    }),
+    methods :{
+        getClick(str){
+            if(str=="userlist") this.widgetSelect="userlist"
+            else if(str=="pishingsitelist") this.widgetSelect="pishing"
+            else if(str=="paymentlist") this.widgetSelect="payment"
+            else if(str=="todayrequest") this.widgetSelect="todayrequest"
+        }
+    }
 }
 </script>
 
