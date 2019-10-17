@@ -12,14 +12,14 @@
 
         <v-card-text>
           <v-flex xs12>
-            <v-text-field label="Email*" v-model="email" required />
+            <v-text-field v-model="email" label="Email*" required />
           </v-flex>
 
           <v-flex xs12>
             <v-text-field
-              label="Password*"
-              type="password"
               v-model="password"
+              type="password"
+              label="Password*"
               @keyup.enter="loginWithEmail"
               required
             />
@@ -47,7 +47,6 @@
 </template>
 
 <script>
-
 export default {
   name: "logIn",
       components: {
@@ -69,6 +68,7 @@ export default {
   
 }
 </script>
+
 <style>
 .headline {
   justify-content: center;
