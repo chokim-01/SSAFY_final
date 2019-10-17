@@ -12,34 +12,34 @@ chrome.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
 
       // Check https
       if(url.indexOf(findstr) == -1) {
-          console.log("No https");
-          httpStatus = "http";
-          // Set icon warn state
-          chrome.browserAction.setIcon({
-              path: { "19": "/Icons/icon_warn.png"},
-              tabId: tabId
-          });
+        console.log("No https");
+        httpStatus = "http";
+        // Set icon warn state
+        chrome.browserAction.setIcon({
+            path: { "19": "/Icons/icon_warn.png"},
+            tabId: tabId
+        });
       } else {
         httpStatus = "https";
         // Check SSL
         await $.ajax({
-            type: "POST",
-            url: "http://localhost:5000/api/get/ssl",
-            data: url,
-            success: function(data){
-              sslData = data;
-              // Set icon secure state
-              chrome.browserAction.setIcon({
-                  path: { "19": "/Icons/icon_secure.png"},
-                  tabId: tabId
-              });
-            },
-            error: function(error) {
-              console.log(error);
-            }
-        });
-      }
+          type: "POST",
+          url: "http://localhost:5000/api/get/ssl",
+          data: url,
+          success: function(data){
+            sslData = data;
+          // Set icon secure state
+          chrome.browserAction.setIcon({
+              path: { "19": "/Icons/icon_secure.png"},
+              tabId: tabId
+          });
+        },
+        error: function(error) {
+          console.log(error);
+        }
+      });
     }
+  }
 });
 
 /* The Web Request API */

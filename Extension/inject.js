@@ -12,9 +12,10 @@
     sslData = data2;
     document.querySelector('#httpStatus').innerHTML = httpStatus;
 
-    for(let i of data2){
-      document.querySelector('#sslData').innerHTML += "<span>"+i+"</span><br />";
+    if(sslData) {
+      for(let data of sslData){
+        document.querySelector('#sslData').innerHTML += "<span>"+data+"</span><br />";
+      }
     }
-
   });
 })();
