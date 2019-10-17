@@ -71,7 +71,7 @@ var getsslData = async function(url, tabId, port) {
   // Check SSL
   await $.ajax({
     type: "POST",
-    url: "http://localh ost:5000/api/get/ssl",
+    url: "http://localhost:5000/api/get/ssl",
     data: url,
     success: function(data){
       sslData = data;
