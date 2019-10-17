@@ -58,9 +58,9 @@
 
     <!-- Data Table -->
     <!-- User List -->
-    <!-- <v-layout v-show="widgetSelect==='userlist'">
+    <v-layout v-show="widgetSelect==='userlist'">
       <UserList />
-    </v-layout>-->
+    </v-layout>
 
     <!-- Payment List -->
     <v-layout v-show="widgetSelect==='payment'">
@@ -82,11 +82,11 @@
 <script>
 export default{
     components :{
-        // UserList : () => import('@/components/UserList'),
-        TodayRequestList : () => import('@/components/TodayRequestList'),
-        PaymentList : () => import('@/components/PaymentList'),
-        PishingSiteList : () => import('@/components/PishingSiteList'),
-        widget : () => import('@/components/Widget')
+        UserList : () => import("@/components/UserList"),
+        TodayRequestList : () => import("@/components/TodayRequestList"),
+        PaymentList : () => import("@/components/PaymentList"),
+        PishingSiteList : () => import("@/components/PishingSiteList"),
+        widget : () => import("@/components/Widget")
     },
     data: ()=> ({
       widgetSelect : "userlist"

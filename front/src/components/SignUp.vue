@@ -2,7 +2,7 @@
   <div justify-end>
     <v-dialog v-model="dialog" persistent max-width="500">
       <template v-slot:activator="{ on }">
-        <v-btn color="green darken-1" v-on="on" text>Sign Up</v-btn>
+        <v-btn v-on="on" color="green darken-1" text>Sign Up</v-btn>
       </template>
 
       <v-card>
@@ -11,7 +11,7 @@
         </v-card-title>
 
         <v-card-text>
-          <v-text-field label="Name" type="text" v-model="name" :rules="[rule.required]" required />
+          <v-text-field v-model="name" type="text" label="Name" :rules="[rule.required]" required />
 
           <v-text-field
             label="Email"
