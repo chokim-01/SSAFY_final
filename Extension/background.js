@@ -43,7 +43,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
       // check pw is plaintext
       if(details.method == "POST") {
-        return checkPassword(details);
+        var s = checkPassword(details);
       }
     },
     {urls: ["<all_urls>"]},
@@ -84,20 +84,25 @@ var getsslData = async function(url, tabId, port) {
 }
 
 var checkPassword = function(details) {
+  var a = "1234";
+  var self = this;
+  getLoginData('passwordInfo').then(res => {
+    a = res;
+  });
+  console.log(a);
 
-  return chrome.storage.local.get('passwordInfo', function (items) {
-    if(items['passwordInfo']){
-      let requestBody = details.requestBody
-      let passwordName = items['passwordInfo'][0];
-      let passwordValue = items['passwordInfo'][1];
+  return a;
+}
 
-      if(requestBody && requestBody.formData && requestBody.formData[passwordName]) {
-        if(requestBody.formData[passwordName] == passwordValue) {
-          alert("Un secured");
-          return {cancel: true}
-        }
+function getLoginData(sKey) {
+  return new Promise(function(resolve, reject) {
+    chrome.storage.local.get(sKey, function(items) {
+      if (chrome.runtime.lastError) {
+        console.error(chrome.runtime.lastError.message);
+        reject(chrome.runtime.lastError.message);
+      } else {
+        resolve(items[sKey]);
       }
-      chrome.storage.local.remove('passwordInfo');
-    }
+    });
   });
 }
