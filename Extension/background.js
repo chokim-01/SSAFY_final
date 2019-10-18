@@ -4,11 +4,16 @@ var sslData;
 /* New tab, url changed */
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     url = tab.url;
-    let findstr = "https://";
     let check_url = url.indexOf("http");
 
     if(url !== undefined && check_url != -1 && changeInfo.status == "complete") {
       console.log("tab changed");
+
+      let findstr = "https://";
+      // click, type password exist : pw data transfer
+      chrome.tabs.executeScript({
+        code:"document.addEventListener('click', function(){var elements = document.querySelectorAll('input[type=password]')[0]; if(elements) { var passwordName = elements.name; var passwordValue = elements.value; chrome.storage.local.set({ passwordInfo: [passwordName, passwordValue] }); } });"
+      });
 
       // Check https
       if(url.indexOf(findstr) == -1) {
@@ -38,14 +43,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
       // check pw is plaintext
       if(details.method == "POST") {
-        let requestBody = details.requestBody
-        if(requestBody && requestBody.formData && requestBody.formData.pw) {
-            if(pw.pw[0] == "test") {
-              alert("Un secured");
-              window.location.reload();
-              return { cancel: true };
-          }
-        }
+        return checkPassword(details);
       }
     },
     {urls: ["<all_urls>"]},
@@ -83,4 +81,23 @@ var getsslData = async function(url, tabId, port) {
   if(port !== 0){
     port.postMessage([httpStatus, sslData]);
   }
+}
+
+var checkPassword = function(details) {
+
+  return chrome.storage.local.get('passwordInfo', function (items) {
+    if(items['passwordInfo']){
+      let requestBody = details.requestBody
+      let passwordName = items['passwordInfo'][0];
+      let passwordValue = items['passwordInfo'][1];
+
+      if(requestBody && requestBody.formData && requestBody.formData[passwordName]) {
+        if(requestBody.formData[passwordName] == passwordValue) {
+          alert("Un secured");
+          return {cancel: true}
+        }
+      }
+      chrome.storage.local.remove('passwordInfo');
+    }
+  });
 }
