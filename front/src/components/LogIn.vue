@@ -61,11 +61,15 @@ export default {
     }
   },
    async loginWithEmail () {
-     this.dialog = false
+     let userdata = {
+      email : this.email,
+      password : this.password
+      }
+      this.$http.post("/logIn",userdata).then((res)=>{
 
+      })
+      this.dialog = false
     }
-
-  
 }
 </script>
 
