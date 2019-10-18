@@ -4,6 +4,7 @@
       <v-flex mb-10>
         <span>Email : {{email}}</span>
       </v-flex>
+
       <!-- User Request URL -->
       <v-data-table :headers="headers" :items="userRequest">
         <template v-slot:item.request="{item}">
@@ -21,12 +22,12 @@ export default {
       selected: [],
       headers: [
         {
-          text: 'SiteAddress',
-          value: 'siteAddress',
+          text: "SiteAddress",
+          value: "siteAddress",
         },
         {
-          text:'Request',
-          value:'request'
+          text:"Request",
+          value:"request"
           }
         ],
         userRequest:[
@@ -46,10 +47,9 @@ export default {
     },
     methods:{
           getColor(str){
-              if(str=="Reject") return 'red'
-              else return 'green'
+              if(str=="Reject") return "red"
+              else return "green"
           }
       }
-    
 }
 </script>

@@ -8,24 +8,21 @@
   </v-container>
 </template>
 
-
-
-
 <script>
 export default {
     data: () => ({
         headers:[
             {
-                text:'email',
-                value:'email'
+                text:"email",
+                value:"email"
             },
             {
-                text:'date',
-                value:'date'
+                text:"date",
+                value:"date"
             },
             {
-                text:'request',
-                value:'requestCount'
+                text:"request",
+                value:"requestCount"
             }
         ],
         userlist:[
@@ -37,11 +34,9 @@ export default {
         ]
     }),
     methods: {
-
   toUserRequest(email) {
-    this.$router.push({ name: 'UserRequest', params: { id : email } });
+    this.$router.push({ name: "UserRequest", params: { id : email } });
+    }
   }
-
-}
 }
 </script>

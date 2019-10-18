@@ -65,6 +65,23 @@ export default {
     }
   },
   methods: {
+    signUp(){
+      this.dialog = false
+      let userdata = {
+        userName : this.name,
+        email : this.email,
+        password : this.password
+      }
+      this.$http.post("/signUp",userdata).then((res)=>{
+        // if(res.data.success == true){
+        //   alert(res.data.message)
+        //   this.$router.push("/signUp")
+        // }
+        // if(res.data.success == false){
+        //   alert(res.data.message)
+        // }
+      })
+    },
     clear () {
       this.name = ""
       this.email = ""

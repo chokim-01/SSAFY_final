@@ -4,6 +4,7 @@
     <v-layout>
       <v-flex id="userName">회원명 : 홍길동</v-flex>
     </v-layout>
+
     <!-- Payment / Payment History -->
     <v-layout mb-3>
       <v-flex offset-xs8 offset-md10 offsest-sm8>
@@ -22,12 +23,14 @@
         </v-btn>
       </v-flex>
     </v-layout>
+
     <!-- urlRequestList -->
     <v-data-table :headers="headers" :items="urlRequestList">
       <template v-slot:urlRequestList.result="{urlRequestList}">
         <v-chip :color="getColor(urlRequestList.result)" dark>{{urlRequestList.result}}</v-chip>
       </template>
     </v-data-table>
+
     <!-- User Modify / User Delete -->
     <v-layout mt-3>
       <v-flex offset-xs8 offset-md10>
@@ -49,16 +52,16 @@ export default {
         //test data
         headers:[
             {
-                text:'url',
-                value:'url'
+                text:"url",
+                value:"url"
             },
             {
-                text:'result',
-                value:'result'
+                text:"result",
+                value:"result"
             },
             {
-                text:'',
-                value:'deleteurl'
+                text:"",
+                value:"deleteurl"
             }
         ],
         urlRequestList: [
@@ -105,8 +108,8 @@ export default {
       },
       methods:{
           getColor(str){
-              if(str=="false") return 'red'
-              else return 'green'
+              if(str=="false") return "red"
+              else return "green"
           }
       }
 }
