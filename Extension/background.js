@@ -40,10 +40,28 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
 /* The Web Request API */
 chrome.webRequest.onBeforeRequest.addListener(
-    function(details) {
+    async function(details) {
+      requestBody = details.requestBody;
       // check pw is plaintext
       if(details.method == "POST") {
-        var s = checkPassword(details);
+        var userInfo;
+        await getLoginData('passwordInfo').then(res => {
+          userInfo = res;
+        });
+        chrome.storage.local.remove('passwordInfo');
+
+        if(userInfo){
+          var passwordName = userInfo[0];
+          var passwordValue = userInfo[1];
+          if(requestBody && requestBody.formData && requestBody.formData[passwordName]) {
+            console.log(requestBody.formData[passwordName][0])
+            console.log(passwordValue)
+            if(requestBody.formData[passwordName][0] === passwordValue) {
+              console.log("match")
+              return {cancel: true}
+            }
+          }
+        }
       }
     },
     {urls: ["<all_urls>"]},
@@ -81,17 +99,6 @@ var getsslData = async function(url, tabId, port) {
   if(port !== 0){
     port.postMessage([httpStatus, sslData]);
   }
-}
-
-var checkPassword = function(details) {
-  var a = "1234";
-  var self = this;
-  getLoginData('passwordInfo').then(res => {
-    a = res;
-  });
-  console.log(a);
-
-  return a;
 }
 
 function getLoginData(sKey) {
