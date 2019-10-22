@@ -7,6 +7,11 @@
 
 <script>
 export default {
+    props:{
+      todayRequestList:{
+        type:Array
+      }
+    },
     data: () => ({
         headers:[
             {
@@ -20,13 +25,6 @@ export default {
             {
                 text:'admission',
                 value:'admission'
-            }
-        ],
-        todayRequestList:[
-            {
-                username:"홍길동",
-                requestUrl:"https://www.naver.com",
-                admission:"true"
             }
         ]
     })

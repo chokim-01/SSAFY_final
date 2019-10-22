@@ -31,5 +31,16 @@ def get_user_list():
     return jsonify(rows)
 
 
+@app.route("/today_request", methods=['POST'])
+def get_today_request():
+    today_date = request.form.get("today")
+
+    sql = "select u.userName, r.url from user u, request r where r.requestDate = %s and u.email = r.User_email"
+    curs.execute(sql, today_date)
+    rows = curs.fetchall()
+    print(rows)
+    return jsonify(rows)
+
+
 if __name__ == '__main__':
     app.run()

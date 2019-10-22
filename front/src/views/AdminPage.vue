@@ -18,7 +18,7 @@
 
         <!-- Today Request Widget -->
         <v-flex d-flex lg3 sm6 xs12>
-          <v-flex @click="getClick('todayrequest')">
+          <v-flex @click="getClick('todayrequest'), getTodayRequest()">
             <widget
               icon="mdi-calendar-blank"
               title="Today Request"
@@ -66,14 +66,14 @@
       <UserList :users="list" />
     </v-layout>
 
+    <!-- Today Request List -->
+    <v-layout v-show="widgetSelect==='todayrequest'">
+      <TodayRequestList :todayRequestList="list" />
+    </v-layout>
+
     <!-- Payment List -->
     <v-layout v-show="widgetSelect==='payment'">
       <PaymentList />
-    </v-layout>
-
-    <!-- Today Request List -->
-    <v-layout v-show="widgetSelect==='todayrequest'">
-      <TodayRequestList />
     </v-layout>
 
     <!-- Pishing Site List -->
@@ -116,6 +116,33 @@ export default{
             for(var i=0;i<result.data.length;i++){
               this.list.push({email: result.data[i][0], user_name:result.data[i][1], requestCount: result.data[i][3]})
             }
+          })
+        },
+        getTodayRequest() {
+          let date = new Date();
+          let year = date.getFullYear();
+          let month = new String(date.getMonth()+1);
+          let day = new String(date.getDate());
+
+          if(month.length == 1){
+            month = "0" + month;
+          }
+          if(day.length == 1){
+            day = "0" + day;
+          }
+
+          let today = year+"-"+month+"-"+day;
+
+          let formData = new FormData();
+          formData.append("today", today);
+
+          axios.post("http://localhost:5000/today_request", formData).then(result=>{
+            this.list = []
+            for(var i=0;i<result.data.length;i++){
+              this.list.push({username: result.data[i][0], requestUrl:result.data[i][1], admission: "true"})
+            }
+
+            // **** admission 인증
           })
         },
     }
