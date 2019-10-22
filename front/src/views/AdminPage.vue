@@ -46,7 +46,7 @@
 
         <!-- Pishing Site Widget -->
         <v-flex d-flex lg3 sm6 xs12>
-          <v-flex @click="getClick('pishingsitelist')">
+          <v-flex @click="getClick('pishingsitelist'), getPhishingSite()">
             <widget
               icon="mdi-view-list"
               title="Pishing Site"
@@ -78,7 +78,7 @@
 
     <!-- Pishing Site List -->
     <v-layout v-show="widgetSelect==='pishing'">
-      <PishingSiteList />
+      <PishingSiteList :pishingsitelist="list" />
     </v-layout>
   </v-container>
 </template>
@@ -153,6 +153,14 @@ export default{
             }
           })
         },
+        getPhishingSite() {
+          axios.post("http://localhost:5000/phishing_list").then(result=>{
+            this.list = []
+            for(var i=0;i<result.data.length;i++){
+              this.list.push({url: result.data[i][0], analysis:result.data[i][1], result: result.data[i][2]})
+            }
+          })
+        }
     }
 }
 </script>
