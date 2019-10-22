@@ -4,7 +4,7 @@
       <v-layout row wrap>
         <!-- UserList Widget -->
         <v-flex d-flex lg3 sm6 xs12>
-          <v-flex @click="getClick('userlist')">
+          <v-flex @click="getClick('userlist'), getUserlist()">
             <widget
               icon="mdi-account"
               title="User List"
@@ -62,9 +62,9 @@
 
     <!-- Data Table -->
     <!-- User List -->
-    <!-- <v-layout v-show="widgetSelect==='userlist'">
-      <UserList />
-    </v-layout>-->
+    <v-layout v-show="widgetSelect==='userlist'">
+      <UserList :users="list" />
+    </v-layout>
 
     <!-- Payment List -->
     <v-layout v-show="widgetSelect==='payment'">
@@ -84,16 +84,24 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default{
     components :{
-        // UserList : () => import('@/components/UserList'),
+        UserList : () => import('@/components/UserList'),
         TodayRequestList : () => import('@/components/TodayRequestList'),
         PaymentList : () => import('@/components/PaymentList'),
         PishingSiteList : () => import('@/components/PishingSiteList'),
         widget : () => import('@/components/Widget')
     },
     data: ()=> ({
-      widgetSelect : "userlist"
+      widgetSelect : "userlist",
+      list :
+        [{
+          email:"",
+          userName:"",
+          requestCount:0
+        }]
     }),
     methods :{
         getClick(str){
@@ -101,7 +109,15 @@ export default{
             else if(str=="pishingsitelist") this.widgetSelect="pishing"
             else if(str=="paymentlist") this.widgetSelect="payment"
             else if(str=="todayrequest") this.widgetSelect="todayrequest"
-        }
+        },
+        getUserlist(){
+          axios.post("http://localhost:5000/userlist").then(result=>{
+            this.list = []
+            for(var i=0;i<result.data.length;i++){
+              this.list.push({email: result.data[i][0], user_name:result.data[i][1], requestCount: result.data[i][3]})
+            }
+          })
+        },
     }
 }
 </script>
