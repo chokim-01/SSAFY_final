@@ -9,8 +9,9 @@
               icon="mdi-account"
               title="User List"
               subTitle="Total User Count"
-              supTitle="123 명"
-              color="#00b297"
+              supTitle="123"
+              color="#1565C0"
+              unit="명"
             />
           </v-flex>
         </v-flex>
@@ -22,8 +23,9 @@
               icon="mdi-calendar-blank"
               title="Today Request"
               subTitle="Today's Request Count"
-              supTitle="123 개"
-              color="#dc3545"
+              supTitle="123"
+              color="#FFA000"
+              unit="개"
             />
           </v-flex>
         </v-flex>
@@ -35,8 +37,9 @@
               icon="mdi-cash"
               title="Payment List"
               subTitle="Total Payment"
-              supTitle="123 개"
-              color="#0866C6"
+              supTitle="123"
+              color="#27AE60"
+              unit="개"
             />
           </v-flex>
         </v-flex>
@@ -48,8 +51,9 @@
               icon="mdi-view-list"
               title="Pishing Site"
               subTitle="Total Pishing Site List"
-              supTitle="123 개"
-              color="#1D2939"
+              supTitle="12356779"
+              color="#FF0000"
+              unit="개"
             />
           </v-flex>
         </v-flex>
