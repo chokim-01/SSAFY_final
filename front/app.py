@@ -50,6 +50,14 @@ def get_payment_list():
     print(rows)
     return jsonify(rows)
 
+@app.route("/phishing_list", methods=['POST'])
+def get_phishing_list():
+    sql = "select url, case analysisCheck when 1 then 'Complete' else 'in progress' END, case analysisResult when 1 then 'Phishing' else 'Safe' END from sitelist"
+    curs.execute(sql)
+    rows = curs.fetchall()
+    print(rows)
+    return jsonify(rows)
+
 
 if __name__ == '__main__':
     app.run()
