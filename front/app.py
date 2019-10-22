@@ -42,5 +42,14 @@ def get_today_request():
     return jsonify(rows)
 
 
+@app.route("/payment_list", methods=['POST'])
+def get_payment_list():
+    sql = "select User_email, Payment_grade, date_format(pay_date, '%Y-%m-%d %r'), date_format(expire_date, '%Y-%m-%d %r') from User_Payment"
+    curs.execute(sql)
+    rows = curs.fetchall()
+    print(rows)
+    return jsonify(rows)
+
+
 if __name__ == '__main__':
     app.run()

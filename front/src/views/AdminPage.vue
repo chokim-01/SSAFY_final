@@ -32,7 +32,7 @@
 
         <!-- Payment List Widget -->
         <v-flex d-flex lg3 sm6 xs12>
-          <v-flex @click="getClick('paymentlist')">
+          <v-flex @click="getClick('paymentlist'), getPaymentList()">
             <widget
               icon="mdi-cash"
               title="Payment List"
@@ -73,7 +73,7 @@
 
     <!-- Payment List -->
     <v-layout v-show="widgetSelect==='payment'">
-      <PaymentList />
+      <PaymentList :paymentlist="list" />
     </v-layout>
 
     <!-- Pishing Site List -->
@@ -143,6 +143,14 @@ export default{
             }
 
             // **** admission 인증
+          })
+        },
+        getPaymentList() {
+          axios.post("http://localhost:5000/payment_list").then(result=>{
+            this.list = []
+            for(var i=0;i<result.data.length;i++){
+              this.list.push({email: result.data[i][0], grade:result.data[i][1], pay_date: result.data[i][2], expire_date: result.data[i][3]})
+            }
           })
         },
     }
