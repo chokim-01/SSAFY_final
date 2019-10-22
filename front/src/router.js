@@ -3,6 +3,7 @@ import Router from "vue-router";
 import Home from "./views/Home.vue";
 import MyPage from "./views/MyPage.vue";
 import AdminPage from "./views/AdminPage.vue";
+import UserRequest from "./views/UserRequest.vue";
 
 Vue.use(Router);
 
@@ -24,6 +25,12 @@ export default new Router({
       path: "/adminpage",
       name: "adminpage",
       component: AdminPage
+    },
+    {
+      path: "/userrequest",
+      name: "UserRequest",
+      component: UserRequest,
+      props: router => ({ id: router.query.id })
     }
   ]
 });
