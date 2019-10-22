@@ -1,7 +1,7 @@
 <template>
   <v-app-bar app>
     <v-toolbar-title class="headline text-uppercase" xs12>
-      <span>Previewer</span>
+      <router-link to="/" style="text-decoration:none; color: black;">Previewer</router-link>
     </v-toolbar-title>
 
     <v-spacer />
@@ -17,7 +17,7 @@ export default {
     LogIn: () => import("./LogIn.vue"),
   },
   data: () => ({
-   
+
   })
 };
 </script>
