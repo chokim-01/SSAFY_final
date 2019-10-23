@@ -36,6 +36,73 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
     });
 });
 
+chrome.webRequest.onBeforeRequest.addListener((requestData) => {
+	// Request method check
+	if(requestData.method == "POST")
+	{
+		checkPassword(requestData);
+	}
+},
+{urls: ["<all_urls>"]},
+["blocking", "requestBody"]
+);
+
+chrome.extension.onConnect.addListener(function (port) {
+    port.onMessage.addListener(async function (message) {
+        if(message == "GET SSL") {
+          // get current tab id
+          await chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            var currTab = tabs[0];
+            if(currTab) { // Sanity check
+              getsslData(currTab.url, currTab, port);
+            }
+          });
+        }
+        if(message == "XSS Check") {
+          xssCheck();
+        }
+    });
+});
+
+var secureCheck = () {
+	// get current tab html
+  chrome.tabs.executeScript({
+    code:"document.querySelector('html').innerHTML"
+  }, function (result) {
+    console.log(result);
+    $.ajax({
+      type: "POST",
+      url: "http://localhost:5000/api/get/check_secure",
+      data: result[0],
+      success: (data) => {
+        console.log("check_secure")
+        console.log(data);
+      },
+      error: (error) => {
+        console.log(error)
+      }
+    });
+  });
+}
+
+var getsslData = async (url) => {
+  // Check SSL
+  await $.ajax({
+    type: "POST",
+    url: "http://localhost:5000/api/get/ssl",
+    data: url,
+    success: (data) => {
+      sslData = data;
+    },
+    error: (error) => {
+      console.log(error)
+    }
+  });
+	// httpStatus, sslData transfer status.html
+  port.postMessage([httpStatus, sslData]);
+
+}
+
 var checkPassword = (requestData) => {
 	// Get user password parameter name and value in chrome local storage
 	chrome.storage.local.get("passwordInfo", (data) => {
@@ -59,14 +126,3 @@ var checkPassword = (requestData) => {
 		}
 	});
 };
-
-chrome.webRequest.onBeforeRequest.addListener((requestData) => {
-	// Request method check
-	if(requestData.method == "POST")
-	{
-		checkPassword(requestData);
-	}
-},
-{urls: ["<all_urls>"]},
-["blocking", "requestBody"]
-);
