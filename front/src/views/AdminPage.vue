@@ -150,8 +150,8 @@ export default{
         getUserlist(){
           axios.post("http://localhost:5000/userlist").then(result=>{
             this.list = []
-            for(var i=0;i<result.data.length;i++){
-              this.list.push({email: result.data[i][0], user_name:result.data[i][1], requestCount: result.data[i][3]})
+            for(var idx = 0; idx < result.data.length; idx++) {
+              this.list.push({email: result.data[idx][0], user_name:result.data[idx][1], requestCount: result.data[idx][3]})
             }
           })
         },
@@ -159,28 +159,33 @@ export default{
           let formData = new FormData();
           formData.append("today", this.today);
 
-          axios.post("http://localhost:5000/today_request", formData).then(result=>{
+          axios.post("http://localhost:5000/todayRequest", formData).then(result=>{
             this.list = []
-            for(var i=0;i<result.data.length;i++){
-              this.list.push({username: result.data[i][0], requestUrl:result.data[i][1], admission: "true"})
+            for(var idx = 0; idx < result.data.length; idx++) {
+              this.list.push({username: result.data[idx][0], requestUrl:result.data[idx][1], admission: "true"})
             }
 
             // **** admission 인증
           })
         },
         getPaymentList() {
-          axios.post("http://localhost:5000/payment_list").then(result=>{
+          axios.post("http://localhost:5000/paymentList").then(result=>{
             this.list = []
-            for(var i=0;i<result.data.length;i++){
-              this.list.push({email: result.data[i][0], grade:result.data[i][1], pay_date: result.data[i][2], expire_date: result.data[i][3]})
+            for(var idx = 0; idx < result.data.length; idx++) {
+              this.list.push({email: result.data[idx][0], grade:result.data[idx][1], pay_date: result.data[idx][2], expire_date: result.data[idx][3]})
             }
           })
         },
         getPhishingSite() {
-          axios.post("http://localhost:5000/phishing_list").then(result=>{
+          axios.post("http://localhost:5000/phishingList").then(result=>{
             this.list = []
-            for(var i=0;i<result.data.length;i++){
-              this.list.push({url: result.data[i][0], analysis:result.data[i][1], result: result.data[i][2]})
+            for(var idx = 0; idx < result.data.length; idx++) {
+              if(result.data[idx][1]=="in progress") {
+                this.list.push({url: result.data[idx][0], analysis:result.data[idx][1], result: "no result"})
+              }
+              else {
+                this.list.push({url: result.data[idx][0], analysis:result.data[idx][1], result: result.data[idx][2]})
+              }
             }
           })
         }

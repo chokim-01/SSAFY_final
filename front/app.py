@@ -15,10 +15,12 @@ cors = CORS(app, resources={
     r"/*": {"origin": "*"}
 })
 
+
 # Set directory path for vue
 @app.route("/")
 def main():
     return app.send_static_file("index.html")
+
 
 @app.route("/countList", methods=['POST'])
 def get_count_list():
@@ -46,7 +48,7 @@ def get_user_list():
     return jsonify(rows)
 
 
-@app.route("/today_request", methods=['POST'])
+@app.route("/todayRequest", methods=['POST'])
 def get_today_request():
     today_date = request.form.get("today")
 
@@ -57,7 +59,7 @@ def get_today_request():
     return jsonify(rows)
 
 
-@app.route("/payment_list", methods=['POST'])
+@app.route("/paymentList", methods=['POST'])
 def get_payment_list():
     sql = "select User_email, Payment_grade, date_format(pay_date, '%Y-%m-%d %r'), date_format(expire_date, '%Y-%m-%d %r') from User_Payment"
     curs.execute(sql)
@@ -65,10 +67,26 @@ def get_payment_list():
 
     return jsonify(rows)
 
-@app.route("/phishing_list", methods=['POST'])
+
+@app.route("/phishingList", methods=['POST'])
 def get_phishing_list():
     sql = "select url, case analysisCheck when 1 then 'Complete' else 'in progress' END, case analysisResult when 1 then 'Phishing' else 'Safe' END from sitelist"
     curs.execute(sql)
+    rows = curs.fetchall()
+
+    return jsonify(rows)
+
+
+@app.route("/userRequest", methods=['POST'])
+def get_user_request():
+    email = request.form.get("email")
+
+    sql = "select r.url, date_format(r.requestDate, '%%Y-%%m-%%d'),\
+          case s.analysisCheck when 1 then 'Complete' else 'in progress' END,\
+          case s.analysisResult when 1 then 'Phishing' else 'Safe' END \
+          from Request r, SiteList s \
+          where r.User_email = %s and r.url = s.url order by requestDate desc"
+    curs.execute(sql, email)
     rows = curs.fetchall()
 
     return jsonify(rows)

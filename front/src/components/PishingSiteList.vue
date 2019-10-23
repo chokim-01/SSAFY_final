@@ -37,12 +37,13 @@ export default {
     }),
     methods: {
       getAnalysisColor (analysis) {
-        if (analysis == "Complete") return 'blue'
-        else return 'orange'
+        if (analysis == "Complete") return "blue";
+        else return "orange";
       },
       getResultColor (result) {
-        if (result == "Phishing") return 'red'
-        else return 'green'
+        if (result == "Phishing") return "red";
+        else if(result == "no result") return "yellow";
+        else return "green";
       }
     }
 }
