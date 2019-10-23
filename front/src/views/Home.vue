@@ -1,8 +1,8 @@
 <template>
   <div class="home">
-    <v-layout class="mainPage mb-12" row wrap style="text-align: center; color: black;">
-      <v-flex class="my-10" xs12>
-        <div style="font-size:60px; ">🚥PREVIEWER</div>
+    <v-layout class="mainPage mb-12" row wrap>
+      <v-flex class="my-10 projectName" xs12>
+        <div>🚥PREVIEWER</div>
       </v-flex>
       <v-flex class="px-10" xs12>
         <h3>
@@ -18,7 +18,7 @@
       </v-flex>
       <v-flex xs12>
         <v-btn class="my-12" text x-large>
-          <span style="color: green; font-size:27px;">
+          <span class="moveButton">
             확장 프로그램 추가하러 가기
             <v-icon large>mdi mdi-share</v-icon>
           </span>
@@ -36,7 +36,7 @@
             </span>
              크롬 확장 프로그램 추가
           </div>
-          <v-img src="../assets/preview.png" class="ma-7 stepImage"/>
+          <v-img src="@/assets/preview.png" class="ma-7 stepImage"/>
         </v-flex>
         <v-flex xs12 md6 lg4>
           <div>
@@ -46,7 +46,7 @@
             </span>
             회원 설정하기
           </div>
-          <v-img src="../assets/preview.png" class="ma-7 stepImage"/>
+          <v-img src="@/assets/preview.png" class="ma-7 stepImage"/>
         </v-flex>
         <v-flex xs12 md6 lg4>
           <div>
@@ -56,7 +56,7 @@
             </span>
             사용하기
           </div>
-          <v-img src="../assets/preview.png" class="ma-7 stepImage"/>
+          <v-img src="@/assets/preview.png" class="ma-7 stepImage"/>
         </v-flex>
       </v-layout>
       <v-layout class="my-12 pa-10" row wrap>
@@ -81,9 +81,7 @@ export default {
     }
   },
   components: {},
-  methods: {
-
-  }
+  methods: {}
 }
 </script>
 
@@ -95,6 +93,17 @@ export default {
   background-image: url("https://image.freepik.com/free-vector/_1055-3147.jpg");
   background-size: cover;
   font-family: 'Do Hyeon', sans-serif;
+  text-align: center;
+  color: black;
+}
+
+.projectName {
+  font-size: 60px;
+}
+
+.moveButton {
+  color: green;
+  font-size:27px;
 }
 
 .step {

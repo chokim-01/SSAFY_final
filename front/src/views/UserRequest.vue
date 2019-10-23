@@ -27,20 +27,20 @@ export default {
     selected: [],
     headers: [
       {
-        text: 'Site Url',
-        value: 'url',
+        text: "Site Url",
+        value: "url",
       },
       {
-        text:'Request date',
-        value:'date'
+        text: "Request date",
+        value: "date"
       },
       {
-        text:'Analysis',
-        value:'analysis'
+        text: "Analysis",
+        value: "analysis"
       },
       {
-        text:'Result',
-        value:'result'
+        text: "Result",
+        value: "result"
       }
     ],
     userRequest: []

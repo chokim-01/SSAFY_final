@@ -4,7 +4,7 @@
       <v-layout row wrap>
         <!-- UserList Widget -->
         <v-flex d-flex lg3 sm6 xs12>
-          <v-flex @click="getClick('userlist'), getUserlist()">
+          <v-flex @click="getClick("userlist"), getUserlist()">
             <widget
               icon="mdi-account"
               title="User List"
@@ -18,7 +18,7 @@
 
         <!-- Today Request Widget -->
         <v-flex d-flex lg3 sm6 xs12>
-          <v-flex @click="getClick('todayrequest'), getTodayRequest()">
+          <v-flex @click="getClick("todayrequest"), getTodayRequest()">
             <widget
               icon="mdi-calendar-blank"
               title="Today Request"
@@ -32,7 +32,7 @@
 
         <!-- Payment List Widget -->
         <v-flex d-flex lg3 sm6 xs12>
-          <v-flex @click="getClick('paymentlist'), getPaymentList()">
+          <v-flex @click="getClick("paymentlist"), getPaymentList()">
             <widget
               icon="mdi-cash"
               title="Payment List"
@@ -46,7 +46,7 @@
 
         <!-- Pishing Site Widget -->
         <v-flex d-flex lg3 sm6 xs12>
-          <v-flex @click="getClick('pishingsitelist'), getPhishingSite()">
+          <v-flex @click="getClick("pishingsitelist"), getPhishingSite()">
             <widget
               icon="mdi-view-list"
               title="Pishing Site"
@@ -194,7 +194,6 @@ export default{
 </script>
 
 <style scoped>
-
 .defaultBox {
   width: 100%;
   height: 400px;
@@ -202,5 +201,4 @@ export default{
   line-height:400px;
   text-align:center;
 }
-
 </style>

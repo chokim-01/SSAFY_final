@@ -8,7 +8,7 @@
 export default {
     name : "MyPage",
     data: () => ({
-        
+
     }),
     components:{
         MyRequestList: () => import("@/components/MyRequestList")

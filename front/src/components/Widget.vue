@@ -17,7 +17,6 @@
               :delay="delay"
               :endVal="setEndValue"
               :options="options"
-              id="countUpId"
               />
               {{ unit }}
             </div>
@@ -28,7 +27,7 @@
 </template>
 
 <script>
-import ICountUp from 'vue-countup-v2';
+import ICountUp from "vue-countup-v2";
 
 export default {
   components: {
@@ -66,10 +65,10 @@ export default {
       options: {
         useEasing: false,
         useGrouping: true,
-        separator: ',',
-        decimal: '.',
-        prefix: '',
-        suffix: ''
+        separator: ",",
+        decimal: ".",
+        prefix: "",
+        suffix: ""
       }
     }
   },
@@ -105,6 +104,7 @@ export default {
   margin-right: 1.5em;
   margin-left: 1.5em;
 }
+
 .marginright {
   margin-right: 1em;
 }
