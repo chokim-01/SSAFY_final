@@ -32,16 +32,16 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 
 	// Get user input password
 	chrome.tabs.executeScript({
-        code:"document.addEventListener('click', function(){var elements = document.querySelectorAll('input[type=password]')[0]; if(elements) { var passwordName = elements.name; var passwordValue = elements.value; chrome.storage.local.set({ passwordInfo: [passwordName, passwordValue] }); } });"
+        code:"document.addEventListener('keyup', function(){var elements = document.querySelectorAll('input[type=password]')[0]; if(elements) { var passwordName = elements.name; var passwordValue = elements.value; chrome.storage.local.set({ passwordInfo: [passwordName, passwordValue] }); } });"
     });
 });
 
-var checkPassword = (requestData) => { 
+var checkPassword = (requestData) => {
 	// Get user password parameter name and value in chrome local storage
 	chrome.storage.local.get("passwordInfo", (data) => {
 		if(data["passwordInfo"])
 		{
-			// If user send password to server 
+			// If user send password to server
 			let requestBody = requestData.requestBody;
 			let passwordParameterName = data["passwordInfo"][0];
 			let passwordValue = data["passwordInfo"][1];
@@ -70,4 +70,3 @@ chrome.webRequest.onBeforeRequest.addListener((requestData) => {
 {urls: ["<all_urls>"]},
 ["blocking", "requestBody"]
 );
-
