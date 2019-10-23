@@ -6,7 +6,8 @@
     "background": {
         "scripts": [
           "Vue.js",
-          "background.js"
+          "background.js",
+          "jQuery/jquery-3.4.1.js"
         ],
         "pages": [
           "status.html"

@@ -1,15 +1,9 @@
 chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 	// Get User access url ex) https://naver.com
-	let userAccessURL = tab.url;
-
-	// Find "http" word in userAccessURL
-	let http_check = userAccessURL.indexOf("http");
-
-	// Find "https" word in userAcessURL
-	let https_check = userAccessURL.indexOf("https");
-
+	// Check http, https
+	urlStatus = checkURL(tab.url);
 	// If https
-	if(https_check == 0)
+	if(urlStatus === "https")
 	{
 		chrome.browserAction.setIcon({
 			path: {"38": "/Icons/38_secure.png"},
@@ -17,7 +11,7 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 		});
 	}
 	// If http
-	else if(http_check == 0)
+	else if(urlStatus === "http")
 	{
 		chrome.browserAction.setIcon({
 			path: {"38": "/Icons/38_warning.png"},
@@ -27,7 +21,7 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 	// Unkown
 	else
 	{
-		console.log("Unkown");
+		console.log("Unknown");
 	}
 
 	// Get user input password
@@ -54,7 +48,7 @@ chrome.extension.onConnect.addListener((port) => {
           await chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
             var currTab = tabs[0];
             if(currTab) { // Sanity check
-              getsslData(currTab.url);
+              getsslData(currTab.url, port);
             }
           });
           secureCheck();
@@ -62,14 +56,32 @@ chrome.extension.onConnect.addListener((port) => {
     });
 });
 
-var getsslData = async (url) => {
-  // Check SSL
+var checkURL = (url) => {
+	// Find "http" word in userAccessURL
+	let http_check = url.indexOf("http://");
+	if(http_check == 0)
+	{
+		return "http"
+	}
+	// Find "https" word in userAcessURL
+	let https_check = url.indexOf("https://");
+	if(https_check == 0)
+	{
+		return "https"
+	}
+	return "unknown"
+}
+
+var getsslData = async (url, port) => {
+  // Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
     url: "http://localhost:5000/api/get/ssl",
     data: url,
     success: (data) => {
-			port.postMessage([httpStatus, sslData]);
+			// send to inject.js
+			let httpStatus = checkURL(url)
+			port.postMessage([httpStatus, data]);
 			console.log(data);
     },
     error: (error) => {
