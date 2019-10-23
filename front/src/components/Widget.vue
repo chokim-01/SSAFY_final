@@ -29,7 +29,6 @@
 
 <script>
 import ICountUp from 'vue-countup-v2';
-import { CountUp } from 'countup.js';
 
 export default {
   components: {

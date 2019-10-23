@@ -1,6 +1,6 @@
 import os
 import pymysql
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, json
 from flask_cors import CORS
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -22,6 +22,80 @@ def main():
     return app.send_static_file("index.html")
 
 
+###################################################
+#   Member section
+###################################################
+@app.route("/signUp", methods=['POST'])
+def signUp():
+    data = request.get_json()
+    userName = data.get('userName')
+    email = data.get('email')
+    password = data.get('password')
+
+    print(userName)
+
+    sql = "INSERT INTO USER (email,userName,password) VALUES (%s, %s,%s)"
+    val = (email, userName, password)
+    curs.execute(sql, val)
+    conn.commit()
+    return jsonify()
+
+
+@app.route("/logIn", methods=['POST'])
+def logIn():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    sql = "SELECT u.*, IFNULL(( \
+                select (CASE WHEN expire_date > now() THEN payment_grade ELSE 'basic' END) \
+                from user_payment \
+                where User_email = %s order by expire_date limit 1 ), 'basic') as grade \
+            FROM USER u, user_payment up  \
+            WHERE u.email = %s AND u.password = %s limit 1"
+
+    val = (email, email, password)
+    curs.execute(sql, val)
+
+    data = (curs.fetchall())
+    print(data)
+
+    return jsonify(data)
+
+
+@app.route("/update", methods=['POST'])
+def update():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    name = data.get('name')
+
+    sql = "UPDATE USER SET userName = %s, password = %s where email = %s "
+    val = (password, name, email)
+    curs.execute(sql, val)
+    conn.commit()
+
+    return jsonify()
+
+
+@app.route("/userOut", methods=['POST'])
+def userOut():
+    data = request.get_json()
+    email = data.get('email')
+    grade = data.get('grade')
+
+    sql = "DELETE * FROM USER where email = %s"
+    val = (email)
+
+    curs.execute(sql, val)
+    data = (curs.fetchall())
+
+    return jsonify(data)
+
+
+###################################################
+#   Admin section
+###################################################
 @app.route("/countList", methods=['POST'])
 def get_count_list():
     today_date = request.form.get("today")

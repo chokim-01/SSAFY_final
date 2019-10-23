@@ -1,27 +1,28 @@
 ﻿{
-    "name": "catch-data-test",
+    "name": "Previewer",
     "version": "0.0.1",
     "manifest_version": 2,
-    "description": "ChromeTest explain",
+    "description": "Detect threat",
     "background": {
         "scripts": [
-          "jQuery/jquery-3.4.1.js",
+          "Vue.js",
           "background.js"
         ],
         "pages": [
-          "popup.html"
+          "status.html"
         ],
         "persistent": true
     },
     "browser_action": {
         "default_title": "default",
-        "default_icon": "Icons/icon.png",
-        "default_popup": "popup.html"
+        "default_icon": "/Icons/secure.png",
+        "default_popup": "status.html"
     },
     "permissions": [
         "https://*/*",
         "http://*/*",
         "tabs",
+        "storage",
         "webRequest",
         "webRequestBlocking",
         "http://localhost/"

@@ -4,6 +4,7 @@ import Home from "./views/Home.vue";
 import MyPage from "./views/MyPage.vue";
 import AdminPage from "./views/AdminPage.vue";
 import UserRequest from "./views/UserRequest.vue";
+import UserInfo from "./views/UserInfo.vue";
 
 Vue.use(Router);
 
@@ -20,6 +21,11 @@ export default new Router({
       path: "/mypage",
       name: "mypage",
       component: MyPage
+    },
+    {
+      path: "/UserInfo",
+      name: "UserInfo",
+      component: UserInfo
     },
     {
       path: "/adminpage",

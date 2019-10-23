@@ -12,14 +12,14 @@
 
         <v-card-text>
           <v-flex xs12>
-            <v-text-field label="Email*" v-model="email" required />
+            <v-text-field v-model="email" label="Email*" required />
           </v-flex>
 
           <v-flex xs12>
             <v-text-field
-              label="Password*"
-              type="password"
               v-model="password"
+              type="password"
+              label="Password*"
               @keyup.enter="loginWithEmail"
               required
             />
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-
+import EventBus from "../EventBus.js"
 export default {
   name: "logIn",
       components: {
@@ -58,17 +58,31 @@ export default {
       email:"",
       password:"",
       dialog:false
-     
+
     }
   },
-   async loginWithEmail () {
-     this.dialog = false
-
+  methods:{
+    async loginWithEmail () {
+    let userdata = {
+      email : this.email,
+      password : this.password
+      }
+      this.$http.post("http://localhost:5000/logIn",userdata).then((res)=>{
+        if(res.status==200){
+          alert("로그인성공")
+          let userInfo ={ email : res.data[0][0],name: res.data[0][1],grade:res.data[0][3]}
+          sessionStorage.setItem("userInfo",JSON.stringify(userInfo))
+          EventBus.$emit('userInfo',userInfo)
+        }else{
+          alert("실패")
+          }
+      })
+      this.dialog = false
     }
-
-  
+  }
 }
 </script>
+
 <style>
 .headline {
   justify-content: center;

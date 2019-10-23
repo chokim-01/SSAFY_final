@@ -2,7 +2,7 @@
   <div justify-end>
     <v-dialog v-model="dialog" persistent max-width="500">
       <template v-slot:activator="{ on }">
-        <v-btn color="green darken-1" v-on="on" text>Sign Up</v-btn>
+        <v-btn v-on="on" color="green darken-1" text>Sign Up</v-btn>
       </template>
 
       <v-card>
@@ -11,7 +11,7 @@
         </v-card-title>
 
         <v-card-text>
-          <v-text-field label="Name" type="text" v-model="name" :rules="[rule.required]" required />
+          <v-text-field v-model="name" type="text" label="Name" :rules="[rule.required]" required />
 
           <v-text-field
             label="Email"
@@ -28,6 +28,8 @@
             :rules="[rule.required, rule.minLength(0), rule.maxLength(20)]"
             required
           />
+
+          <v-text-field v-model="grade" label="Grade" value="Basic" readonly />
         </v-card-text>
 
         <v-card-actions>
@@ -56,6 +58,7 @@ export default {
       name: "",
       email: "",
       password: "",
+      grade: "Basic",
       rule: {
         required: v => !!v || "필수항목",
         email: v => /.+@.+/.test(v) || "이메일 형식입력",
@@ -65,6 +68,23 @@ export default {
     }
   },
   methods: {
+    signUp(){
+      this.dialog = false
+      let userdata = {
+        userName : this.name,
+        email : this.email,
+        password : this.password
+      }
+      this.$http.post("http://localhost:5000/signUp",userdata).then((res)=>{
+        if(res.data.success == true){
+          alert(res.data.message)
+          this.$router.push("/")
+        }
+        if(res.data.success == false){
+          alert(res.data.message)
+        }
+      })
+    },
     clear () {
       this.name = ""
       this.email = ""

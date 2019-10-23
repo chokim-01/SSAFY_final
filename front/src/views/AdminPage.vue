@@ -95,11 +95,11 @@ import axios from "axios";
 
 export default{
     components :{
-        UserList : () => import('@/components/UserList'),
-        TodayRequestList : () => import('@/components/TodayRequestList'),
-        PaymentList : () => import('@/components/PaymentList'),
-        PishingSiteList : () => import('@/components/PishingSiteList'),
-        widget : () => import('@/components/Widget')
+        UserList : () => import("@/components/UserList"),
+        TodayRequestList : () => import("@/components/TodayRequestList"),
+        PaymentList : () => import("@/components/PaymentList"),
+        PishingSiteList : () => import("@/components/PishingSiteList"),
+        widget : () => import("@/components/Widget")
     },
     data: ()=> ({
       widgetSelect : "default",

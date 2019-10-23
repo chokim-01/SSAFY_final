@@ -19,32 +19,32 @@ export default {
       type:Array
     }
   },
-    data: () => ({
-        headers:[
-            {
-                text:'url',
-                value:'url'
-            },
-            {
-                text:'analysis',
-                value:'analysis'
-            },
-            {
-                text:'result',
-                value:'result'
-            }
-        ]
-    }),
-    methods: {
-      getAnalysisColor (analysis) {
-        if (analysis == "Complete") return "blue";
-        else return "orange";
+  data: () => ({
+    headers:[
+      {
+        text: "url",
+        value: "url"
       },
-      getResultColor (result) {
-        if (result == "Phishing") return "red";
-        else if(result == "no result") return "yellow";
-        else return "green";
+      {
+        text: "analysis",
+        value: "analysis"
+      },
+      {
+        text: "result",
+        value: "result"
       }
+    ]
+  }),
+  methods: {
+    getAnalysisColor (analysis) {
+      if (analysis == "Complete") return "blue";
+      else return "orange";
+    },
+    getResultColor (result) {
+      if (result == "Phishing") return "red";
+      else if(result == "no result") return "yellow";
+      else return "green";
     }
+  }
 }
 </script>

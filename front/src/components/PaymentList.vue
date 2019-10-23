@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <!-- PaymentList Data Table -->
-    <v-data-table :headers="headers" :items="paymentlist"></v-data-table>
+    <v-data-table :headers="headers" :items="paymentlist" />
   </v-container>
 </template>
 
@@ -15,20 +15,20 @@ export default {
   data: () => ({
     headers:[
       {
-        text:'email',
-        value:'email'
+        text: "email",
+        value: "email"
       },
       {
-        text:'grade',
-        value:'grade'
+        text: "grade",
+        value: "grade"
       },
       {
-        text:'pay_date',
-        value:'pay_date'
+        text: "pay_date",
+        value: "pay_date"
       },
       {
-        text:'expire_date',
-        value:'expire_date'
+        text: "expire_date",
+        value: "expire_date"
       }
     ]
   })

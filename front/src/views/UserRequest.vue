@@ -65,7 +65,6 @@ export default {
       formData.append("email", this.email);
 
       axios.post("http://localhost:5000/userRequest", formData).then(result=>{
-        console.log(result.data);
         for(var idx = 0; idx < result.data.length; idx++) {
           if(result.data[idx][2]=="in progress") {
             this.userRequest.push({
