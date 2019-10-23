@@ -47,6 +47,7 @@
 </template>
 
 <script>
+import EventBus from "../EventBus.js"
 export default {
   name: "logIn",
       components: {
@@ -60,16 +61,25 @@ export default {
      
     }
   },
-   async loginWithEmail () {
-     let userdata = {
+  methods:{
+    async loginWithEmail () {
+    let userdata = {
       email : this.email,
       password : this.password
       }
       this.$http.post("/logIn",userdata).then((res)=>{
-
+        if(res.status==200){
+          alert("로그인성공")
+          let userInfo ={ email : res.data[0][0],name: res.data[0][1],grade:res.data[0][3]}
+          sessionStorage.setItem("userInfo",JSON.stringify(userInfo))
+          EventBus.$emit('userInfo',userInfo)
+        }else{
+          alert("실패")
+          }
       })
       this.dialog = false
     }
+  }
 }
 </script>
 

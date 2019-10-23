@@ -26,7 +26,6 @@ def signUp():
     val = (email, userName, password, "basic")
     curs.execute(sql, val)
     conn.commit()
-
     return jsonify()
 
 
@@ -35,11 +34,45 @@ def logIn():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
-    sql = "SELECT email FROM USER where eamil = %s AND password = %s"
+
+    sql = "SELECT * FROM USER where email = %s AND password = %s"
     val = (email, password)
     curs.execute(sql, val)
+
     data = (curs.fetchall())
     print(data)
+
+    return jsonify(data)
+
+
+@app.route("/update", methods=['POST'])
+def update():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    name = data.get('name')
+
+    sql = "UPDATE USER SET userName = %s, password = %s where email = %s "
+    val = (password, name, email)
+    curs.execute(sql, val)
+    conn.commit()
+
+    return jsonify()
+
+
+@app.route("/userOut", methods=['POST'])
+def userOut():
+    data = request.get_json()
+    email = data.get('email')
+    grade = data.get('grade')
+
+    sql = "DELETE * FROM USER where email = %s"
+    val = (email)
+
+    curs.execute(sql, val)
+    data = (curs.fetchall())
+
+    return jsonify(data)
 
 
 if __name__ == '__main__':

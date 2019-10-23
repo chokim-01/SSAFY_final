@@ -28,6 +28,8 @@
             :rules="[rule.required, rule.minLength(0), rule.maxLength(20)]"
             required
           />
+
+          <v-text-field v-model="grade" label="Grade" value="Basic" readonly />
         </v-card-text>
 
         <v-card-actions>
@@ -73,13 +75,13 @@ export default {
         password : this.password
       }
       this.$http.post("/signUp",userdata).then((res)=>{
-        // if(res.data.success == true){
-        //   alert(res.data.message)
-        //   this.$router.push("/signUp")
-        // }
-        // if(res.data.success == false){
-        //   alert(res.data.message)
-        // }
+        if(res.data.success == true){
+          alert(res.data.message)
+          this.$router.push("/")
+        }
+        if(res.data.success == false){
+          alert(res.data.message)
+        }
       })
     },
     clear () {

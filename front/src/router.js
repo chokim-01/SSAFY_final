@@ -4,6 +4,7 @@ import Home from "./views/Home.vue";
 import MyPage from "./views/MyPage.vue";
 import AdminPage from "./views/AdminPage.vue";
 import UserRequest from "./views/UserRequest.vue";
+import UserInfo from "./views/UserInfo.vue";
 
 Vue.use(Router);
 
@@ -22,6 +23,11 @@ export default new Router({
       component: MyPage
     },
     {
+      path: "/UserInfo",
+      name: "UserInfo",
+      component: UserInfo
+    },
+    {
       path: "/adminpage",
       name: "adminpage",
       component: AdminPage
@@ -34,4 +40,3 @@ export default new Router({
     }
   ]
 });
-2;
