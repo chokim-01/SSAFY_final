@@ -15,9 +15,8 @@
             <div class="headline font-weight-bold iCountUp" :style="{ color: color}">
               <ICountUp
               :delay="delay"
-              :endVal="count"
+              :endVal="setEndValue"
               :options="options"
-              @ready="onReady"
               id="countUpId"
               />
               {{ unit }}
@@ -30,11 +29,12 @@
 
 <script>
 import ICountUp from 'vue-countup-v2';
+import { CountUp } from 'countup.js';
 
 export default {
-    components: {
-      ICountUp
-},
+  components: {
+    ICountUp
+  },
   props: {
     supTitle: {
       type: String,
@@ -61,30 +61,41 @@ export default {
       required: false
     }
   },
-      data() {
-        return {
-          delay: 1000,
-          endValue: parseInt(this.supTitle),
-          options: {
-            useEasing: false,
-            useGrouping: true,
-            separator: ',',
-            decimal: '.',
-            prefix: '',
-            suffix: ''
-          },
-          count : parseInt(this.supTitle)
-        }
-      },
-      created() {
-      },
-      methods: {
-        onReady: function(instance, CountUp) {
-        const that = this;
-        instance.update(that.endValue);
-        console.log(CountUp)
+  data() {
+    return {
+      delay: 1000,
+      options: {
+        useEasing: false,
+        useGrouping: true,
+        separator: ',',
+        decimal: '.',
+        prefix: '',
+        suffix: ''
       }
     }
+  },
+  created() {
+  },
+  computed: {
+    setEndValue() {
+      let count = 0;
+      if(this.supTitle == "user") {
+        count = this.$store.state.userCount;
+      }
+      else if(this.supTitle == "today") {
+        count = this.$store.state.todayCount;
+      }
+      else if(this.supTitle == "payment") {
+        count = this.$store.state.paymentCount;
+      }
+      else {
+        count = this.$store.state.phishingCount;
+      }
+      return count;
+    }
+  },
+  methods: {
+  }
 }
 </script>
 

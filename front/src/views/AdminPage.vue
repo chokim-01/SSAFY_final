@@ -9,7 +9,7 @@
               icon="mdi-account"
               title="User List"
               subTitle="Total User Count"
-              supTitle="123"
+              supTitle="user"
               color="#1565C0"
               unit="명"
             />
@@ -23,7 +23,7 @@
               icon="mdi-calendar-blank"
               title="Today Request"
               subTitle="Today's Request Count"
-              supTitle="123"
+              supTitle="today"
               color="#FFA000"
               unit="개"
             />
@@ -37,7 +37,7 @@
               icon="mdi-cash"
               title="Payment List"
               subTitle="Total Payment"
-              supTitle="123"
+              supTitle="payment"
               color="#27AE60"
               unit="개"
             />
@@ -51,7 +51,7 @@
               icon="mdi-view-list"
               title="Pishing Site"
               subTitle="Total Pishing Site List"
-              supTitle="12356779"
+              supTitle="phishing"
               color="#FF0000"
               unit="개"
             />
@@ -61,6 +61,13 @@
     </v-content>
 
     <!-- Data Table -->
+    <!-- Initial Page -->
+    <v-layout v-show="widgetSelect==='default'">
+      <div class="defaultBox">
+        <h3>원하시는 메뉴를 선택해주세요.</h3>
+      </div>
+    </v-layout>
+
     <!-- User List -->
     <v-layout v-show="widgetSelect==='userlist'">
       <UserList :users="list" />
@@ -95,14 +102,44 @@ export default{
         widget : () => import('@/components/Widget')
     },
     data: ()=> ({
-      widgetSelect : "userlist",
+      widgetSelect : "default",
       list :
         [{
           email:"",
           userName:"",
           requestCount:0
-        }]
+        }],
+      userCount: "0",
+      todayCount: "0",
+      paymentCount: "0",
+      phishingCount: "0",
+      today: "2019-01-01"
     }),
+    created() {
+      let date = new Date();
+      let year = date.getFullYear();
+      let month = new String(date.getMonth()+1);
+      let day = new String(date.getDate());
+
+      if(month.length == 1){
+        month = "0" + month;
+      }
+      if(day.length == 1){
+        day = "0" + day;
+      }
+
+      this.today = year+"-"+month+"-"+day;
+
+      let formData = new FormData();
+      formData.append("today", this.today);
+
+      axios.post("http://localhost:5000/countList", formData).then(result=>{
+        this.$store.state.userCount = result.data[0][0];
+        this.$store.state.todayCount = result.data[0][1];
+        this.$store.state.paymentCount = result.data[0][2];
+        this.$store.state.phishingCount = result.data[0][3];
+      })
+    },
     methods :{
         getClick(str){
             if(str=="userlist") this.widgetSelect="userlist"
@@ -119,22 +156,8 @@ export default{
           })
         },
         getTodayRequest() {
-          let date = new Date();
-          let year = date.getFullYear();
-          let month = new String(date.getMonth()+1);
-          let day = new String(date.getDate());
-
-          if(month.length == 1){
-            month = "0" + month;
-          }
-          if(day.length == 1){
-            day = "0" + day;
-          }
-
-          let today = year+"-"+month+"-"+day;
-
           let formData = new FormData();
-          formData.append("today", today);
+          formData.append("today", this.today);
 
           axios.post("http://localhost:5000/today_request", formData).then(result=>{
             this.list = []
@@ -166,4 +189,13 @@ export default{
 </script>
 
 <style scoped>
+
+.defaultBox {
+  width: 100%;
+  height: 400px;
+  border: 2px dashed gray;
+  line-height:400px;
+  text-align:center;
+}
+
 </style>

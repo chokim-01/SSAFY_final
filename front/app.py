@@ -20,6 +20,21 @@ cors = CORS(app, resources={
 def main():
     return app.send_static_file("index.html")
 
+@app.route("/countList", methods=['POST'])
+def get_count_list():
+    today_date = request.form.get("today")
+
+    sql = "select\
+            (select count(*) from user) as userCount,\
+            (select count(*) from user u, request r where r.requestDate = %s and u.email = r.User_email) as todayCount,\
+            (select count(*) from User_Payment) as paymentCount,\
+            (select count(*) from sitelist);"
+
+    curs.execute(sql, today_date)
+    rows = curs.fetchall()
+
+    return jsonify(rows)
+
 
 @app.route("/userlist", methods=['POST'])
 def get_user_list():
@@ -27,7 +42,7 @@ def get_user_list():
 
     curs.execute(sql)
     rows = curs.fetchall()
-    print(rows)
+
     return jsonify(rows)
 
 
@@ -38,7 +53,7 @@ def get_today_request():
     sql = "select u.userName, r.url from user u, request r where r.requestDate = %s and u.email = r.User_email"
     curs.execute(sql, today_date)
     rows = curs.fetchall()
-    print(rows)
+
     return jsonify(rows)
 
 
@@ -47,7 +62,7 @@ def get_payment_list():
     sql = "select User_email, Payment_grade, date_format(pay_date, '%Y-%m-%d %r'), date_format(expire_date, '%Y-%m-%d %r') from User_Payment"
     curs.execute(sql)
     rows = curs.fetchall()
-    print(rows)
+
     return jsonify(rows)
 
 @app.route("/phishing_list", methods=['POST'])
@@ -55,7 +70,7 @@ def get_phishing_list():
     sql = "select url, case analysisCheck when 1 then 'Complete' else 'in progress' END, case analysisResult when 1 then 'Phishing' else 'Safe' END from sitelist"
     curs.execute(sql)
     rows = curs.fetchall()
-    print(rows)
+
     return jsonify(rows)
 
 
