@@ -12,7 +12,7 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 	if(https_check == 0)
 	{
 		chrome.browserAction.setIcon({
-			path: {"128": "/Icons/secure.png"},
+			path: {"38": "/Icons/38_secure.png"},
 			tabId: currentTabId
 		});
 	}
@@ -20,7 +20,7 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 	else if(http_check == 0)
 	{
 		chrome.browserAction.setIcon({
-			path: {"128": "/Icons/warn.png"},
+			path: {"38": "/Icons/38_warning.png"},
 			tabId: currentTabId
 		});
 	}

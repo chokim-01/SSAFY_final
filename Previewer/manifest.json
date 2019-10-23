@@ -15,7 +15,7 @@
     },
     "browser_action": {
         "default_title": "default",
-        "default_icon": "Icons/icon.png",
+        "default_icon": "/Icons/secure.png",
         "default_popup": "status.html"
     },
     "permissions": [
@@ -25,8 +25,6 @@
         "storage",
         "webRequest",
         "webRequestBlocking",
-        "http://localhost/",
-        "https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js",
-        "https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"
+        "http://localhost/"
     ]
 }
