@@ -21,7 +21,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         httpStatus = "http";
         // Set icon warn state
         chrome.browserAction.setIcon({
-          path: { "19": "/Icons/icon_warn.png"},
+          path: { "19": "/Icons/warn.png"},
           tabId: tabId
         });
       } else {
@@ -30,7 +30,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         if(sslFlag) {
           // Set icon secure state
           chrome.browserAction.setIcon({
-            path: { "19": "/Icons/icon_secure.png"},
+            path: { "19": "/Icons/secure.png"},
             tabId: tabId
           });
         }
@@ -40,10 +40,28 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
 /* The Web Request API */
 chrome.webRequest.onBeforeRequest.addListener(
-    function(details) {
+    async function(details) {
+      requestBody = details.requestBody;
       // check pw is plaintext
       if(details.method == "POST") {
-        return checkPassword(details);
+        var userInfo;
+        await getLoginData('passwordInfo').then(res => {
+          userInfo = res;
+        });
+        chrome.storage.local.remove('passwordInfo');
+
+        if(userInfo){
+          var passwordName = userInfo[0];
+          var passwordValue = userInfo[1];
+          if(requestBody && requestBody.formData && requestBody.formData[passwordName]) {
+            console.log(requestBody.formData[passwordName][0])
+            console.log(passwordValue)
+            if(requestBody.formData[passwordName][0] === passwordValue) {
+              console.log("match")
+              return {cancel: true}
+            }
+          }
+        }
       }
     },
     {urls: ["<all_urls>"]},
@@ -83,21 +101,15 @@ var getsslData = async function(url, tabId, port) {
   }
 }
 
-var checkPassword = function(details) {
-
-  return chrome.storage.local.get('passwordInfo', function (items) {
-    if(items['passwordInfo']){
-      let requestBody = details.requestBody
-      let passwordName = items['passwordInfo'][0];
-      let passwordValue = items['passwordInfo'][1];
-
-      if(requestBody && requestBody.formData && requestBody.formData[passwordName]) {
-        if(requestBody.formData[passwordName] == passwordValue) {
-          alert("Un secured");
-          return {cancel: true}
-        }
+function getLoginData(sKey) {
+  return new Promise(function(resolve, reject) {
+    chrome.storage.local.get(sKey, function(items) {
+      if (chrome.runtime.lastError) {
+        console.error(chrome.runtime.lastError.message);
+        reject(chrome.runtime.lastError.message);
+      } else {
+        resolve(items[sKey]);
       }
-      chrome.storage.local.remove('passwordInfo');
-    }
+    });
   });
 }
