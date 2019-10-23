@@ -1,22 +1,22 @@
 ﻿{
-    "name": "catch-data-test",
+    "name": "Previewer",
     "version": "0.0.1",
     "manifest_version": 2,
-    "description": "ChromeTest explain",
+    "description": "Detect threat",
     "background": {
         "scripts": [
-          "jQuery/jquery-3.4.1.js",
+          "Vue.js",
           "background.js"
         ],
         "pages": [
-          "popup.html"
+          "status.html"
         ],
         "persistent": true
     },
     "browser_action": {
         "default_title": "default",
         "default_icon": "Icons/icon.png",
-        "default_popup": "popup.html"
+        "default_popup": "status.html"
     },
     "permissions": [
         "https://*/*",
@@ -25,6 +25,8 @@
         "storage",
         "webRequest",
         "webRequestBlocking",
-        "http://localhost/"
+        "http://localhost/",
+        "https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js",
+        "https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"
     ]
 }

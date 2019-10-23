@@ -21,7 +21,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         httpStatus = "http";
         // Set icon warn state
         chrome.browserAction.setIcon({
-          path: { "19": "/Icons/icon_warn.png"},
+          path: { "19": "/Icons/warn.png"},
           tabId: tabId
         });
       } else {
@@ -30,7 +30,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         if(sslFlag) {
           // Set icon secure state
           chrome.browserAction.setIcon({
-            path: { "19": "/Icons/icon_secure.png"},
+            path: { "19": "/Icons/secure.png"},
             tabId: tabId
           });
         }
