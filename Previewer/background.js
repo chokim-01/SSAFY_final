@@ -47,28 +47,42 @@ chrome.webRequest.onBeforeRequest.addListener((requestData) => {
 ["blocking", "requestBody"]
 );
 
-chrome.extension.onConnect.addListener(function (port) {
-    port.onMessage.addListener(async function (message) {
-        if(message == "GET SSL") {
-          // get current tab id
-          await chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+chrome.extension.onConnect.addListener((port) => {
+    port.onMessage.addListener(async (message) => {
+        if(message == "GET Site Data") {
+          // get current tab info
+          await chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
             var currTab = tabs[0];
             if(currTab) { // Sanity check
-              getsslData(currTab.url, currTab, port);
+              getsslData(currTab.url);
             }
           });
-        }
-        if(message == "XSS Check") {
-          xssCheck();
+          secureCheck();
         }
     });
 });
 
-var secureCheck = () {
+var getsslData = async (url) => {
+  // Check SSL
+  await $.ajax({
+    type: "POST",
+    url: "http://localhost:5000/api/get/ssl",
+    data: url,
+    success: (data) => {
+			port.postMessage([httpStatus, sslData]);
+			console.log(data);
+    },
+    error: (error) => {
+      console.log(error)
+    }
+  });
+}
+
+var secureCheck = () => {
 	// get current tab html
   chrome.tabs.executeScript({
     code:"document.querySelector('html').innerHTML"
-  }, function (result) {
+  }, (result) => {
     console.log(result);
     $.ajax({
       type: "POST",
@@ -83,24 +97,6 @@ var secureCheck = () {
       }
     });
   });
-}
-
-var getsslData = async (url) => {
-  // Check SSL
-  await $.ajax({
-    type: "POST",
-    url: "http://localhost:5000/api/get/ssl",
-    data: url,
-    success: (data) => {
-      sslData = data;
-    },
-    error: (error) => {
-      console.log(error)
-    }
-  });
-	// httpStatus, sslData transfer status.html
-  port.postMessage([httpStatus, sslData]);
-
 }
 
 var checkPassword = (requestData) => {
