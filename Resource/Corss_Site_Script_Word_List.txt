@@ -1,7 +1,6 @@
 <img\x10src=
 xss
 noxss
-javasciprt
 alert
 "><
 "`'>
