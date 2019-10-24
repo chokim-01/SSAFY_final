@@ -6,7 +6,6 @@
           <v-icon>mdi-account</v-icon>
         </v-btn>
       </template>
-
       <v-card width="200">
         <v-flex xs8>
           <!-- UserName -->
@@ -14,7 +13,6 @@
             {{userInfo.name}}
             <br />
           </v-card-text>
-
           <!-- User LogOut / Edit -->
           <v-card-text>
             <v-btn @click="signOut()" color="error">
@@ -24,7 +22,6 @@
               <v-icon>mdi-account-edit</v-icon>
             </v-btn>
           </v-card-text>
-
           <!-- Admin -->
           <v-card-text>
             <v-list v-if="userInfo.grade=='master'" class="text-center">
@@ -45,7 +42,7 @@ name: "UserInfo",
    userInfo: JSON.parse(sessionStorage.getItem("userInfo"))
   }),
   computed:{
-     
+
     getUserEmail(){
       return sessionStorage.getItem("userInfo").email
     }
@@ -53,7 +50,7 @@ name: "UserInfo",
   created(){
     this.userInfo= JSON.parse(sessionStorage.getItem("userInfo"))
   },
-  
+
   updated(){
     this.userInfo= JSON.parse(sessionStorage.getItem("userInfo"))
   },

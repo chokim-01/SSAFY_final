@@ -4,15 +4,12 @@
       <template v-slot:activator="{ on }">
         <v-btn v-on="on" color="green darken-1" text>Sign Up</v-btn>
       </template>
-
       <v-card>
         <v-card-title class="headline">
           <span>Sign Up Below</span>
         </v-card-title>
-
         <v-card-text>
           <v-text-field v-model="name" type="text" label="Name" :rules="[rule.required]" required />
-
           <v-text-field
             label="Email"
             type="email"
@@ -20,7 +17,6 @@
             :rules="[rule.required, rule.email]"
             required
           />
-
           <v-text-field
             label="Password"
             type="password"
@@ -28,17 +24,13 @@
             :rules="[rule.required, rule.minLength(0), rule.maxLength(20)]"
             required
           />
-
           <v-text-field v-model="grade" label="Grade" value="Basic" readonly />
         </v-card-text>
-
         <v-card-actions>
           <v-spacer />
-
           <v-btn color="darken-1" text @click="clear()">
             <span>close</span>
           </v-btn>
-
           <v-btn color="darken-1" text @click="signUp()">
             <span>sign_up</span>
           </v-btn>
@@ -49,7 +41,6 @@
 </template>
 
 <script>
-
 export default {
   name: "signUp",
   data () {
@@ -58,6 +49,7 @@ export default {
       name: "",
       email: "",
       password: "",
+      grade: "Basic",
       rule: {
         required: v => !!v || "필수항목",
         email: v => /.+@.+/.test(v) || "이메일 형식입력",
@@ -74,7 +66,7 @@ export default {
         email : this.email,
         password : this.password
       }
-      this.$http.post("/signUp",userdata).then((res)=>{
+      this.$http.post("http://localhost:5000/signUp",userdata).then((res)=>{
         if(res.data.success == true){
           alert(res.data.message)
           this.$router.push("/")

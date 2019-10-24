@@ -1,11 +1,9 @@
 <template>
   <v-app-bar app>
     <v-toolbar-title class="headline text-uppercase" xs12>
-      <span>Previewer</span>
+      <router-link to="/" class="moveHome">Previewer</router-link>
     </v-toolbar-title>
-
     <v-spacer />
-
     <!-- user Login /LogOut  -->
     <LogIn v-if="check" />
     <UserInfo v-else />
@@ -17,7 +15,7 @@ import EventBus from "../EventBus.js"
 
 export default {
   name: "Header",
-  
+
   data(){
         return{
           check:true,
@@ -25,7 +23,7 @@ export default {
           auth: JSON.parse(sessionStorage.getItem("userInfo"))
         }
     },
-  
+
   components: {
     LogIn: () => import("./LogIn.vue"),
     UserInfo :()=>import("./UserInfo.vue")
@@ -33,15 +31,22 @@ export default {
 
   created() {
     EventBus.$on("userInfo", () => this.check= false)
-    if(JSON.parse(sessionStorage.getItem("userInfo")).name != null){
+    console.log(sessionStorage.getItem("userInfo"));
+    if(JSON.parse(sessionStorage.getItem("userInfo")) != null){
       this.check = false;
     }else{
       this.check = true;
     }
   },
-  
   updated(){
     this.userInfo = sessionStorage.getItem("userInfo")
   }
 };
 </script>
+
+<style scoped>
+.moveHome {
+  text-decoration:none;
+  color: black;
+}
+</style>
