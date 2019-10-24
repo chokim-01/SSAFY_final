@@ -2,7 +2,9 @@
   <div class="home">
     <v-layout class="mainPage mb-12" row wrap>
       <v-flex class="my-10 projectName" xs12>
-        <div>🚥PREVIEWER</div>
+        <div>
+          🚥PREVIEWER
+        </div>
       </v-flex>
       <v-flex class="px-10" xs12>
         <h3>
@@ -63,7 +65,6 @@
         <v-flex  xs12 sm6>
           <h2>"PREVIEWER"는 스마트하게 알려드립니다.</h2>
           <br><br>
-
           피싱사이트 이동시 실시간으로다가 이렇게 잘 알려드리겠슴다.
         </v-flex>
         <v-flex xs12 sm6>
@@ -86,7 +87,7 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css?family=Do+Hyeon&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Do+Hyeon&display=swap");
 
 .mainPage {
   height:95vh;

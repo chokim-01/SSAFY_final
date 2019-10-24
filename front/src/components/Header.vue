@@ -3,9 +3,7 @@
     <v-toolbar-title class="headline text-uppercase" xs12>
       <router-link to="/" class="moveHome">Previewer</router-link>
     </v-toolbar-title>
-
     <v-spacer />
-
     <!-- user Login /LogOut  -->
     <LogIn v-if="check" />
     <UserInfo v-else />

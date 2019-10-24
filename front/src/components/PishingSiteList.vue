@@ -3,10 +3,14 @@
     <!-- Pishing Site List Data Table-->
     <v-data-table :headers="headers" :items="pishingsitelist">
       <template v-slot:item.analysis="{ item }">
-        <v-chip :color="getAnalysisColor(item.analysis)" dark>{{ item.analysis }}</v-chip>
+        <v-chip :color="getAnalysisColor(item.analysis)" dark>
+          {{ item.analysis }}
+        </v-chip>
       </template>
       <template v-slot:item.result="{ item }">
-        <v-chip :color="getResultColor(item.result)" dark>{{ item.result }}</v-chip>
+        <v-chip :color="getResultColor(item.result)" dark>
+          {{ item.result }}
+        </v-chip>
       </template>
     </v-data-table>
   </v-container>

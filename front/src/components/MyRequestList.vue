@@ -4,7 +4,6 @@
     <v-layout>
       <v-flex id="userName">회원명 : {{userInfo.name}}</v-flex>
     </v-layout>
-    ​
     <!-- Payment / Payment History -->
     <v-layout mb-3>
       <v-flex offset-xs8 offset-md10 offsest-sm8>
@@ -14,30 +13,25 @@
               <span>결제</span>
             </v-btn>
           </template>
-          ​
           <payment />
         </v-dialog>
-        ​
         <v-btn min-width="80px">
           <span>결제내역</span>
         </v-btn>
       </v-flex>
     </v-layout>
-    ​
     <!-- urlRequestList -->
     <v-data-table :headers="headers" :items="urlRequestList">
       <template v-slot:urlRequestList.result="{urlRequestList}">
         <v-chip :color="getColor(urlRequestList.result)" dark>{{urlRequestList.result}}</v-chip>
       </template>
     </v-data-table>
-    ​
     <!-- User Modify / User Delete -->
     <v-layout mt-3>
       <v-flex offset-xs8 offset-md10>
         <v-btn to="UserInfo" min-width="90px">
           <span>수정</span>
         </v-btn>
-        ​
         <v-btn @click="userOut()" min-width="90px">
           <span>탈퇴</span>
         </v-btn>
@@ -45,7 +39,6 @@
     </v-layout>
   </v-container>
 </template>
-​
 <script>
 export default {
   data: () => ({
@@ -127,7 +120,6 @@ export default {
   }
 }
 </script>
-​
 <style scoped>
 #userName {
   font-weight: bold;
