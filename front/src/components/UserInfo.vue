@@ -45,7 +45,7 @@ name: "UserInfo",
    userInfo: JSON.parse(sessionStorage.getItem("userInfo"))
   }),
   computed:{
-     
+
     getUserEmail(){
       return sessionStorage.getItem("userInfo").email
     }
@@ -53,7 +53,7 @@ name: "UserInfo",
   created(){
     this.userInfo= JSON.parse(sessionStorage.getItem("userInfo"))
   },
-  
+
   updated(){
     this.userInfo= JSON.parse(sessionStorage.getItem("userInfo"))
   },

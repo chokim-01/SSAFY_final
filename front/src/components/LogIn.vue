@@ -58,7 +58,7 @@ export default {
       email:"",
       password:"",
       dialog:false
-     
+
     }
   },
   methods:{
@@ -67,7 +67,7 @@ export default {
       email : this.email,
       password : this.password
       }
-      this.$http.post("/logIn",userdata).then((res)=>{
+      this.$http.post("http://localhost:5000/logIn",userdata).then((res)=>{
         if(res.status==200){
           alert("로그인성공")
           let userInfo ={ email : res.data[0][0],name: res.data[0][1],grade:res.data[0][3]}

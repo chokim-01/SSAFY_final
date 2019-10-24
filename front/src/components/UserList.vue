@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-data-table :headers="headers" :items="userlist">
+    <v-data-table :headers="headers" :items="users">
       <template v-slot:item.email="{item}">
         <td @click="toUserRequest(item.email)">{{item.email}}</td>
       </template>
@@ -10,6 +10,11 @@
 
 <script>
 export default {
+  props:{
+      users:{
+        type:Array
+      }
+  },
     data: () => ({
         headers:[
             {
@@ -17,19 +22,12 @@ export default {
                 value:"email"
             },
             {
-                text:"date",
-                value:"date"
+                text:"user name",
+                value:"user_name"
             },
             {
-                text:"request",
+                text:"request count",
                 value:"requestCount"
-            }
-        ],
-        userlist:[
-            {
-                email:"asdf@naver.com",
-                date:"2019.10.11",
-                requestCount:10
             }
         ]
     }),

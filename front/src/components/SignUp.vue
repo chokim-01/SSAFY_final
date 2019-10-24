@@ -58,6 +58,7 @@ export default {
       name: "",
       email: "",
       password: "",
+      grade: "Basic",
       rule: {
         required: v => !!v || "필수항목",
         email: v => /.+@.+/.test(v) || "이메일 형식입력",
@@ -74,7 +75,7 @@ export default {
         email : this.email,
         password : this.password
       }
-      this.$http.post("/signUp",userdata).then((res)=>{
+      this.$http.post("http://localhost:5000/signUp",userdata).then((res)=>{
         if(res.data.success == true){
           alert(res.data.message)
           this.$router.push("/")
