@@ -2,15 +2,21 @@
   <v-layout>
     <v-container>
       <v-flex mb-10>
-        <span>Email : {{email}}</span>
+        <span>
+          Email : {{email}}
+        </span>
       </v-flex>
       <!-- User Request URL -->
       <v-data-table :headers="headers" :items="userRequest">
         <template v-slot:item.analysis="{ item }">
-          <v-chip :color="getAnalysisColor(item.analysis)" dark>{{ item.analysis }}</v-chip>
+          <v-chip :color="getAnalysisColor(item.analysis)" dark>
+            {{ item.analysis }}
+          </v-chip>
         </template>
         <template v-slot:item.result="{ item }">
-          <v-chip :color="getResultColor(item.result)" dark>{{ item.result }}</v-chip>
+          <v-chip :color="getResultColor(item.result)" dark>
+            {{ item.result }}
+          </v-chip>
         </template>
       </v-data-table>
     </v-container>
@@ -52,13 +58,23 @@ export default {
   },
   methods:{
     getAnalysisColor (analysis) {
-      if (analysis == "Complete") return "blue";
-      else return "orange";
+      if (analysis == "Complete") {
+        return "blue";
+      }
+      else {
+        return "orange";
+      }
     },
     getResultColor (result) {
-      if (result == "Phishing") return "red";
-      else if(result == "no result") return "yellow";
-      else return "green";
+      if (result == "Phishing") {
+        return "red";
+      }
+      else if(result == "no result") {
+        return "yellow";
+      }
+      else {
+        return "green";
+      }
     },
     getRequests() {
       let formData = new FormData();

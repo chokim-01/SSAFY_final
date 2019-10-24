@@ -5,13 +5,17 @@
           <div class="sm3 xs3 flex marginright">
             <!-- Widget Icon -->
             <div class="layout column ma-0 justify-center align-center">
-              <v-icon size="50px" :style="{ color: color}" style="opacity: 0.8; margin-top: 5px">{{icon}}</v-icon>
+              <v-icon size="50px" :style="{ color: color}" style="opacity: 0.8; margin-top: 5px">
+                {{icon}}
+              </v-icon>
             </div>
           </div>
 
           <!-- Title / SupTitle -->
           <div class="layout column ma-0">
-            <span class="caption">{{ title }}</span>
+            <span class="caption">
+              {{ title }}
+            </span>
             <div class="headline font-weight-bold iCountUp" :style="{ color: color}">
               <ICountUp
               :delay="delay"
@@ -34,11 +38,11 @@ export default {
     ICountUp
   },
   props: {
-    supTitle: {
+    widgetValue: {
       type: String,
       required: false
     },
-    subTitle: {
+    widgetTitle: {
       type: String,
       required: false
     },
@@ -65,7 +69,7 @@ export default {
       options: {
         useEasing: false,
         useGrouping: true,
-        separator: ",",
+        separator: "" ,
         decimal: ".",
         prefix: "",
         suffix: ""
@@ -77,13 +81,13 @@ export default {
   computed: {
     setEndValue() {
       let count = 0;
-      if(this.supTitle == "user") {
+      if(this.widgetValue == "user") {
         count = this.$store.state.userCount;
       }
-      else if(this.supTitle == "today") {
+      else if(this.widgetValue == "today") {
         count = this.$store.state.todayCount;
       }
-      else if(this.supTitle == "payment") {
+      else if(this.widgetValue == "payment") {
         count = this.$store.state.paymentCount;
       }
       else {
@@ -104,7 +108,6 @@ export default {
   margin-right: 1.5em;
   margin-left: 1.5em;
 }
-
 .marginright {
   margin-right: 1em;
 }
