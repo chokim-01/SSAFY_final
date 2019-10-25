@@ -58,43 +58,6 @@ export default {
         value:"deleteurl"
       }
     ],
-    urlRequestList: [
-      {
-        url:"https://www.naver.com",
-        result:"true",
-        deleteurl:""
-      },
-      {
-        url:"https://www.google.com",
-        result:"false",
-        deleteurl:""
-      },
-      {
-        url:"https://edu.ssafy.com/comm/login/SecurityLoginForm.do",
-        result:"true",
-        deleteurl:""
-      },
-      {
-        url:"https://github.com",
-        result:"true",
-        deleteurl:""
-      },
-      {
-        url:"111.111.111.111",
-        result:"false",
-        deleteurl:""
-      },
-      {
-        url:"222.222.111.222",
-        result:"false",
-        deleteurl:""
-      },
-      {
-        url:"333.444.333.111",
-        result:"true",
-        deleteurl:""
-      },
-    ],
     dialog:false
   }),
   created(){

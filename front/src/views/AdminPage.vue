@@ -83,7 +83,8 @@
 </template>
 
 <script>
-import axios from "axios";
+import Server from "../server.js"
+import {store} from "../store.js"
 
 export default{
   components :{
@@ -108,28 +109,11 @@ export default{
     today: "2019-01-01"
   }),
   created() {
-    let date = new Date();
-    let year = date.getFullYear();
-    let month = new String(date.getMonth()+1);
-    let day = new String(date.getDate());
-
-    if(month.length == 1){
-      month = "0" + month;
-    }
-    if(day.length == 1){
-      day = "0" + day;
-    }
-
-    this.today = year+"-"+month+"-"+day;
-
-    let formData = new FormData();
-    formData.append("today", this.today);
-
-    axios.post("http://localhost:5000/countList", formData).then(result=>{
-      this.$store.state.userCount = result.data[0][0];
-      this.$store.state.todayCount = result.data[0][1];
-      this.$store.state.paymentCount = result.data[0][2];
-      this.$store.state.phishingCount = result.data[0][3];
+      Server(this.$store.state.SERVER_URL).get("/get/allCount").then(result=>{
+      this.$store.state.userCount = result.data[0].paymentCount;
+      this.$store.state.todayCount = result.data[0].todayCount;
+      this.$store.state.paymentCount = result.data[0].paymentCount;
+      this.$store.state.phishingCount = result.data[0].siteCount;
     })
   },
   methods :{
@@ -148,27 +132,25 @@ export default{
       }
     },
     getUserlist(){
-      axios.post("http://localhost:5000/userlist").then(result=>{
+      Server(this.$store.state.SERVER_URL).get("/get/userList").then(result=>{
         this.list = []
         for(var idx = 0; idx < result.data.length; idx++) {
           this.list.push({
-            email: result.data[idx][0],
-            user_name:result.data[idx][1],
-            requestCount: result.data[idx][3]
+            user_name:result.data[idx].name,
+            email: result.data[idx].email,
+            requestCount: result.data[idx].requestCount
           })
         }
       })
     },
     getTodayRequest() {
-      let formData = new FormData();
-      formData.append("today", this.today);
-
-      axios.post("http://localhost:5000/todayRequest", formData).then(result=>{
+      Server(this.$store.state.SERVER_URL).get("/get/todayRequest").then(result=>{
+        console.log(result.data)
         this.list = []
         for(var idx = 0; idx < result.data.length; idx++) {
           this.list.push({
-            username: result.data[idx][0],
-            requestUrl:result.data[idx][1],
+            username: result.data[idx].name,
+            requestUrl:result.data[idx].url,
             admission: "true"
           })
         }
@@ -176,33 +158,33 @@ export default{
       })
     },
     getPaymentList() {
-      axios.post("http://localhost:5000/paymentList").then(result=>{
+      Server(this.$store.state.SERVER_URL).get("/get/paymentList").then(result=>{
         this.list = []
         for(var idx = 0; idx < result.data.length; idx++) {
           this.list.push({
-            email: result.data[idx][0],
-            grade:result.data[idx][1],
-            pay_date: result.data[idx][2],
-            expire_date: result.data[idx][3]
+            email: result.data[idx].email,
+            grade:result.data[idx].grade,
+            payment_date: result.data[idx].payment_date,
+            expire_date: result.data[idx].expire_date
           })
         }
       })
     },
     getPhishingSite() {
-      axios.post("http://localhost:5000/phishingList").then(result=>{
+      Server(this.$store.state.SERVER_URL).get("/get/phishingList").then(result=>{
         this.list = []
         for(var idx = 0; idx < result.data.length; idx++) {
           if(result.data[idx][1]=="in progress") {
             this.list.push({
-              url: result.data[idx][0],
-              analysis:result.data[idx][1],
+              url: result.data[idx].url,
+              analysis:result.data[idx].analysis,
               result: "no result"})
             }
             else {
               this.list.push({
-                url: result.data[idx][0],
-                analysis:result.data[idx][1],
-                result: result.data[idx][2]
+                url: result.data[idx].url,
+                analysis:result.data[idx].analysis,
+                result: result.data[idx].result
               })
             }
           }

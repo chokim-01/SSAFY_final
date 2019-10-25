@@ -1,26 +1,17 @@
 <template>
-  <v-layout>
-    <v-container>
-      <v-flex mb-10>
+  <v-container>
+    <v-layout row wrap>
+      <v-flex xs8>
+        <router-link class="moveAdmin" to="/adminpage"> <<돌아가기 </router-link>
+      </v-flex>
+      <v-flex xs4 mb-10>
         <span>
-          Email : {{email}}
+          Email : {{sendEmail}}
         </span>
       </v-flex>
-      <!-- User Request URL -->
-      <v-data-table :headers="headers" :items="userRequest">
-        <template v-slot:item.analysis="{ item }">
-          <v-chip :color="getAnalysisColor(item.analysis)" dark>
-            {{ item.analysis }}
-          </v-chip>
-        </template>
-        <template v-slot:item.result="{ item }">
-          <v-chip :color="getResultColor(item.result)" dark>
-            {{ item.result }}
-          </v-chip>
-        </template>
-      </v-data-table>
-    </v-container>
-  </v-layout>
+    </v-layout>
+    <OneUserRequest :email="sendEmail" />
+  </v-container>
 </template>
 
 <script>
@@ -29,78 +20,20 @@ import axios from "axios";
 export default {
   name : "UserRequest",
   data: () => ({
-    email : "",
-    selected: [],
-    headers: [
-      {
-        text: "Site Url",
-        value: "url",
-      },
-      {
-        text: "Request date",
-        value: "date"
-      },
-      {
-        text: "Analysis",
-        value: "analysis"
-      },
-      {
-        text: "Result",
-        value: "result"
-      }
-    ],
-    userRequest: []
+    sendEmail : "",
   }),
-  created(){
-    this.email = this.$route.params.id;
-    this.getRequests();
-
+  components :{
+    OneUserRequest : () => import("@/components/OneUserRequest"),
   },
-  methods:{
-    getAnalysisColor (analysis) {
-      if (analysis == "Complete") {
-        return "blue";
-      }
-      else {
-        return "orange";
-      }
-    },
-    getResultColor (result) {
-      if (result == "Phishing") {
-        return "red";
-      }
-      else if(result == "no result") {
-        return "yellow";
-      }
-      else {
-        return "green";
-      }
-    },
-    getRequests() {
-      let formData = new FormData();
-      formData.append("email", this.email);
-
-      axios.post("http://localhost:5000/userRequest", formData).then(result=>{
-        for(var idx = 0; idx < result.data.length; idx++) {
-          if(result.data[idx][2]=="in progress") {
-            this.userRequest.push({
-              url: result.data[idx][0],
-              date: result.data[idx][1],
-              analysis: result.data[idx][2],
-              result: "no result"
-            })
-          }
-          else {
-            this.userRequest.push({
-              url: result.data[idx][0],
-              date: result.data[idx][1],
-              analysis: result.data[idx][2],
-              result: result.data[idx][3]
-            })
-          }
-        }
-      })
-    }
-  }
+  created(){
+    this.sendEmail = this.$route.params.id;
+  },
 }
 </script>
+<style scoped>
+.moveAdmin {
+  text-decoration: none;
+  color: orange;
+  font-size: 23px;
+}
+</style>
