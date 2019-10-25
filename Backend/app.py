@@ -167,12 +167,14 @@ def delete_user():
 def get_user_payment():
     email = request.form.get("email")
 
+    print(email)
+
     db = conn.db()
     cursor = db.cursor()
 
     sql = "SELECT (CASE WHEN expire_date > now() THEN grade ELSE 'basic' END) as grade, \
             date_format(payment_date, '%%Y-%%m-%%d') as payment_date,  date_format(expire_date, '%%Y-%%m-%%d') as expire_date \
-            FROM user_payment WHERE email= %s ORDER BY expire_date limit 1;"
+            FROM user_payment WHERE email= %s ORDER BY expire_date limit 1"
 
     cursor.execute(sql, email)
     data = (cursor.fetchall())

@@ -1,7 +1,7 @@
 <template>
   <v-app-bar app>
     <v-toolbar-title class="headline text-uppercase" xs12>
-      <span>Previewer</span>
+      <router-link class="moveHome" to="/">Previewer</router-link>
     </v-toolbar-title>
 
     <v-spacer />
@@ -104,7 +104,7 @@ export default {
           email: "",
           password: "",
           grade:"member",
-          dialog : false, 
+          dialog : false,
           rule: {
             required: v => !!v || "필수항목",
             email: v => /.+@.+/.test(v) || "이메일 형식입력",
@@ -142,7 +142,7 @@ export default {
       })
       this.dialog = false
     },
-    
+
     async signOut () {
       this.email = ""
       this.password = ""
@@ -150,10 +150,14 @@ export default {
       this.$store.dispatch("logout")
       if(window.location.pathname!="/" ){
         this.$router.push("/")
-
       }
-    
     }
   }
 };
 </script>
+<style scoped>
+.moveHome {
+  text-decoration: none;
+  color: black;
+}
+</style>

@@ -144,7 +144,6 @@ export default{
     },
     getTodayRequest() {
       Server(this.$store.state.SERVER_URL).get("/get/todayRequest").then(result=>{
-        console.log(result.data)
         this.list = []
         for(var idx = 0; idx < result.data.length; idx++) {
           this.list.push({

@@ -31,8 +31,9 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`User` (
   `email` VARCHAR(45) NOT NULL,
-  `userName` VARCHAR(45) NOT NULL,
-  `password` VARCHAR(45) NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(70) NOT NULL,
+  `auth` VARCHAR(25)  NOT NULL,
   PRIMARY KEY (`email`)
 )
 ENGINE = InnoDB;
@@ -40,19 +41,19 @@ ENGINE = InnoDB;
 -- Table `mydb`.`User_Payment`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `mydb`.`User_Payment` (
-	`User_email` varchar(45) not null,
-    `Payment_grade` VARCHAR(10) NOT NULL,
-	`pay_date` timestamp,
+	`email` varchar(45) not null,
+    `grade` VARCHAR(10) NOT NULL,
+	`payment_date` timestamp,
     `expire_date` timestamp,
-    INDEX `fk_User_Payment_Email_idx` (`User_email` ASC) VISIBLE,
+    INDEX `fk_User_Payment_Email_idx` (`email` ASC) VISIBLE,
 	CONSTRAINT `fk_User_Payment_Email`
-    FOREIGN KEY (`User_email`)
+    FOREIGN KEY (`email`)
     REFERENCES `mydb`.`User` (`email`)
     ON DELETE cascade
     ON UPDATE cascade,
-	INDEX `fk_User_Payment_Grade_idx` (`Payment_grade` ASC) VISIBLE,
-	CONSTRAINT `fk_User_Payment_Grade`
-    FOREIGN KEY (`Payment_grade`)
+	INDEX `fk_User_grade_idx` (`grade` ASC) VISIBLE,
+	CONSTRAINT `fk_User_grade`
+    FOREIGN KEY (`grade`)
     REFERENCES `mydb`.`Payment` (`grade`)
     ON DELETE cascade
     ON UPDATE cascade
@@ -72,12 +73,12 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `mydb`.`Request` (
   `number` INT NOT NULL AUTO_INCREMENT,
   `url` VARCHAR(200) NOT NULL,
-  `requestDate` DATE NULL,
-  `User_email` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`number`, `User_email`),
-  INDEX `fk_Request_User1_idx` (`User_email` ASC) VISIBLE,
+  `request_date` DATE NULL,
+  `email` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`number`, `email`),
+  INDEX `fk_Request_User1_idx` (`email` ASC) VISIBLE,
   CONSTRAINT `fk_Request_User1`
-    FOREIGN KEY (`User_email`)
+    FOREIGN KEY (`email`)
     REFERENCES `mydb`.`User` (`email`)
     ON DELETE cascade
     ON UPDATE cascade)
