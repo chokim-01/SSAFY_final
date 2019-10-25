@@ -3,8 +3,9 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+export const store = new Vuex.Store({
   state: {
+    SERVER_URL: " http://localhost:5000/",
     userCount: 0,
     todayCount: 0,
     paymentCount: 0,

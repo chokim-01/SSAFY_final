@@ -1,17 +1,196 @@
 <template>
   <v-container>
-    <MyRequestList />
+    <!-- User Name -->
+    <v-layout class="mt-10">
+      <v-flex id="userName">🌼&nbsp;&nbsp;{{userInfo.name}}님 반갑습니다.&nbsp;🌼</v-flex>
+    </v-layout>
+
+    <!-- user info -->
+    <v-layout class="my-10" row wrap>
+      <v-flex class="my-5" xs12 sm6>
+        <v-card style="width:90%; margin: 0 auto;">
+          <v-card-title class="subheading font-weight-bold">회원 정보</v-card-title>
+          <v-divider></v-divider>
+          <v-card-text class="subtitle-1 black--text">
+            <v-simple-table>
+              <template v-slot:default>
+                <tbody>
+                  <tr>
+                    <td>이메일</td>
+                    <td>{{userInfo.email}}</td>
+                  </tr>
+                  <tr>
+                    <td>이름</td>
+                    <td>{{userInfo.name}}</td>
+                  </tr>
+                  <tr>
+                    <td>권한</td>
+                    <td>{{userInfo.grade}}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn min-width="80px">
+              <span>정보 수정</span>
+            </v-btn>
+            <v-btn min-width="80px">
+              <span>회원 탈퇴</span>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-flex>
+      <v-flex class="my-5" xs12 sm6>
+        <v-card style="width:90%; margin: 0 auto;">
+          <v-card-title class="subheading font-weight-bold">결제 정보</v-card-title>
+          <v-divider></v-divider>
+          <v-card-text class="subtitle-1 black--text">
+            <v-simple-table>
+              <template v-slot:default>
+                <tbody>
+                  <tr>
+                    <td>결제 등급</td>
+                    <td>{{userPaymentInfo.grade}}</td>
+                  </tr>
+                  <tr>
+                    <td>결제일</td>
+                    <td>{{userPaymentInfo.payment_date}}</td>
+                  </tr>
+                  <tr>
+                    <td>만료일</td>
+                    <td>{{userPaymentInfo.expire_date}}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-card-text>
+          <v-card-actions>
+            <v-dialog v-model="dialog" width="1000">
+              <template v-slot:activator="{ on }">
+                <v-btn v-on="on" min-width="90px">
+                  <span>결제</span>
+                </v-btn>
+              </template>
+              <payment />
+            </v-dialog>
+            <v-btn min-width="80px">
+              <span>결제내역</span>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-flex>
+    </v-layout>
+
+    <h3>
+      {{userInfo.name}}님의 요청 목록입니다.
+    </h3>
+    <!-- urlRequestList -->
+    <OneUserRequest :email="userInfo.email" />
   </v-container>
 </template>
 
 <script>
-export default {
-    name : "MyPage",
-    data: () => ({
+import Server from "../server.js"
+import {store} from "../store.js"
 
-    }),
-    components:{
-        MyRequestList: () => import("@/components/MyRequestList")
+export default {
+  name: "MyPage",
+  data: () => ({
+    userInfo:{},
+    userPaymentInfo:{},
+    //test data
+    headers:[
+      {
+        text:"url",
+        value:"url"
+      },
+      {
+        text:"result",
+        value:"result"
+      },
+      {
+        text:"",
+        value:"deleteurl"
+      }
+    ],
+    urlRequestList: [
+      {
+        url:"https://www.naver.com",
+        result:"true",
+        deleteurl:""
+      },
+      {
+        url:"https://www.google.com",
+        result:"false",
+        deleteurl:""
+      },
+      {
+        url:"https://edu.ssafy.com/comm/login/SecurityLoginForm.do",
+        result:"true",
+        deleteurl:""
+      },
+      {
+        url:"https://github.com",
+        result:"true",
+        deleteurl:""
+      },
+      {
+        url:"111.111.111.111",
+        result:"false",
+        deleteurl:""
+      },
+      {
+        url:"222.222.111.222",
+        result:"false",
+        deleteurl:""
+      },
+      {
+        url:"333.444.333.111",
+        result:"true",
+        deleteurl:""
+      },
+    ],
+    dialog:false
+  }),
+  created(){
+    this.userInfo = JSON.parse(sessionStorage.getItem("userInfo"))
+
+    let formData = new FormData();
+    formData.append("email", this.userInfo.email);
+
+    Server(this.$store.state.SERVER_URL).post("/post/getPayment", formData).then(result=>{
+      this.userPaymentInfo = {
+        grade: result.data[0].payment_date,
+        payment_date: result.data[0].expire_date,
+        expire_date: result.data[0].grade
+      };
+    })
+  },
+  components :{
+    payment: () => import("@/components/Payment"),
+    OneUserRequest : () => import("@/components/OneUserRequest"),
+  },
+  methods:{
+    userOut(){
+      let userdata = {
+        email : this.userInfo.email,
+        grade : this.userInfo.grade
+      }
+      this.$http.post("/userOut",userdata).then((res)=>{
+        console.log(res)
+      })
+    },
+    getColor(str){
+      if(str=="false") return "red"
+      else return "green"
     }
+  }
 }
 </script>
+<style scoped>
+#userName {
+  font-weight: bold;
+  font-size: 2em;
+}
+</style>

@@ -23,8 +23,8 @@ export default {
         value: "grade"
       },
       {
-        text: "pay_date",
-        value: "pay_date"
+        text: "payment_date",
+        value: "payment_date"
       },
       {
         text: "expire_date",

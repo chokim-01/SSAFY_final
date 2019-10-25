@@ -161,6 +161,23 @@ def delete_user():
     return jsonify({"message": "탈퇴가 완료되었습니다."})
 
 
+@app.route("/post/getPayment", methods=["POST"])
+def get_user_payment():
+    email = request.form.get("email")
+
+    db = conn.db()
+    cursor = db.cursor()
+
+    sql = "SELECT (CASE WHEN expire_date > now() THEN grade ELSE 'basic' END) as grade, \
+            date_format(payment_date, '%%Y-%%m-%%d') as payment_date,  date_format(expire_date, '%%Y-%%m-%%d') as expire_date \
+            FROM user_payment WHERE email= %s ORDER BY expire_date limit 1;"
+
+    cursor.execute(sql, email)
+    data = (cursor.fetchall())
+
+    return jsonify(data)
+
+
 ################################################
 #                  Admin Section
 ################################################
@@ -177,13 +194,15 @@ def get_all_count():
     today = get_today()
 
     cursor = conn.db().cursor()
+    print(today)
+
 
     # Get user, request, payments, phishing site count
     sql = "select\
             (select count(*) from user) as userCount,\
             (select count(*) from user u, request r where r.request_date = %s and u.email = r.email) as todayCount,\
             (select count(*) from User_Payment) as paymentCount,\
-            (select count(*) from sitelist)"
+            (select count(*) from sitelist) as siteCount"
 
     cursor.execute(sql, today)
 
@@ -201,7 +220,7 @@ def get_user_list():
 
     cursor = conn.db().cursor()
 
-    sql = "select u.*, count(r.email) from user u LEFT OUTER JOIN request r on r.email = u.email group by `email`"
+    sql = "select u.*, count(r.email) as requestCount from user u LEFT OUTER JOIN request r on r.email = u.email group by `email`"
 
     cursor.execute(sql)
 
@@ -222,7 +241,7 @@ def get_today_request():
 
     cursor = conn.db().cursor()
 
-    sql = "select u.name, r.url from user u, request r where r.request_date = %s and u.email = r.email"
+    sql = "select u.name as name, r.url as url from user u, request r where r.request_date = %s and u.email = r.email"
 
     cursor.execute(sql, today)
 
@@ -239,8 +258,8 @@ def get_payment_list():
     """
     cursor = conn.db().cursor()
 
-    sql = "select email, grade, date_format(payment_date, " \
-          "'%Y-%m-%d %r'), date_format(expire_date, '%Y-%m-%d %r') from User_Payment"
+    sql = "select email, grade, date_format(payment_date, '%Y-%m-%d %r') as payment_date," \
+          "date_format(expire_date, '%Y-%m-%d %r') as expire_date from User_Payment"
 
     cursor.execute(sql)
 
@@ -249,7 +268,7 @@ def get_payment_list():
     return jsonify(result)
 
 
-@app.route("/phishingList", methods=["GET"])
+@app.route("/get/phishingList", methods=["GET"])
 def get_phishing_list():
     """
     Get phishing site list API
@@ -258,8 +277,8 @@ def get_phishing_list():
 
     cursor = conn.db().cursor()
 
-    sql = "select url, case analysisCheck when 1 then 'Complete' else 'in progress' END, " \
-          "case analysisResult when 1 then 'Phishing' else 'Safe' END from sitelist"
+    sql = "select url, case analysisCheck when 1 then 'Complete' else 'in progress' END as analysis, " \
+          "case analysisResult when 1 then 'Phishing' else 'Safe' END as result from sitelist"
 
     cursor.execute(sql)
 
@@ -279,9 +298,9 @@ def get_one_user_request():
 
     cursor = conn.db().cursor()
 
-    sql = "select r.url, date_format(r.request_date, '%%Y-%%m-%%d'),\
-              case s.analysisCheck when 1 then 'Complete' else 'in progress' END,\
-              case s.analysisResult when 1 then 'Phishing' else 'Safe' END \
+    sql = "select r.url, date_format(r.request_date, '%%Y-%%m-%%d') as request_date,\
+              case s.analysisCheck when 1 then 'Complete' else 'in progress' END as analysis,\
+              case s.analysisResult when 1 then 'Phishing' else 'Safe' END as result\
               from Request r, SiteList s \
               where r.email = %s and r.url = s.url order by request_date desc"
 
