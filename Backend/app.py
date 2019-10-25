@@ -102,7 +102,8 @@ def sign_in():
 
     # If email or password does not match
     if isinstance(result, type(None)):
-        return jsonify({"message": "회원정보를 다시 확인해주세요."})
+        return jsonify({"result":"false","message": "회원정보를 다시 확인해주세요."})
+    result["result"] = "true"
 
     return jsonify(result)
 
@@ -125,6 +126,7 @@ def edit_user():
     password = request_data.get("password") + SALT
     password = hashlib.sha256(password.encode()).hexdigest()
 
+    print(request_data)
     db = conn.db()
     cursor = db.cursor()
 

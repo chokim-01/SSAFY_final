@@ -2,12 +2,10 @@
   <v-container>
     <v-layout row wrap>
       <v-flex xs8>
-        <router-link class="moveAdmin" to="/adminpage"> <<돌아가기 </router-link>
+        <router-link class="moveAdmin" to="/adminpage">돌아가기</router-link>
       </v-flex>
       <v-flex xs4 mb-10>
-        <span>
-          Email : {{sendEmail}}
-        </span>
+        <span>Email : {{sendEmail}}</span>
       </v-flex>
     </v-layout>
     <OneUserRequest :email="sendEmail" />
@@ -15,8 +13,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   name : "UserRequest",
   data: () => ({

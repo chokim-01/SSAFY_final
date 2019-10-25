@@ -21,7 +21,7 @@
             label="Password"
             type="password"
             v-model="password"
-            :rules="[rule.required, rule.minLength(0), rule.maxLength(20)]"
+            :rules="[rule.required, rule.minLength(0), rule.maxLength(70)]"
             required
           />
           <v-text-field v-model="grade" label="Grade" value="Basic" readonly />
@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import Server from "../server.js"
 export default {
   name: "signUp",
   data () {
@@ -62,17 +63,22 @@ export default {
     signUp(){
       this.dialog = false
       let userdata = {
-        userName : this.name,
+        name : this.name,
         email : this.email,
-        password : this.password
+        password : this.password,
+        auth : "member"
+
       }
-      this.$http.post("http://localhost:5000/signUp",userdata).then((res)=>{
-        if(res.data.success == true){
+      Server(this.$store.state.SERVER_URL).post("/post/signUp",userdata).then((res)=>{
+        if(res.data.result === "가입완료."){
           alert(res.data.message)
-          this.$router.push("/")
-        }
-        if(res.data.success == false){
+          
+        
+        }else{
           alert(res.data.message)
+          this.name = ""
+          this.email = ""
+          this.password = ""
         }
       })
     },

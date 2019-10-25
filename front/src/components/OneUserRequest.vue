@@ -4,14 +4,10 @@
       <!-- User Request URL -->
       <v-data-table :headers="headers" :items="userRequest">
         <template v-slot:item.analysis="{ item }">
-          <v-chip :color="getAnalysisColor(item.analysis)" dark>
-            {{ item.analysis }}
-          </v-chip>
+          <v-chip :color="getAnalysisColor(item.analysis)" dark>{{ item.analysis }}</v-chip>
         </template>
         <template v-slot:item.result="{ item }">
-          <v-chip :color="getResultColor(item.result)" dark>
-            {{ item.result }}
-          </v-chip>
+          <v-chip :color="getResultColor(item.result)" dark>{{ item.result }}</v-chip>
         </template>
       </v-data-table>
     </v-container>
@@ -20,7 +16,6 @@
 
 <script>
 import Server from "../server.js"
-import {store} from "../store.js"
 
 export default {
   name : "UserRequest",
