@@ -115,54 +115,27 @@ export default {
         value:"deleteurl"
       }
     ],
-    urlRequestList: [
-      {
-        url:"https://www.naver.com",
-        result:"true",
-        deleteurl:""
-      },
-      {
-        url:"https://www.google.com",
-        result:"false",
-        deleteurl:""
-      },
-      {
-        url:"https://edu.ssafy.com/comm/login/SecurityLoginForm.do",
-        result:"true",
-        deleteurl:""
-      },
-      {
-        url:"https://github.com",
-        result:"true",
-        deleteurl:""
-      },
-      {
-        url:"111.111.111.111",
-        result:"false",
-        deleteurl:""
-      },
-      {
-        url:"222.222.111.222",
-        result:"false",
-        deleteurl:""
-      },
-      {
-        url:"333.444.333.111",
-        result:"true",
-        deleteurl:""
-      },
-    ],
     dialog:false
   }),
   created(){
     let formData = new FormData();
-    formData.append("email", this.userInfo.email);
+    formData.append("email", this.$store.getters.getUser.email);
     Server(this.$store.state.SERVER_URL).post("/post/getPayment", formData).then(result=>{
-      this.userPaymentInfo = {
-        grade: result.data[0].payment_date,
-        payment_date: result.data[0].expire_date,
-        expire_date: result.data[0].grade
-      };
+      if(result.data.length == 0) {
+        this.userPaymentInfo = {
+          grade: "Basic",
+          payment_date: "결제 내역이 없습니다.",
+          expire_date: ""
+        }
+      }
+      else {
+        this.userPaymentInfo = {
+          grade: result.data[0].grade,
+          payment_date: result.data[0].payment_date,
+          expire_date: result.data[0].expire_date
+        };
+      }
+
     })
 
   },
