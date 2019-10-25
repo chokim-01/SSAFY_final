@@ -84,7 +84,6 @@
 
 <script>
 import Server from "../server.js"
-import {store} from "../store.js"
 
 export default{
   components :{
@@ -199,7 +198,7 @@ export default{
   width: 100%;
   height: 400px;
   border: 2px dashed gray;
-  line-height:400px;
-  text-align:center;
+  line-height: 400px;
+  text-align: center;
 }
 </style>

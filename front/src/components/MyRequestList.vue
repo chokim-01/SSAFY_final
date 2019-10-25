@@ -29,12 +29,14 @@
     <!-- User Modify / User Delete -->
     <v-layout mt-3>
       <v-flex offset-xs8 offset-md10>
-        <v-btn to="UserInfo" min-width="90px">
+        <v-btn min-width="90px">
           <span>수정</span>
         </v-btn>
+
         <v-btn @click="userOut()" min-width="90px">
           <span>탈퇴</span>
         </v-btn>
+        <useredit />
       </v-flex>
     </v-layout>
   </v-container>
@@ -64,7 +66,8 @@ export default {
     this.userInfo= JSON.parse(sessionStorage.getItem("userInfo"))
   },
   components :{
-    payment: () => import("./Payment")
+    payment: () => import("./Payment"),
+    useredit: ()=>import("./UserEdit")
   },
   methods:{
     userOut(){
