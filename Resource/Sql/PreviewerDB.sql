@@ -2,34 +2,34 @@
 -- Fri Oct 18 14:55:25 2019
 -- Model: New Model    Version: 1.0
 -- MySQL Workbench Forward Engineering
-drop database if exists mydb;
+drop database if exists previewer_db;
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema previewer_db
 -- -----------------------------------------------------
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema previewer_db
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+CREATE SCHEMA IF NOT EXISTS `previewer_db` DEFAULT CHARACTER SET utf8 ;
 -- -----------------------------------------------------
 -- Schema test
 -- -----------------------------------------------------
-USE `mydb` ;
+USE `previewer_db` ;
 -- -----------------------------------------------------
--- Table `mydb`.`Payment`
+-- Table `previewer_db`.`Payment`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Payment` (
+CREATE TABLE IF NOT EXISTS `previewer_db`.`Payment` (
   `grade` VARCHAR(10) NOT NULL,
   `price` INT NULL,
   PRIMARY KEY (`grade`))
 ENGINE = InnoDB;
 -- -----------------------------------------------------
--- Table `mydb`.`User`
+-- Table `previewer_db`.`User`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`User` (
+CREATE TABLE IF NOT EXISTS `previewer_db`.`User` (
   `email` VARCHAR(45) NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   `password` VARCHAR(70) NOT NULL,
@@ -38,48 +38,45 @@ CREATE TABLE IF NOT EXISTS `mydb`.`User` (
 )
 ENGINE = InnoDB;
 -- -----------------------------------------------------
--- Table `mydb`.`User_Payment`
+-- Table `previewer_db`.`User_Payment`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`User_Payment` (
+CREATE TABLE IF NOT EXISTS `previewer_db`.`User_Payment` (
 	`email` varchar(45) not null,
     `grade` VARCHAR(10) NOT NULL,
 	`payment_date` timestamp,
     `expire_date` timestamp,
-    INDEX `fk_User_Payment_Email_idx` (`email` ASC) VISIBLE,
 	CONSTRAINT `fk_User_Payment_Email`
     FOREIGN KEY (`email`)
-    REFERENCES `mydb`.`User` (`email`)
+    REFERENCES `previewer_db`.`User` (`email`)
     ON DELETE cascade
     ON UPDATE cascade,
-	INDEX `fk_User_grade_idx` (`grade` ASC) VISIBLE,
 	CONSTRAINT `fk_User_grade`
     FOREIGN KEY (`grade`)
-    REFERENCES `mydb`.`Payment` (`grade`)
+    REFERENCES `previewer_db`.`Payment` (`grade`)
     ON DELETE cascade
     ON UPDATE cascade
 );
 -- -----------------------------------------------------
--- Table `mydb`.`SiteList`
+-- Table `previewer_db`.`SiteList`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`SiteList` (
+CREATE TABLE IF NOT EXISTS `previewer_db`.`SiteList` (
   `url` VARCHAR(200) NOT NULL,
   `analysisCheck` int NULL,
   `analysisResult` int NULL,
   PRIMARY KEY (`url`))
 ENGINE = InnoDB;
 -- -----------------------------------------------------
--- Table `mydb`.`Request`
+-- Table `previewer_db`.`Request`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Request` (
+CREATE TABLE IF NOT EXISTS `previewer_db`.`Request` (
   `number` INT NOT NULL AUTO_INCREMENT,
   `url` VARCHAR(200) NOT NULL,
   `request_date` DATE NULL,
   `email` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`number`, `email`),
-  INDEX `fk_Request_User1_idx` (`email` ASC) VISIBLE,
   CONSTRAINT `fk_Request_User1`
     FOREIGN KEY (`email`)
-    REFERENCES `mydb`.`User` (`email`)
+    REFERENCES `previewer_db`.`User` (`email`)
     ON DELETE cascade
     ON UPDATE cascade)
 ENGINE = InnoDB;
