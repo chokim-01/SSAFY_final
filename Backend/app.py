@@ -83,7 +83,7 @@ def sign_in():
     emain, password
     :return: json type message
     """
-
+    print("로그인")
     request_data = request.get_json()
 
     # Get user data
@@ -167,14 +167,40 @@ def delete_user():
 def get_user_payment():
     email = request.form.get("email")
 
-    print(email)
-
     db = conn.db()
     cursor = db.cursor()
 
     sql = "SELECT (CASE WHEN expire_date > now() THEN grade ELSE 'basic' END) as grade, \
             date_format(payment_date, '%%Y-%%m-%%d') as payment_date,  date_format(expire_date, '%%Y-%%m-%%d') as expire_date \
             FROM user_payment WHERE email= %s ORDER BY expire_date limit 1"
+
+    cursor.execute(sql, email)
+    data = (cursor.fetchall())
+
+    return jsonify(data)
+
+
+@app.route("/post/getPaymentGrade", methods=["POST"])
+def get_payment_grade():
+    db = conn.db()
+    cursor = db.cursor()
+
+    sql = "SELECT * FROM Payment"
+
+    cursor.execute(sql)
+    data = (cursor.fetchall())
+
+    return jsonify(data)
+
+
+@app.route("/post/getPaymentHistory", methods=["POST"])
+def get_user_payment_history():
+    email = request.form.get("email")
+
+    db = conn.db()
+    cursor = db.cursor()
+
+    sql = "SELECT grade, date_format(payment_date, '%%Y-%%m-%%d') as payment_date, date_format(expire_date, '%%Y-%%m-%%d') as expire_date FROM user_payment WHERE email=%s ORDER BY expire_date DESC"
 
     cursor.execute(sql, email)
     data = (cursor.fetchall())
@@ -198,8 +224,6 @@ def get_all_count():
     today = get_today()
 
     cursor = conn.db().cursor()
-    print(today)
-
 
     # Get user, request, payments, phishing site count
     sql = "select\
@@ -263,7 +287,7 @@ def get_payment_list():
     cursor = conn.db().cursor()
 
     sql = "select email, grade, date_format(payment_date, '%Y-%m-%d %r') as payment_date," \
-          "date_format(expire_date, '%Y-%m-%d %r') as expire_date from User_Payment"
+          "date_format(expire_date, '%Y-%m-%d %r') as expire_date from User_Payment ORDER BY expire_date DESC"
 
     cursor.execute(sql)
 
