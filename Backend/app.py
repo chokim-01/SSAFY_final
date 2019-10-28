@@ -1,19 +1,27 @@
 import os
 import pymysql
 import hashlib
+import certifi
+import ssl
+import OpenSSL
 import conn.conn as conn
+from urllib3 import PoolManager, Timeout
 from datetime import datetime
 from flask_cors import CORS
 from flask import Flask, jsonify, request
 
 SALT = "SSAFY_FINAL_PJT"
 
+# Certificate check
+http = PoolManager(
+    cert_reqs="CERT_REQUIRED",
+    ca_certs=certifi.where(),
+)
 
 # Set directory path for vue.js static file
 ROOT_PATH = os.path.dirname(os.path.abspath("__file__"))
 STATIC_PATH = os.path.join(ROOT_PATH, "dist")
 
-print(ROOT_PATH)
 
 # Flask run at STATIC_PATH
 app = Flask("__name__", static_folder=STATIC_PATH, static_url_path='')
@@ -35,6 +43,39 @@ def index():
 @app.errorhandler(404)
 def page_not_found(e):
     return app.send_static_file("index.html")
+
+
+################################################
+#                  HSTS section
+################################################
+
+@app.route("/post/ssl", methods=["POST"])
+    # Get URL
+    url = request.get_data().decode("UTF-8")
+
+    # Get host of URL
+    url = url.replace("https://", "").replcae("http://", "")
+    host = url[:url.find("/")]
+
+    # Get certificate data
+    certificate = ssl.get_server_certificate((host, 443))
+    x_dot_509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, certificate)
+    ssl_info = x_dot_509.get_subject().get_components()
+
+    # HSTS check
+    http = PoolManager(timeout=Timeout(read=2.0))
+    reqeust_of_host = http.request("GET", host, headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0)"}, timeout=2)
+    response_of_host = request_of_host.headers
+
+    # HSTS check
+    hsts_data = dict()
+    for ssl_data in ssl_info:
+        hsts_data[ssl_data[0],decode("UTF-8")] = ssl_data[1].decode("UTF-8")
+
+    if "strict-transport-security" in response_of_host:
+        hsts_data["hsts"] = True
+
+    return jsonify(hsts_data)
 
 
 ################################################
