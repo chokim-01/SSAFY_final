@@ -41,13 +41,13 @@ def getCertificate():
 
     # Make return status
     result = dict()
-    result['hsts'] = False
+    result['hsts'] = True
     for ssl_data in ssl_info:
         result[ssl_data[0].decode('utf-8')] = ssl_data[1].decode('utf-8')
         print(result[ssl_data[0].decode('utf-8')])
 
     if 'strict-transport-security' in response:
-        result['hsts'] = True
+        result['hsts'] = False
         print('hsts policy secure')
 
     return jsonify(result)

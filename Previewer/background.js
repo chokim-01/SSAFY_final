@@ -1,3 +1,5 @@
+var dataTransferCheck = {};
+
 chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 	// Get User access url ex) https://naver.com
 	url = tab.url;
@@ -53,7 +55,7 @@ chrome.extension.onConnect.addListener((port) => {
           await chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
             var currTab = tabs[0];
             if(currTab && checkURL(currTab.url) !== "unknown") { // Sanity check
-              getsslData(currTab.url, port);
+              getsslData(currTab, port);
 		          secureCheck();
             }
           });
@@ -80,16 +82,16 @@ var checkURL = (url) => {
 	return result;
 }
 
-var getsslData = async (url, port) => {
+var getsslData = async (tab, port) => {
   // Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
     url: "http://localhost:5000/api/get/ssl",
-    data: url,
+    data: tab.url,
     success: (data) => {
 			// send to inject.js
-			let urlStatus = checkURL(url)
-			port.postMessage([urlStatus, data]);
+			let urlStatus = checkURL(tab.url)
+			port.postMessage([dataTransferCheck[tab.id], urlStatus, data]);
 			console.log(data);
     },
     error: (error) => {
@@ -119,7 +121,7 @@ var secureCheck = () => {
 
 var checkPassword = (requestData) => {
 	// Get user password parameter name and value in chrome local storage
-	chrome.storage.local.get("passwordInfo", (data) => {
+	chrome.storage.local.get("passwordInfo", async (data) => {
 		if(data["passwordInfo"])
 		{
 			// If user send password to server
@@ -132,6 +134,10 @@ var checkPassword = (requestData) => {
 			{
 				if(requestBody.formData[passwordParameterName] == passwordValue)
 				{
+					await chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+						var currTab = tabs[0];
+						dataTransferCheck[currTab.id] = true;
+					});
 					console.log("Un Secure");
 				}
 			}
