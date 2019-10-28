@@ -13,6 +13,7 @@ SALT = "SSAFY_FINAL_PJT"
 ROOT_PATH = os.path.dirname(os.path.abspath("__file__"))
 STATIC_PATH = os.path.join(ROOT_PATH, "dist")
 
+print(ROOT_PATH)
 
 # Flask run at STATIC_PATH
 app = Flask("__name__", static_folder=STATIC_PATH, static_url_path='')
@@ -63,7 +64,7 @@ def sign_up():
     db = conn.db()
     cursor = db.cursor()
 
-    sql = "insert into user (email, name, password, auth) values (%s, %s, %s, %s)"
+    sql = "insert into User (email, name, password, auth) values (%s, %s, %s, %s)"
 
     # User email existed check
     try:
@@ -94,7 +95,7 @@ def sign_in():
     password = hashlib.sha256(password.encode()).hexdigest()
 
     cursor = conn.db().cursor()
-    sql = "select * from user where email = %s and password = %s"
+    sql = "select * from User where email = %s and password = %s"
     cursor.execute(sql, (email, password))
 
     # Get one user
@@ -130,7 +131,7 @@ def edit_user():
     db = conn.db()
     cursor = db.cursor()
 
-    sql = "update user set name = %s, password = %s where email = %s"
+    sql = "update User set name = %s, password = %s where email = %s"
 
     cursor.execute(sql, (name, password, email))
 
@@ -154,7 +155,7 @@ def delete_user():
     db = conn.db()
     cursor = db.cursor()
 
-    sql = "delete * from user where email = %s"
+    sql = "delete from User where email = %s"
 
     cursor.execute(sql, email)
 
@@ -174,7 +175,7 @@ def get_user_payment():
 
     sql = "SELECT (CASE WHEN expire_date > now() THEN grade ELSE 'basic' END) as grade, \
             date_format(payment_date, '%%Y-%%m-%%d') as payment_date,  date_format(expire_date, '%%Y-%%m-%%d') as expire_date \
-            FROM user_payment WHERE email= %s ORDER BY expire_date limit 1"
+            FROM User_Payment WHERE email= %s ORDER BY expire_date limit 1"
 
     cursor.execute(sql, email)
     data = (cursor.fetchall())
@@ -203,14 +204,17 @@ def get_all_count():
 
     # Get user, request, payments, phishing site count
     sql = "select\
-            (select count(*) from user) as userCount,\
-            (select count(*) from user u, request r where r.request_date = %s and u.email = r.email) as todayCount,\
+            (select count(*) from User) as userCount,\
+            (select count(*) from User u, Request r where r.request_date = %s and u.email = r.email) as todayCount,\
             (select count(*) from User_Payment) as paymentCount,\
-            (select count(*) from sitelist) as siteCount"
+            (select count(*) from SiteList) as siteCount"
 
     cursor.execute(sql, today)
 
     result = cursor.fetchall()
+
+    print("#############################")
+    print(result)
 
     return jsonify(result)
 
@@ -224,7 +228,7 @@ def get_user_list():
 
     cursor = conn.db().cursor()
 
-    sql = "select u.*, count(r.email) as requestCount from user u LEFT OUTER JOIN request r on r.email = u.email group by `email`"
+    sql = "select u.*, count(r.email) as requestCount from User u LEFT OUTER JOIN Request r on r.email = u.email group by `email`"
 
     cursor.execute(sql)
 
@@ -245,7 +249,7 @@ def get_today_request():
 
     cursor = conn.db().cursor()
 
-    sql = "select u.name as name, r.url as url from user u, request r where r.request_date = %s and u.email = r.email"
+    sql = "select u.name as name, r.url as url from User u, Request r where r.request_date = %s and u.email = r.email"
 
     cursor.execute(sql, today)
 
@@ -282,7 +286,7 @@ def get_phishing_list():
     cursor = conn.db().cursor()
 
     sql = "select url, case analysisCheck when 1 then 'Complete' else 'in progress' END as analysis, " \
-          "case analysisResult when 1 then 'Phishing' else 'Safe' END as result from sitelist"
+          "case analysisResult when 1 then 'Phishing' else 'Safe' END as result from SiteList"
 
     cursor.execute(sql)
 
