@@ -1,0 +1,150 @@
+<html>
+  <body>
+    <form class="logform">
+      <label for="uname">Email</label>
+      <input type="text" placeholder="Enter Email" name="email" required />
+
+      <label for="password">Pass</label>
+      <input
+        type="password"
+        placeholder="Enter password"
+        name="password"
+        required
+      />
+      <button type="submit">Login</button>
+    </form>
+
+    <diV class="content">
+      <div class="step">
+        <div class="div1">
+          <a href="#">
+            초록그림
+          </a>
+        </div>
+        <div class="div2 green">
+          blahblahblahblahblahblah
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="div1">
+          <a href="#">
+            노란그림
+          </a>
+        </div>
+        <div class="div2 yellow">
+          blahblahblahblahblahblah
+        </div>
+      </div>
+      <div class="step">
+        <div class="div1">
+          <a href="#">
+            빨간그림
+          </a>
+        </div>
+        <div class="div2 red">
+          blahblahblahblahblahblah
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="div1">
+          <a href="#">
+            빨간그림
+          </a>
+        </div>
+        <div class="div2 red">
+          blahblahblahblahblahblah
+        </div>
+      </div>
+      <div class="step">
+        <div class="div1">
+          <a href="#">
+            마지막그림
+          </a>
+        </div>
+        <div class="div2 red">
+          blahblahblahblahblahblah
+        </div>
+      </div>
+    </diV>
+    <div class="urlform">
+      <form>
+        <input id="url" type="text" name="url" />
+        <input type="submit" value="submit" />
+      </form>
+    </div>
+  </body>
+  <style>
+    body {
+      width: 500px;
+      height: 600px;
+    }
+    .logform {
+      padding-top: 10px;
+      height: 40px;
+    }
+    .green {
+      background-image: url(./green.png);
+    }
+    .yellow {
+      background-image: url(./yellow.png);
+    }
+    .red {
+      background-image: url(./red.png);
+    }
+    .div1 {
+      width: 100px;
+      display: inline-block;
+    }
+    .div2 {
+      width: 350px;
+      display: inline-block;
+      text-align: center;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      white-space: nowrap;
+      font-weight: bold;
+      font-size: 28px;
+    }
+    .div2:hover {
+      transition: 0.6s 0.1s;
+      background-position: bottom right;
+    }
+    .div2:hover:before {
+      transition: 0.3s;
+      transform: translateY(-100%) scaleY(0);
+      opacity: 0;
+    }
+    .step {
+      width: 500px;
+      height: 80px;
+    }
+    .content {
+      border-collapse: collapse;
+    }
+    .urlform {
+      width: 500px;
+      height: 80px;
+    }
+    #url {
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      width: 350px;
+    }
+    input[type="submit"] {
+      width: 100px;
+      background-color: orange;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</html>
