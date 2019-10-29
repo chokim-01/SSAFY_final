@@ -1,3 +1,5 @@
+
+
 <template>
   <v-container>
     <!-- Today Request List Data Table -->
@@ -12,23 +14,25 @@
   </v-container>
 </template>
 
+
 <script>
 import Server from "../server.js"
+
 
 export default {
     data: () => ({
         headers:[
             {
-                text:"name",
-                value:"username"
+                text:"email",
+                value:"email"
             },
             {
                 text:"url",
                 value:"requestUrl"
             },
             {
-                text:"admission",
-                value:"admission"
+                text:"analysisResult",
+                value:"analysisResult"
             }
         ],
         TodayRequest:[]
