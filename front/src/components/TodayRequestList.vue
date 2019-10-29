@@ -16,11 +16,6 @@
 import Server from "../server.js"
 
 export default {
-    props:{
-      todayRequestList:{
-        type:Array
-      }
-    },
     data: () => ({
         headers:[
             {
@@ -35,8 +30,21 @@ export default {
                 text:"admission",
                 value:"admission"
             }
-        ]
+        ],
+        TodayRequest:[]
     }),
+    created(){
+      Server(this.$store.state.SERVER_URL).get("/get/todayRequest").then(result=>{
+            this.TodayRequest = []
+            for(var idx = 0; idx < result.data.length; idx++) {
+              this.TodayRequest.push({
+                email: result.data[idx].email,
+                requestUrl:result.data[idx].url,
+                analysisResult: result.data[idx].analysisResult
+              })
+            }
+          })
+    },
     methods:{
       changeResult(email,url){
         let formData=new FormData()
