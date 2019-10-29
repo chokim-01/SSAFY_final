@@ -59,15 +59,17 @@ chrome.extension.onConnect.addListener((port) => {
               getsiteData(currTab, port);
             }
           });
-        } else if(message[0] === "Login") {
-					signIn(message[1], message[2], port)
-				} else if(message[0] === "Get Session Data") {
+        } else if(message[0] === "Get Session Data") {
 					console.log(sessionStorage.length)
 					if(sessionStorage.length > 0) {
 						let email = sessionStorage.getItem('email');
-						let auth = sessionStorage.getItem('auth');
-						port.postMessage([email, auth])
+						let grade = sessionStorage.getItem('grade');
+						port.postMessage([email, grade]);
 					}
+				} else if(message[0] === "Login") {
+					signIn(message[1], message[2], port);
+				} else if(message[0] === "Logout") {
+					sessionStorage.clear();
 				}
     });
 });

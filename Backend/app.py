@@ -58,13 +58,6 @@ def chrome_sign_in():
     password = request_data['password'] + SALT
     password = hashlib.sha256(password.encode()).hexdigest()
 
-    tmp_res = dict()
-    tmp_res['status'] = "success"
-    tmp_res['email'] = email
-    tmp_res['auth'] = "password"
-    if email == '2@n':
-        return tmp_res
-
     cursor = conn.db().cursor()
     sql = "select * from User where email = %s and password = %s"
     cursor.execute(sql, (email, password))
@@ -74,7 +67,8 @@ def chrome_sign_in():
 
     # If email or password does not match
     if isinstance(result, type(None)):
-        return jsonify({"result":"false","message": "회원정보를 다시 확인해주세요."})
+        print("fail")
+        return jsonify({"status":"failed","message": "회원정보를 다시 확인해주세요."})
 
     # Get user's grade
     cursor = conn.db().cursor()
@@ -83,7 +77,9 @@ def chrome_sign_in():
 
     user_grade = cursor.fetchone()
 
-    result["grade"] = user_grade
+    result['status'] = "success"
+    result['grade'] = user_grade
+    print("success")
 
     return jsonify(result)
 

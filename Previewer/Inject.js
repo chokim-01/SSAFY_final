@@ -36,7 +36,7 @@
 
   portSession.onMessage.addListener(([data1, data2]) => {
     let email = data1;
-    let auth = data2;
+    let grade = data2;
 
     document.querySelector("#loginTable").style.display = "none";
     document.querySelector("#loginSuccess").style.display = "inline";
@@ -86,7 +86,7 @@
     let loginForm = document.loginForm;
     let userId = loginForm.userId.value;
     let userPassword = loginForm.password.value;
-      portLogin.postMessage(["Login", userId, userPassword]);
+    portLogin.postMessage(["Login", userId, userPassword]);
   });
     portLogin.onMessage.addListener((data) => {
     //data['status'] : status, data['email'] : email, data['grade'] : grade?
@@ -94,6 +94,8 @@
       document.querySelector("#loginTable").style.display = "none";
       document.querySelector("#loginSuccess").style.display = "inline";
       document.querySelector("#loginMessage").innerHTML = data['email']+"님 환영합니다.";
+    } else if(data['status'] == 'failed') {
+      alert(data['message'])
     }
   });
 
@@ -101,7 +103,7 @@
   logout.addEventListener('click', event => {
     document.querySelector("#loginTable").style.display = "block";
     document.querySelector("#loginSuccess").style.display = "none";
-
+    portLogin.postMessage(["Logout",])
   });
 
 })();
