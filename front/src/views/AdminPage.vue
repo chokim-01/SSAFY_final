@@ -17,7 +17,7 @@
         </v-flex>
         <!-- Today Request Widget -->
         <v-flex d-flex lg3 sm6 xs12>
-          <v-flex @click="getClick('todayrequest'), getTodayRequest()">
+          <v-flex @click="getClick('todayrequest')">
             <widget
               icon="mdi-calendar-blank"
               title="Today Request"
@@ -69,7 +69,7 @@
     </v-layout>
     <!-- Today Request List -->
     <v-layout v-show="widgetSelect==='todayrequest'">
-      <TodayRequestList :todayRequestList="list" />
+      <TodayRequestList />
     </v-layout>
     <!-- Payment List -->
     <v-layout v-show="widgetSelect==='payment'">
@@ -140,19 +140,6 @@ export default{
             requestCount: result.data[idx].requestCount
           })
         }
-      })
-    },
-    getTodayRequest() {
-      Server(this.$store.state.SERVER_URL).get("/get/todayRequest").then(result=>{
-        this.list = []
-        for(var idx = 0; idx < result.data.length; idx++) {
-          this.list.push({
-            username: result.data[idx].name,
-            requestUrl:result.data[idx].url,
-            admission: "true"
-          })
-        }
-        //  admission 인증
       })
     },
     getPaymentList() {
