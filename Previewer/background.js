@@ -1,3 +1,5 @@
+var dataTransferCheck = {};
+
 chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 	// Get User access url ex) https://naver.com
 	url = tab.url;
@@ -26,6 +28,7 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 		else
 		{
 			console.log("Unknown");
+			return;
 		}
 
 		// Get user input password
@@ -53,8 +56,7 @@ chrome.extension.onConnect.addListener((port) => {
           await chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
             var currTab = tabs[0];
             if(currTab && checkURL(currTab.url) !== "unknown") { // Sanity check
-              getsslData(currTab.url, port);
-		          secureCheck();
+              getsiteData(currTab, port);
             }
           });
         }
@@ -80,16 +82,16 @@ var checkURL = (url) => {
 	return result;
 }
 
-var getsslData = async (url, port) => {
+var getsiteData = async (tab, port) => {
   // Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
-    url: "http://localhost:5000/api/get/ssl",
-    data: url,
+    url: "http://localhost:5000/post/ssl",
+    data: tab.url,
     success: (data) => {
 			// send to inject.js
-			let urlStatus = checkURL(url)
-			port.postMessage([urlStatus, data]);
+			let urlStatus = checkURL(tab.url)
+			port.postMessage([dataTransferCheck[tab.id], urlStatus, data]);
 			console.log(data);
     },
     error: (error) => {
@@ -97,29 +99,9 @@ var getsslData = async (url, port) => {
   });
 }
 
-var secureCheck = () => {
-	// get current tab html
-  chrome.tabs.executeScript({
-    code:"document.querySelector('html').innerHTML"
-  }, (result) => {
-    console.log(result);
-    $.ajax({
-      type: "POST",
-      url: "http://localhost:5000/api/get/check_secure",
-      data: result[0],
-      success: (data) => {
-        console.log("check_secure")
-        console.log(data);
-      },
-      error: (error) => {
-      }
-    });
-  });
-}
-
 var checkPassword = (requestData) => {
 	// Get user password parameter name and value in chrome local storage
-	chrome.storage.local.get("passwordInfo", (data) => {
+	chrome.storage.local.get("passwordInfo", async (data) => {
 		if(data["passwordInfo"])
 		{
 			// If user send password to server
@@ -132,6 +114,10 @@ var checkPassword = (requestData) => {
 			{
 				if(requestBody.formData[passwordParameterName] == passwordValue)
 				{
+					await chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+						var currTab = tabs[0];
+						dataTransferCheck[currTab.id] = true;
+					});
 					console.log("Un Secure");
 				}
 			}

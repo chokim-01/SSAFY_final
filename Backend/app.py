@@ -1,4 +1,4 @@
-import os
+﻿import os
 import pymysql
 import hashlib
 import certifi
@@ -102,8 +102,6 @@ def chrome_user_site_request():
     return ""
 
 
-
-
 ################################################
 #                  HSTS section
 ################################################
@@ -120,7 +118,7 @@ def hsts_check():
     url = request.get_data().decode("UTF-8")
 
     # Get host of URL
-    url = url.replace("https://", "").replcae("http://", "")
+    url = url.replace("https://", "").replace("http://", "")
     host = url[:url.find("/")]
 
     # Get certificate data
@@ -130,7 +128,7 @@ def hsts_check():
 
     # HSTS check
     http = PoolManager(timeout=Timeout(read=2.0))
-    reqeust_of_host = http.request("GET", host, headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0)"}, timeout=2)
+    request_of_host = http.request("GET", host, headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0)"}, timeout=2)
     response_of_host = request_of_host.headers
 
     # HSTS check
