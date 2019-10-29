@@ -5,12 +5,27 @@
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	</head>
 	<body>
+		<div id="loginSuccess">
+			<div id="loginMessage"></div>
+			<input id="logout" type="button" value="로그아웃" />
+		</div>
+		<div id="loginTable">
+			<form name="loginForm">
+				계정 : <input type="text" name="userId" /><br>
+        비밀번호 : <input type="password" name="password" /><br>
+        <input id="login" type="button" value="로그인" />
+			</form>
+		</div>
 		<div id="secureTable"></div>
 	</body>
 	<script src="inject.js"></script>
 </html>
 
 <style>
+#loginSuccess {
+	display: none;
+}
+
 html {
 width: 600px;
 height: 500px;

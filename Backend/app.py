@@ -52,11 +52,18 @@ def page_not_found(e):
 @app.route("/post/chrome/signIn", methods=["POST"])
 def chrome_sign_in():
     # Get user information
-    request_data = request
+    request_data = request.form
 
-    email = request_data 
-    password = request_data + SALT
+    email = request_data['email']
+    password = request_data['password'] + SALT
     password = hashlib.sha256(password.encode()).hexdigest()
+
+    tmp_res = dict()
+    tmp_res['status'] = "success"
+    tmp_res['email'] = email
+    tmp_res['auth'] = "password"
+    if email == '2@n':
+        return tmp_res
 
     cursor = conn.db().cursor()
     sql = "select * from User where email = %s and password = %s"

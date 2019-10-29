@@ -30,16 +30,16 @@
   </tbody>
 </table>`
 
-  var port = chrome.extension.connect({
+  var portGetData = chrome.extension.connect({
       name: "Data Communication"
   });
-  port.postMessage("GET Site Data");
+  portGetData.postMessage(["GET Site Data",]);
 
   var iconSecure = "<img src='./Icons/64_secure.png' />"
   var iconWarning = "<img src='./Icons/64_warning.png' />"
   var iconDanger = "<img src='./Icons/64_danger.png' />"
 
-  port.onMessage.addListener( ([data1, data2, data3]) => {
+  portGetData.onMessage.addListener(([data1, data2, data3]) => {
     let dataTransferCheck = data1;
     let httpStatus = data2;
     let hstsData = data3['hsts'];
@@ -62,6 +62,34 @@
       document.querySelector('#hstsIcon').innerHTML = iconWarning;
       document.querySelector("#hstsContent").innerHTML = "WARN! HSTS를 사용하지 않는 사이트입니다."
     }
+  });
+
+  var portLogin = chrome.extension.connect({
+      name: "Login Communication"
+  });
+
+  var login = document.querySelector("#login");
+  login.addEventListener('click', event => {
+    let loginForm = document.loginForm;
+    let userId = loginForm.userId.value;
+    let userPassword = loginForm.password.value;
+      portLogin.postMessage(["Login", userId, userPassword]);
+  });
+    portLogin.onMessage.addListener((data) => {
+    //data['status'] : status, data['email'] : email, data['grade'] : grade?
+    if(data['status'] == 'success') {
+      document.querySelector("#loginTable").style.display = "none";
+      document.querySelector("#loginSuccess").style.display = "inline";
+      document.querySelector("#loginMessage").innerHTML = data['email']+"님 환영합니다.";
+    }
+  });
+
+  var logout = document.querySelector("#logout");
+  logout.addEventListener('click', event => {
+    console.log("123")
+    document.querySelector("#loginTable").style.display = "block";
+    document.querySelector("#loginSuccess").style.display = "none";
 
   });
+
 })();
