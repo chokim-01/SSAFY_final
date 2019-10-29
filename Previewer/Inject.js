@@ -29,6 +29,19 @@
     </tr>
   </tbody>
 </table>`
+  var portSession = chrome.extension.connect({
+    name: "Check Session"
+  });
+  portSession.postMessage(["Get Session Data",])
+
+  portSession.onMessage.addListener(([data1, data2]) => {
+    let email = data1;
+    let auth = data2;
+
+    document.querySelector("#loginTable").style.display = "none";
+    document.querySelector("#loginSuccess").style.display = "inline";
+    document.querySelector("#loginMessage").innerHTML = email+"님 환영합니다.";
+  });
 
   var portGetData = chrome.extension.connect({
       name: "Data Communication"
@@ -86,7 +99,6 @@
 
   var logout = document.querySelector("#logout");
   logout.addEventListener('click', event => {
-    console.log("123")
     document.querySelector("#loginTable").style.display = "block";
     document.querySelector("#loginSuccess").style.display = "none";
 

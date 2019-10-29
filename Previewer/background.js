@@ -61,6 +61,13 @@ chrome.extension.onConnect.addListener((port) => {
           });
         } else if(message[0] === "Login") {
 					signIn(message[1], message[2], port)
+				} else if(message[0] === "Get Session Data") {
+					console.log(sessionStorage.length)
+					if(sessionStorage.length > 0) {
+						let email = sessionStorage.getItem('email');
+						let auth = sessionStorage.getItem('auth');
+						port.postMessage([email, auth])
+					}
 				}
     });
 });
@@ -91,7 +98,8 @@ var signIn = async (email, password, port) => {
     url: "http://localhost:5000/post/chrome/signIn",
     data: {email:email, password:password},
     success: (data) => {
-			// send to inject.js
+			// sessionStorage setItem
+			sessionStorage.setItem('email',data['email'])
 			port.postMessage(data)
     },
     error: (error) => {
