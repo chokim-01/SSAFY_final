@@ -42,7 +42,7 @@
   port.onMessage.addListener( ([data1, data2, data3]) => {
     let dataTransferCheck = data1;
     let httpStatus = data2;
-    let sslData = data3;
+    let hstsData = data3['hsts'];
 
     if(dataTransferCheck) {
       document.querySelector("#plaintextIcon").innerHTML = iconWarning;
@@ -50,17 +50,17 @@
     } else {
       document.querySelector("#plaintextContent").innerHTML = "안전한 사이트입니다."
     }
-    if(httpStatus == "http"){
+    if(httpStatus !== "https"){
       document.querySelector('#httpIcon').innerHTML = iconWarning;
       document.querySelector("#httpContent").innerHTML = "WARN! HTTPS를 사용하지 않는 사이트입니다."
     } else {
       document.querySelector("#httpContent").innerHTML = "HTTPS를 사용하는 사이트입니다."
     }
-    if(sslData['hsts']) {
+    if(hstsData) {
+      document.querySelector("#hstsContent").innerHTML = "HSTS를 사용하는 사이트입니다."
+    } else {
       document.querySelector('#hstsIcon').innerHTML = iconWarning;
       document.querySelector("#hstsContent").innerHTML = "WARN! HSTS를 사용하지 않는 사이트입니다."
-    } else {
-      document.querySelector("#hstsContent").innerHTML = "HSTS를 사용하는 사이트입니다."
     }
 
   });

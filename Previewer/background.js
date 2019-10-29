@@ -28,6 +28,7 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 		else
 		{
 			console.log("Unknown");
+			return;
 		}
 
 		// Get user input password
@@ -55,8 +56,7 @@ chrome.extension.onConnect.addListener((port) => {
           await chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
             var currTab = tabs[0];
             if(currTab && checkURL(currTab.url) !== "unknown") { // Sanity check
-              getsslData(currTab, port);
-		          secureCheck();
+              getsiteData(currTab, port);
             }
           });
         }
@@ -82,11 +82,11 @@ var checkURL = (url) => {
 	return result;
 }
 
-var getsslData = async (tab, port) => {
+var getsiteData = async (tab, port) => {
   // Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
-    url: "http://localhost:5000/api/get/ssl",
+    url: "http://localhost:5000/post/ssl",
     data: tab.url,
     success: (data) => {
 			// send to inject.js
@@ -96,26 +96,6 @@ var getsslData = async (tab, port) => {
     },
     error: (error) => {
     }
-  });
-}
-
-var secureCheck = () => {
-	// get current tab html
-  chrome.tabs.executeScript({
-    code:"document.querySelector('html').innerHTML"
-  }, (result) => {
-    console.log(result);
-    $.ajax({
-      type: "POST",
-      url: "http://localhost:5000/api/get/check_secure",
-      data: result[0],
-      success: (data) => {
-        console.log("check_secure")
-        console.log(data);
-      },
-      error: (error) => {
-      }
-    });
   });
 }
 
