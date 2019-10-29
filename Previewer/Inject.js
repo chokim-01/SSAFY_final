@@ -2,7 +2,7 @@
   document.querySelector("#secureTable").innerHTML = `<div class="content">
       <div class="step">
         <div class="div1" id="plaintextIcon"><img src='./Icons/64_nomal.png' /></div>
-        <div id="plaintextContent">
+        <div class="div3" id="plaintextContent">
           <div class="div2">
             웹 사이트 로그인 시도 후 확인가능 합니다.
           </div>
@@ -11,7 +11,7 @@
 
       <div class="step">
         <div class="div1" id="httpIcon"><img src='./Icons/64_nomal.png' /></div>
-        <div id="httpContent">
+        <div class="div3" id="httpContent">
           <div class="div2">
             분석중 입니다.
           </div>
@@ -19,7 +19,7 @@
       </div>
       <div class="step">
         <div class="div1" id="hstsIcon"><img src='./Icons/64_nomal.png' /></div>
-        <div id="hstsContent">
+        <div class="div3" id="hstsContent">
           <div class="div2">
             분석중 입니다.
           </div>
@@ -28,7 +28,7 @@
 
       <div class="step">
         <div class="div1" id="xssIcon"><img src='./Icons/64_nomal.png' /></div>
-        <div id="xssContent">
+        <div class="div3" id="xssContent">
           <div class="div2">
             분석중 입니다.
           </div>
@@ -36,7 +36,7 @@
       </div>
       <div class="step">
         <div class="div1" id="phishingIcon"><img src='./Icons/64_nomal.png' /></div>
-        <div id="phishingContent">
+        <div class="div3" id="phishingContent">
           <div class="div2">
             분석중 입니다.
           </div>
@@ -85,42 +85,45 @@
 
     if(dataTransferCheck) {
       document.querySelector("#plaintextIcon").innerHTML = iconWarning;
-      document.querySelector("#plaintextContent").innerHTML = "WARN! 데이터가 평문으로 전송되었습니다."
+      document.querySelector("#plaintextContent").innerHTML = `<div class="div2 yellow">데이터가 평문으로 전송되었습니다.</div>`
     } else {
-      document.querySelector("#plaintextContent").innerHTML = "안전한 사이트입니다."
+      document.querySelector("#plaintextIcon").innerHTML = iconSecure;
+      document.querySelector("#plaintextContent").innerHTML = `<div class="div2 green">데이터가 안전하게 전송되었습니다.</div>`
     }
 
 
     if(httpStatus !== "https"){
       document.querySelector('#httpIcon').innerHTML = iconWarning;
-      document.querySelector("#httpContent").innerHTML = "WARN! HTTPS를 사용하지 않는 사이트입니다."
+      document.querySelector("#httpContent").innerHTML = `<div class="div2 yellow">HTTPS를 사용하지 않습니다.</div>`
     } else {
-      document.querySelector("#httpContent").innerHTML = "HTTPS를 사용하는 사이트입니다."
+      document.querySelector("#httpIcon").innerHTML = iconSecure;
+      document.querySelector("#httpContent").innerHTML = `<div class="div2 green">HTTPS를 사용하고 있습니다.</div>`
     }
 
 
     if(hstsData) {
-      document.querySelector("#hstsContent").innerHTML = "HSTS를 사용하는 사이트입니다."
+      document.querySelector("#httpIcon").innerHTML = iconSecure;
+      document.querySelector("#hstsContent").innerHTML = `<div class="div2 green">HSTS를 사용하고 있습니다.</div>`
     } else {
       document.querySelector('#hstsIcon').innerHTML = iconWarning;
-      document.querySelector("#hstsContent").innerHTML = "WARN! HSTS를 사용하지 않는 사이트입니다."
+      document.querySelector("#hstsContent").innerHTML = `<div class="div2 yellow">HSTS를 사용하지 않습니다.</div>`
     }
 
 
     if(xss) {
       document.querySelector("#xssIcon").innerHTML = iconDanger;
-      document.querySelector("#xssContent").innerHTML = "XSS가 탐지되었습니다. 사이트 이용에 주의하세요."
+      document.querySelector("#xssContent").innerHTML = `<div class="div2 red">XSS가 탐지되었습니다. 사이트 이용에 주의하세요.</div>`
     } else {
       document.querySelector("#xssIcon").innerHTML = iconSecure;
-      document.querySelector("#xssContent").innerHTML = "XSS가 탐지되지 않았습니다."
+      document.querySelector("#xssContent").innerHTML = `<div class="div2 green">XSS가 탐지되지않았습니다.</div>`
     }
 
     if(phishing) {
       document.querySelector("#phishingIcon").innerHTML = iconDanger;
-      document.querySelector("#phishingContent").innerHTML = "피싱사이트 입니다. 사이트 이용에 주의하세요."
+      document.querySelector("#phishingContent").innerHTML = `<div class="div2 red">피싱 사이트 입니다. 사이트 이용에 주의하세요.</div>`
     } else {
       document.querySelector("#phishingIcon").innerHTML = iconSecure;
-      document.querySelector("#phishingContent").innerHTML = "안전한 사이트입니다."
+      document.querySelector("#phishingContent").innerHTML = `<div class="div2 red">피싱 사이트가 아닙니다.</div>`
     }
 
   });
