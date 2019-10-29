@@ -1,4 +1,4 @@
-import os
+﻿import os
 import pymysql
 import hashlib
 import certifi
@@ -50,11 +50,12 @@ def page_not_found(e):
 ################################################
 
 @app.route("/post/ssl", methods=["POST"])
+def get_ssl_hsts_data():
     # Get URL
     url = request.get_data().decode("UTF-8")
 
     # Get host of URL
-    url = url.replace("https://", "").replcae("http://", "")
+    url = url.replace("https://", "").replace("http://", "")
     host = url[:url.find("/")]
 
     # Get certificate data
@@ -64,18 +65,18 @@ def page_not_found(e):
 
     # HSTS check
     http = PoolManager(timeout=Timeout(read=2.0))
-    reqeust_of_host = http.request("GET", host, headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0)"}, timeout=2)
+    request_of_host = http.request("GET", host, headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0)"}, timeout=2)
     response_of_host = request_of_host.headers
 
     # HSTS check
-    hsts_data = dict()
+    site_data = dict()
     for ssl_data in ssl_info:
-        hsts_data[ssl_data[0],decode("UTF-8")] = ssl_data[1].decode("UTF-8")
+        site_data[ssl_data[0].decode("UTF-8")] = ssl_data[1].decode("UTF-8")
 
     if "strict-transport-security" in response_of_host:
-        hsts_data["hsts"] = True
+        site_data["hsts"] = True
 
-    return jsonify(hsts_data)
+    return jsonify(site_data)
 
 
 ################################################
