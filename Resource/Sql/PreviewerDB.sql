@@ -80,6 +80,22 @@ CREATE TABLE IF NOT EXISTS `previewer_db`.`Request` (
     ON DELETE cascade
     ON UPDATE cascade)
 ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `previewer_db`.`XssList`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `previewer_db`.`XssList` (
+  `gadget` VARCHAR(256) NOT NULL
+  PRIMARY KEY(`gadget`))
+ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `previewer_db`.`IPList`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `previewer_db`.`IPList` (
+  `ip` VARCHAR(200) NOT NULL,
+  `analysisCheck` int NULL,
+  `analysisResult` int NULL,
+  PRIMARY KEY (`url`))
+ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

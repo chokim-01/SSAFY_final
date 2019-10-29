@@ -46,10 +46,76 @@ def page_not_found(e):
 
 
 ################################################
+#                  Chrome section
+################################################
+
+@app.route("/post/chrome/signIn", methods=["POST"])
+def chrome_sign_in():
+    # Get user information
+    request_data = request
+
+    email = request_data 
+    password = request_data + SALT
+    password = hashlib.sha256(password.encode()).hexdigest()
+
+    cursor = conn.db().cursor()
+    sql = "select * from User where email = %s and password = %s"
+    cursor.execute(sql, (email, password))
+
+    # Get one user
+    result = cursor.fetchone()
+
+    # If email or password does not match
+    if isinstance(result, type(None)):
+        return jsonify({"result":"false","message": "회원정보를 다시 확인해주세요."})
+
+    # Get user's grade
+    cursor = conn.db().cursor()
+    sql = "select grade from User_Payment where email = %s";
+    cursor.execute(sql, result['email'])
+
+    user_grade = cursor.fetchone()
+
+    result["grade"] = user_grade
+
+    return jsonify(result)
+
+
+@app.route("/post/chrome/siteRequest", methods=["POST"])
+def chrome_user_site_request():
+    """
+    User site request API
+    URL
+    :return: json type message
+    """
+
+    url = request_data
+
+    db = conn.db()
+    cursor = db.cursor()
+
+    sql = "insert into SiteList (url, analysisCheck, analysisResult) values (%s, 0, 0)"
+    cursor.execute(sql, url)
+
+    db.commit()
+
+    return ""
+
+
+
+
+################################################
 #                  HSTS section
 ################################################
 
-@app.route("/post/ssl", methods=["POST"])
+@app.route("/post/hsts", methods=["POST"])
+def hsts_check():
+    """
+    HSTS check API
+    url
+    :return: json type message
+    """
+
     # Get URL
     url = request.get_data().decode("UTF-8")
 
@@ -68,14 +134,14 @@ def page_not_found(e):
     response_of_host = request_of_host.headers
 
     # HSTS check
-    hsts_data = dict()
+    site_data = dict()
     for ssl_data in ssl_info:
-        hsts_data[ssl_data[0],decode("UTF-8")] = ssl_data[1].decode("UTF-8")
+        site_data[ssl_data[0].decode("UTF-8")] = ssl_data[1].decode("UTF-8")
 
     if "strict-transport-security" in response_of_host:
-        hsts_data["hsts"] = True
+        site_data["hsts"] = True
 
-    return jsonify(hsts_data)
+    return jsonify(site_data)
 
 
 ################################################
