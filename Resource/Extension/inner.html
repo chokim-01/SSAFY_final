@@ -1,70 +1,52 @@
 <html>
   <body>
     <form class="logform">
-      <label for="uname">Email</label>
-      <input type="text" placeholder="Enter Email" name="email" required />
-
-      <label for="password">Pass</label>
-      <input
-        type="password"
-        placeholder="Enter password"
-        name="password"
-        required
-      />
-      <button type="submit">Login</button>
+      <input id="eamil" type="text" name="eamil" placeholder="Email" />
+      <input id="pass" type="password" name="pass" placeholder="password" />
+      <input class="btn" type="submit" value="LogIn" />
     </form>
 
     <diV class="content">
       <div class="step">
         <div class="div1">
-          <a href="#">
-            초록그림
-          </a>
+          <img src="64_danger.png" />
         </div>
         <div class="div2 green">
-          blahblahblahblahblahblah
+          웹에서 로그인 후 확인이 가능합니다.
         </div>
       </div>
 
       <div class="step">
         <div class="div1">
-          <a href="#">
-            노란그림
-          </a>
+          <img src="64_danger.png" />
         </div>
         <div class="div2 yellow">
-          blahblahblahblahblahblah
+          웹에서 로그인 후 확인이 가능합니다.
         </div>
       </div>
       <div class="step">
         <div class="div1">
-          <a href="#">
-            빨간그림
-          </a>
+          <img src="64_danger.png" />
         </div>
         <div class="div2 red">
-          blahblahblahblahblahblah
+          웹에서 로그인 후 확인이 가능합니다.
         </div>
       </div>
 
       <div class="step">
         <div class="div1">
-          <a href="#">
-            빨간그림
-          </a>
+          <img src="64_danger.png" />
         </div>
         <div class="div2 red">
-          blahblahblahblahblahblah
+          웹에서 로그인 후 확인이 가능합니다.
         </div>
       </div>
       <div class="step">
         <div class="div1">
-          <a href="#">
-            마지막그림
-          </a>
+          <img src="64_danger.png" />
         </div>
         <div class="div2 red">
-          blahblahblahblahblahblah
+          웹에서 로그인 후 확인이 가능합니다.
         </div>
       </div>
     </diV>
@@ -78,11 +60,12 @@
   <style>
     body {
       width: 500px;
-      height: 600px;
+      height: 500px;
     }
     .logform {
       padding-top: 10px;
-      height: 40px;
+      height: 50px;
+      margin-bottom: 0px;
     }
     .green {
       background-image: url(./green.png);
@@ -94,18 +77,22 @@
       background-image: url(./red.png);
     }
     .div1 {
-      width: 100px;
+      width: 90px;
       display: inline-block;
     }
     .div2 {
-      width: 350px;
-      display: inline-block;
+      margin-top: 20px;
+
       text-align: center;
+      height: 70px;
+      vertical-align: top;
+      width: 400px;
+      display: inline-block;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       white-space: nowrap;
       font-weight: bold;
-      font-size: 28px;
+      font-size: 20px;
     }
     .div2:hover {
       transition: 0.6s 0.1s;
@@ -118,18 +105,17 @@
     }
     .step {
       width: 500px;
-      height: 80px;
+      height: 77px;
     }
     .content {
       border-collapse: collapse;
     }
     .urlform {
       width: 500px;
-      height: 80px;
+      height: 50px;
     }
     #url {
       padding: 12px 20px;
-      margin: 8px 0;
       display: inline-block;
       border: 1px solid #ccc;
       border-radius: 4px;
@@ -141,7 +127,7 @@
       background-color: orange;
       color: white;
       padding: 14px 20px;
-      margin: 8px 0;
+
       border: none;
       border-radius: 10px;
       cursor: pointer;
