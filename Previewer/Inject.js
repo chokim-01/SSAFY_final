@@ -9,7 +9,8 @@
 
   // SSL Data check
   port.postMessage("GET Site Data");
-  document.querySelector("#test").innerHTML = `<table class="table">
+  document.querySelector("#test").innerHTML = `
+<table class="table">
   <thead>
     <tr>
       <th scope="col">알림</th>
@@ -38,7 +39,13 @@
       <td>피싱 사이트 체크</td>
     </tr>
   </tbody>
-</table>`
+</table>
+<p class="text-center">피싱 사이트 요청</p>
+<div class="input-group mb-3 ml-1 row">
+  <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+  <button type="button" class="btn btn-primary">요청</button>
+</div>
+`
 
 
   port.onMessage.addListener( ([data1, data2]) => {
