@@ -104,6 +104,48 @@ def chrome_user_site_request():
 
     return ""
 
+@app.route("/post/chrome/xssCheck", methods=["POST"])
+def chrome_xss_check():
+
+    page_data = request
+
+    cursor = conn.db().cursor()
+
+    sql = "select * from xssList"
+
+    cursor.execute(sql)
+
+    result = cursor.fetchall()
+
+    xss_flag = False
+
+    for xss in result:
+        if xss in page_data:
+            xss_flag = True
+            break
+
+    return jsonify({"xssFlag": xss_flag})
+
+
+@app.route("/post/chrome/phishingCheck", methods=["POST"])
+def chrome_phishing_check():
+    url = request
+
+    cursor = conn.db().cursor()
+    sql = "select * from phishingList"
+    cursor.execute(sql)
+
+    result = cursor.fetchall()
+
+    phishing_flag = False
+
+    for phishing in result:
+        if url == phishing:
+            phshing_flag = True
+            break
+
+    return jsonify({"phishingFlag": phishing_flag})
+
 
 ################################################
 #                  HSTS section
