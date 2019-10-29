@@ -354,7 +354,9 @@ def get_today_request():
 
     cursor = conn.db().cursor()
 
-    sql = "select u.name as name, r.url as url from User u, Request r where r.request_date = %s and u.email = r.email"
+    sql = "select u.email as email, u.url as url, s.analysisResult as analysisResult \
+            from (select u.email as email, r.url as url from User u, Request r where r.request_date = %s and u.email = r.email) u, sitelist s \
+                where s.url=u.url"
 
     cursor.execute(sql, today)
 
@@ -423,6 +425,25 @@ def get_one_user_request():
 
     return jsonify(result)
 
+@app.route("/post/changeAnalysisResult", methods=["POST"])
+def post_change_Analysis_Result():
+    """
+    Post change analysisResult
+    :return: json type change analysisResult
+    """
+    db = conn.db()
+    url = request.form.get("url")
+
+
+    cursor = db.cursor()
+
+
+    sql = "update sitelist set analysisResult=NOT analysisResult where url=%s"
+    cursor.execute(sql, url)
+    db.commit()
+
+
+    return jsonify()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
