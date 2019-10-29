@@ -7,7 +7,7 @@ ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 STATIC_PATH = os.path.join(ROOT_PATH, "dist")
 app = Flask(__name__, static_folder=STATIC_PATH, static_url_path='')
 conn = pymysql.connect(
-    host="localhost", user="root", password="1234", db="mydb")
+    host="localhost", user="root", password="toor", db="mydb")
 curs = conn.cursor()
 
 # Set CORS

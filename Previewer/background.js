@@ -51,7 +51,7 @@ chrome.webRequest.onBeforeRequest.addListener((requestData) => {
 
 chrome.extension.onConnect.addListener((port) => {
     port.onMessage.addListener(async (message) => {
-        if(message == "GET Site Data") {
+        if(message[0] === "GET Site Data") {
           // get current tab info
           await chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
             var currTab = tabs[0];
@@ -59,7 +59,18 @@ chrome.extension.onConnect.addListener((port) => {
               getsiteData(currTab, port);
             }
           });
-        }
+        } else if(message[0] === "Get Session Data") {
+					// If session already exists
+					if(sessionStorage.length > 0) {
+						let email = sessionStorage.getItem('email');
+						let grade = sessionStorage.getItem('grade');
+						port.postMessage([email, grade]);
+					}
+				} else if(message[0] === "Login") {
+					signIn(message[1], message[2], port);
+				} else if(message[0] === "Logout") {
+					sessionStorage.clear();
+				}
     });
 });
 
@@ -82,11 +93,27 @@ var checkURL = (url) => {
 	return result;
 }
 
+var signIn = async (email, password, port) => {
+  // Check HSTS, Get sslData
+  await $.ajax({
+    type: "POST",
+    url: "http://localhost:5000/post/chrome/signIn",
+    data: {email:email, password:password},
+    success: (data) => {
+			// sessionStorage setItem
+			sessionStorage.setItem('email',data['email'])
+			port.postMessage(data)
+    },
+    error: (error) => {
+    }
+  });
+}
+
 var getsiteData = async (tab, port) => {
   // Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
-    url: "http://localhost:5000/post/ssl",
+    url: "http://localhost:5000/post/hsts",
     data: tab.url,
     success: (data) => {
 			// send to inject.js

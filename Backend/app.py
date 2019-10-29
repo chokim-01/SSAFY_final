@@ -52,10 +52,10 @@ def page_not_found(e):
 @app.route("/post/chrome/signIn", methods=["POST"])
 def chrome_sign_in():
     # Get user information
-    request_data = request
+    request_data = request.form
 
-    email = request_data 
-    password = request_data + SALT
+    email = request_data['email']
+    password = request_data['password'] + SALT
     password = hashlib.sha256(password.encode()).hexdigest()
 
     cursor = conn.db().cursor()
@@ -67,7 +67,8 @@ def chrome_sign_in():
 
     # If email or password does not match
     if isinstance(result, type(None)):
-        return jsonify({"result":"false","message": "회원정보를 다시 확인해주세요."})
+        print("fail")
+        return jsonify({"status":"failed","message": "회원정보를 다시 확인해주세요."})
 
     # Get user's grade
     cursor = conn.db().cursor()
@@ -76,7 +77,9 @@ def chrome_sign_in():
 
     user_grade = cursor.fetchone()
 
-    result["grade"] = user_grade
+    result['status'] = "success"
+    result['grade'] = user_grade
+    print("success")
 
     return jsonify(result)
 

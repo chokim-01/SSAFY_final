@@ -29,17 +29,40 @@
     </tr>
   </tbody>
 </table>`
+  // Create Session port
+  var portSession = chrome.extension.connect({
+    name: "Check Session"
+  });
+  portSession.postMessage(["Get Session Data",])
 
-  var port = chrome.extension.connect({
+  // Create Login port
+  var portLogin = chrome.extension.connect({
+      name: "Login Communication"
+  });
+
+  // Create GetData port
+  var portGetData = chrome.extension.connect({
       name: "Data Communication"
   });
-  port.postMessage("GET Site Data");
+
+  portGetData.postMessage(["GET Site Data",]);
+
+  // Get Session
+  portSession.onMessage.addListener(([data1, data2]) => {
+    let email = data1;
+    let grade = data2;
+
+    document.querySelector("#loginTable").style.display = "none";
+    document.querySelector("#loginSuccess").style.display = "inline";
+    document.querySelector("#loginMessage").innerHTML = email+"님 환영합니다.";
+  });
 
   var iconSecure = "<img src='./Icons/64_secure.png' />"
   var iconWarning = "<img src='./Icons/64_warning.png' />"
   var iconDanger = "<img src='./Icons/64_danger.png' />"
 
-  port.onMessage.addListener( ([data1, data2, data3]) => {
+  // Get Data
+  portGetData.onMessage.addListener(([data1, data2, data3]) => {
     let dataTransferCheck = data1;
     let httpStatus = data2;
     let hstsData = data3['hsts'];
@@ -62,6 +85,33 @@
       document.querySelector('#hstsIcon').innerHTML = iconWarning;
       document.querySelector("#hstsContent").innerHTML = "WARN! HSTS를 사용하지 않는 사이트입니다."
     }
-
   });
+
+  // Login click
+  var login = document.querySelector("#login");
+  login.addEventListener('click', event => {
+    let loginForm = document.loginForm;
+    let userId = loginForm.userId.value;
+    let userPassword = loginForm.password.value;
+    portLogin.postMessage(["Login", userId, userPassword]);
+  });
+    portLogin.onMessage.addListener((data) => {
+    //data['status'] : status, data['email'] : email, data['grade'] : grade?
+    if(data['status'] == 'success') {
+      document.querySelector("#loginTable").style.display = "none";
+      document.querySelector("#loginSuccess").style.display = "inline";
+      document.querySelector("#loginMessage").innerHTML = data['email']+"님 환영합니다.";
+    } else if(data['status'] == 'failed') {
+      alert(data['message'])
+    }
+  });
+
+  // Logout click
+  var logout = document.querySelector("#logout");
+  logout.addEventListener('click', event => {
+    document.querySelector("#loginTable").style.display = "block";
+    document.querySelector("#loginSuccess").style.display = "none";
+    portLogin.postMessage(["Logout",])
+  });
+
 })();
