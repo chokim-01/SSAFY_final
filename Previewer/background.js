@@ -60,7 +60,7 @@ chrome.extension.onConnect.addListener((port) => {
             }
           });
         } else if(message[0] === "Get Session Data") {
-					console.log(sessionStorage.length)
+					// If session already exists
 					if(sessionStorage.length > 0) {
 						let email = sessionStorage.getItem('email');
 						let grade = sessionStorage.getItem('grade');

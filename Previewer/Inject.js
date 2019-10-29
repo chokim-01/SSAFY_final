@@ -29,11 +29,25 @@
     </tr>
   </tbody>
 </table>`
+  // Create Session port
   var portSession = chrome.extension.connect({
     name: "Check Session"
   });
   portSession.postMessage(["Get Session Data",])
 
+  // Create Login port
+  var portLogin = chrome.extension.connect({
+      name: "Login Communication"
+  });
+
+  // Create GetData port
+  var portGetData = chrome.extension.connect({
+      name: "Data Communication"
+  });
+
+  portGetData.postMessage(["GET Site Data",]);
+
+  // Get Session
   portSession.onMessage.addListener(([data1, data2]) => {
     let email = data1;
     let grade = data2;
@@ -43,15 +57,11 @@
     document.querySelector("#loginMessage").innerHTML = email+"님 환영합니다.";
   });
 
-  var portGetData = chrome.extension.connect({
-      name: "Data Communication"
-  });
-  portGetData.postMessage(["GET Site Data",]);
-
   var iconSecure = "<img src='./Icons/64_secure.png' />"
   var iconWarning = "<img src='./Icons/64_warning.png' />"
   var iconDanger = "<img src='./Icons/64_danger.png' />"
 
+  // Get Data
   portGetData.onMessage.addListener(([data1, data2, data3]) => {
     let dataTransferCheck = data1;
     let httpStatus = data2;
@@ -77,10 +87,7 @@
     }
   });
 
-  var portLogin = chrome.extension.connect({
-      name: "Login Communication"
-  });
-
+  // Login click
   var login = document.querySelector("#login");
   login.addEventListener('click', event => {
     let loginForm = document.loginForm;
@@ -99,6 +106,7 @@
     }
   });
 
+  // Logout click
   var logout = document.querySelector("#logout");
   logout.addEventListener('click', event => {
     document.querySelector("#loginTable").style.display = "block";
