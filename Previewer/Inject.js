@@ -1,34 +1,48 @@
 (function() {
-  document.querySelector("#secureTable").innerHTML = `<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">알림</th>
-      <th scope="col">내용</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th id="plaintextIcon" scope="row"><img src='./Icons/64_secure.png' /></th>
-      <td id="plaintextContent">평문체크</td>
-    </tr>
-    <tr>
-      <th id="httpIcon" scope="row"><img src='./Icons/64_secure.png' /></th>
-      <td id="httpContent">HTTP(S) 체크</td>
-    </tr>
-    <tr>
-      <th id="hstsIcon" scope="row"><img src='./Icons/64_secure.png' /></th>
-      <td id="hstsContent">HSTS 체크</td>
-    </tr>
-    <tr>
-      <th id="xssIcon" scope="row">4</th>
-      <td id="xssContent">XSS 체크</td>
-    </tr>
-    <tr>
-      <th id="phishingIcon" scope="row">5</th>
-      <td id="phishringContent">피싱 사이트 체크</td>
-    </tr>
-  </tbody>
-</table>`
+  document.querySelector("#secureTable").innerHTML = `<div class="content">
+      <div class="step">
+        <div class="div1" id="plaintextIcon"><img src='./Icons/64_nomal.png' /></div>
+        <div id="plaintextContent">
+          <div class="div2">
+            웹 사이트 로그인 시도 후 확인가능 합니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="div1" id="httpIcon"><img src='./Icons/64_nomal.png' /></div>
+        <div id="httpContent">
+          <div class="div2">
+            분석중 입니다.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="div1" id="hstsIcon"><img src='./Icons/64_nomal.png' /></div>
+        <div id="hstsContent">
+          <div class="div2">
+            분석중 입니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="div1" id="xssIcon"><img src='./Icons/64_nomal.png' /></div>
+        <div id="xssContent">
+          <div class="div2">
+            분석중 입니다.
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="div1" id="phishingIcon"><img src='./Icons/64_nomal.png' /></div>
+        <div id="phishingContent">
+          <div class="div2">
+            분석중 입니다.
+          </div>
+        </div>
+      </div>
+    </diV>`
   // Create Session port
   var portSession = chrome.extension.connect({
     name: "Check Session"
@@ -66,6 +80,8 @@
     let dataTransferCheck = data1;
     let httpStatus = data2;
     let hstsData = data3['hsts'];
+    let xss = "true";
+    let phishing = "true";
 
     if(dataTransferCheck) {
       document.querySelector("#plaintextIcon").innerHTML = iconWarning;
@@ -73,27 +89,49 @@
     } else {
       document.querySelector("#plaintextContent").innerHTML = "안전한 사이트입니다."
     }
+
+
     if(httpStatus !== "https"){
       document.querySelector('#httpIcon').innerHTML = iconWarning;
       document.querySelector("#httpContent").innerHTML = "WARN! HTTPS를 사용하지 않는 사이트입니다."
     } else {
       document.querySelector("#httpContent").innerHTML = "HTTPS를 사용하는 사이트입니다."
     }
+
+
     if(hstsData) {
       document.querySelector("#hstsContent").innerHTML = "HSTS를 사용하는 사이트입니다."
     } else {
       document.querySelector('#hstsIcon').innerHTML = iconWarning;
       document.querySelector("#hstsContent").innerHTML = "WARN! HSTS를 사용하지 않는 사이트입니다."
     }
+
+
+    if(xss) {
+      document.querySelector("#xssIcon").innerHTML = iconDanger;
+      document.querySelector("#xssContent").innerHTML = "XSS가 탐지되었습니다. 사이트 이용에 주의하세요."
+    } else {
+      document.querySelector("#xssIcon").innerHTML = iconSecure;
+      document.querySelector("#xssContent").innerHTML = "XSS가 탐지되지 않았습니다."
+    }
+
+    if(phishing) {
+      document.querySelector("#phishingIcon").innerHTML = iconDanger;
+      document.querySelector("#phishingContent").innerHTML = "피싱사이트 입니다. 사이트 이용에 주의하세요."
+    } else {
+      document.querySelector("#phishingIcon").innerHTML = iconSecure;
+      document.querySelector("#phishingContent").innerHTML = "안전한 사이트입니다."
+    }
+
   });
 
   // Login click
   var login = document.querySelector("#login");
   login.addEventListener('click', event => {
     let loginForm = document.loginForm;
-    let userId = loginForm.userId.value;
+    let email = loginForm.email.value;
     let userPassword = loginForm.password.value;
-    portLogin.postMessage(["Login", userId, userPassword]);
+    portLogin.postMessage(["Login", email, userPassword]);
   });
     portLogin.onMessage.addListener((data) => {
     //data['status'] : status, data['email'] : email, data['grade'] : grade?
