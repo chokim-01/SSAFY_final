@@ -102,7 +102,7 @@
 
 
     if(hstsData) {
-      document.querySelector("#httpIcon").innerHTML = iconSecure;
+      document.querySelector("#hstsIcon").innerHTML = iconSecure;
       document.querySelector("#hstsContent").innerHTML = `<div class="div2 green">HSTS를 사용하고 있습니다.</div>`
     } else {
       document.querySelector('#hstsIcon').innerHTML = iconWarning;
