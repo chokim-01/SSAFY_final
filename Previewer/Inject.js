@@ -77,12 +77,12 @@
   var iconDanger = "<img src='./Icons/64_danger.png' />"
 
   // Get Data
-  portGetData.onMessage.addListener(([data1, data2, data3]) => {
+  portGetData.onMessage.addListener(([data1, data2, data3, data4, data5]) => {
     let dataTransferCheck = data1;
     let httpStatus = data2;
     let hstsData = data3['hsts'];
-    let xss = "true";
-    let phishing = "true";
+    let xss = data4;
+    let phishing = data5;
 
     if(dataTransferCheck) {
       document.querySelector("#plaintextIcon").innerHTML = iconWarning;

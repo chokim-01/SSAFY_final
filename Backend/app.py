@@ -1,8 +1,9 @@
 ﻿import os
+import ssl
+import socket
 import pymysql
 import hashlib
 import certifi
-import ssl
 import OpenSSL
 import conn.conn as conn
 from urllib3 import PoolManager, Timeout
@@ -107,12 +108,11 @@ def chrome_user_site_request():
 @app.route("/post/chrome/xssCheck", methods=["POST"])
 def chrome_xss_check():
 
-    page_data = request
+    page_data = request.get_data().decode("UTF-8")
+    return jsonify({"xssFlag": False})
 
     cursor = conn.db().cursor()
-
     sql = "select * from xssList"
-
     cursor.execute(sql)
 
     result = cursor.fetchall()
@@ -129,7 +129,9 @@ def chrome_xss_check():
 
 @app.route("/post/chrome/phishingCheck", methods=["POST"])
 def chrome_phishing_check():
-    url = request
+
+    url = request.get_data().decode("UTF-8")
+    return jsonify({"phishingFlag": False})
 
     cursor = conn.db().cursor()
     sql = "select * from phishingList"
@@ -168,7 +170,7 @@ def hsts_check():
 
     site_data = dict()
     ssl_info = ''
-    
+
     # Get certificate data
     try:
         certificate = ssl.get_server_certificate((host, 443))
@@ -176,6 +178,8 @@ def hsts_check():
         ssl_info = x_dot_509.get_subject().get_components()
     except ssl.SSLError as e:
         site_data["sslfail"] = str(e)
+    except socket.gaierror as e:
+        site_data["sslfail"] = "인증서를 사용하지 않는 사이트입니다."
 
     # HSTS check
     http = PoolManager(timeout=Timeout(read=2.0))
