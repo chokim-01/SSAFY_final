@@ -72,11 +72,13 @@ var signIn = async (email, password, port) => {
   // Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
-    url: "http://52.79.152.29:5000/post/chrome/signIn",
+    url: "http://localhost:5000/post/chrome/signIn",
     data: {email:email, password:password},
     success: (data) => {
 			// sessionStorage setItem
-			sessionStorage.setItem('email',data['email'])
+			console.log(data);
+			if(data['success'] === true)
+				sessionStorage.setItem('email', data['email'])
 			port.postMessage(data)
     },
     error: (error) => {
@@ -88,7 +90,7 @@ var getsiteData = async (tab, port) => {
   // Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
-    url: "http://52.79.152.29:5000/post/hsts",
+    url: "http://localhost:5000/post/hsts",
     data: tab.url,
     success: (data) => {
 			// send to inject.js
@@ -98,6 +100,41 @@ var getsiteData = async (tab, port) => {
     },
     error: (error) => {
     }
+  });
+}
+
+var phishingCheck = async (tab) => {
+  // Check HSTS, Get sslData
+  await $.ajax({
+    type: "POST",
+    url: "http://localhost:5000/post/chrome/phishingCheck",
+    data: tab.url,
+    success: (data) => {
+			// send to inject.js
+			// port.postMessage([dataTransferCheck[tab.id], urlStatus, data]);
+			console.log(data);
+    },
+    error: (error) => {
+    }
+  });
+}
+
+var xssCheck = () => {
+	// get current tab html
+  chrome.tabs.executeScript({
+    code:"document.documentElement.innerHTML"
+  }, (result) => {
+    console.log(result);
+    $.ajax({
+      type: "POST",
+      url: "http://localhost:5000/api/get/xssCheck",
+      data: result[0],
+      success: (data) => {
+
+      },
+      error: (error) => {
+      }
+    });
   });
 }
 

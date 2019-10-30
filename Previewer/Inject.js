@@ -47,7 +47,6 @@
   var portSession = chrome.extension.connect({
     name: "Check Session"
   });
-  portSession.postMessage(["Get Session Data",])
 
   // Create Login port
   var portLogin = chrome.extension.connect({
@@ -59,6 +58,8 @@
       name: "Data Communication"
   });
 
+  // Get session data & site Data
+  portSession.postMessage(["Get Session Data",])
   portGetData.postMessage(["GET Site Data",]);
 
   // Get Session
@@ -136,9 +137,12 @@
     let userPassword = loginForm.password.value;
     portLogin.postMessage(["Login", email, userPassword]);
   });
-    portLogin.onMessage.addListener((data) => {
+
+  // Login Listener
+  portLogin.onMessage.addListener((data) => {
+      console.log(data['status'])
     //data['status'] : status, data['email'] : email, data['grade'] : grade?
-    if(data['status'] == 'success') {
+    if(data['status'] === 'success') {
       document.querySelector("#loginTable").style.display = "none";
       document.querySelector("#loginSuccess").style.display = "inline";
       document.querySelector("#loginMessage").innerHTML = data['email']+"님 환영합니다.";
