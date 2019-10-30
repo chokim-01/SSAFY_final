@@ -10,6 +10,7 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 		chrome.tabs.executeScript({
       code:"document.addEventListener('keyup', function(){var elements = document.querySelectorAll('input[type=password]')[0]; if(elements) { var passwordName = elements.name; var passwordValue = elements.value; chrome.storage.local.set({ passwordInfo: [passwordName, passwordValue] }); } });"
     });
+		// check & extension icon change
 		checkSite(tab);
 	}
 });
@@ -187,6 +188,7 @@ var phishingCheck = async (tab, port) => {
 }
 
 var setIcon = (status, tabId) => {
+	// change extension Icon
 	if(status === "secure") {
 		chrome.browserAction.setIcon({
 				path: {"38": "/Icons/38_secure.png"},

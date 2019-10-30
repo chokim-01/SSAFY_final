@@ -109,7 +109,6 @@ def chrome_user_site_request():
 def chrome_xss_check():
 
     page_data = request.get_data().decode("UTF-8")
-    return jsonify({"xssFlag": False})
 
     cursor = conn.db().cursor()
     sql = "select * from xssList"
@@ -131,7 +130,6 @@ def chrome_xss_check():
 def chrome_phishing_check():
 
     url = request.get_data().decode("UTF-8")
-    return jsonify({"phishingFlag": False})
 
     cursor = conn.db().cursor()
     sql = "select * from phishingList"
