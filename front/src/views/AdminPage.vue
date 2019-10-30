@@ -109,7 +109,7 @@ export default{
   }),
   created() {
       Server(this.$store.state.SERVER_URL).get("/get/allCount").then(result=>{
-      this.$store.state.userCount = result.data[0].paymentCount;
+      this.$store.state.userCount = result.data[0].userCount;
       this.$store.state.todayCount = result.data[0].todayCount;
       this.$store.state.paymentCount = result.data[0].paymentCount;
       this.$store.state.phishingCount = result.data[0].siteCount;
