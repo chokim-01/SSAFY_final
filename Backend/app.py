@@ -166,10 +166,16 @@ def hsts_check():
     url = url.replace("https://", "").replace("http://", "")
     host = url[:url.find("/")]
 
+    site_data = dict()
+    ssl_info = ''
+    
     # Get certificate data
-    certificate = ssl.get_server_certificate((host, 443))
-    x_dot_509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, certificate)
-    ssl_info = x_dot_509.get_subject().get_components()
+    try:
+        certificate = ssl.get_server_certificate((host, 443))
+        x_dot_509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, certificate)
+        ssl_info = x_dot_509.get_subject().get_components()
+    except ssl.SSLError as e:
+        site_data["sslfail"] = str(e)
 
     # HSTS check
     http = PoolManager(timeout=Timeout(read=2.0))
@@ -177,9 +183,9 @@ def hsts_check():
     response_of_host = request_of_host.headers
 
     # HSTS check
-    site_data = dict()
-    for ssl_data in ssl_info:
-        site_data[ssl_data[0].decode("UTF-8")] = ssl_data[1].decode("UTF-8")
+    if ssl_info:
+        for ssl_data in ssl_info:
+            site_data[ssl_data[0].decode("UTF-8")] = ssl_data[1].decode("UTF-8")
 
     if "strict-transport-security" in response_of_host:
         site_data["hsts"] = True
