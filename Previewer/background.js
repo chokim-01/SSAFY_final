@@ -99,7 +99,7 @@ var signIn = async (email, password, port) => {
 	// Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
-    url: "http://localhost:5000/post/chrome/signIn",
+    url: "http://52.79.152.29:5000/post/chrome/signIn",
     data: {email:email, password:password},
     success: (data) => {
 			// sessionStorage setItem
@@ -116,7 +116,7 @@ var getsiteData = async (tab, port) => {
   // Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
-    url: "http://localhost:5000/post/hsts",
+    url: "http://52.79.152.29:5000/post/hsts",
     data: tab.url,
     success: (data) => {
 
@@ -147,7 +147,7 @@ var xssCheck = (tab, port) => {
   }, (result) => {
      $.ajax({
       type: "POST",
-      url: "http://localhost:5000/post/chrome/xssCheck",
+      url: "http://52.79.152.29:5000/post/chrome/xssCheck",
       data: result[0],
       success: (data) => {
 
@@ -169,7 +169,7 @@ var phishingCheck = async (tab, port) => {
   // Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
-    url: "http://localhost:5000/post/chrome/phishingCheck",
+    url: "http://52.79.152.29:5000/post/chrome/phishingCheck",
     data: tab.url,
     success: (data) => {
 
