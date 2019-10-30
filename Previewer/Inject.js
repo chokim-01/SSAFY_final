@@ -47,7 +47,6 @@
   var portSession = chrome.extension.connect({
     name: "Check Session"
   });
-  portSession.postMessage(["Get Session Data",])
 
   // Create Login port
   var portLogin = chrome.extension.connect({
@@ -59,6 +58,8 @@
       name: "Data Communication"
   });
 
+  // Get session data & site Data
+  portSession.postMessage(["Get Session Data",])
   portGetData.postMessage(["GET Site Data",]);
 
   // Get Session
@@ -76,12 +77,12 @@
   var iconDanger = "<img src='./Icons/64_danger.png' />"
 
   // Get Data
-  portGetData.onMessage.addListener(([data1, data2, data3]) => {
+  portGetData.onMessage.addListener(([data1, data2, data3, data4, data5]) => {
     let dataTransferCheck = data1;
     let httpStatus = data2;
     let hstsData = data3['hsts'];
-    let xss = "true";
-    let phishing = "true";
+    let xss = data4;
+    let phishing = data5;
 
     if(dataTransferCheck) {
       document.querySelector("#plaintextIcon").innerHTML = iconWarning;
@@ -136,9 +137,12 @@
     let userPassword = loginForm.password.value;
     portLogin.postMessage(["Login", email, userPassword]);
   });
-    portLogin.onMessage.addListener((data) => {
+
+  // Login Listener
+  portLogin.onMessage.addListener((data) => {
+      console.log(data['status'])
     //data['status'] : status, data['email'] : email, data['grade'] : grade?
-    if(data['status'] == 'success') {
+    if(data['status'] === 'success') {
       document.querySelector("#loginTable").style.display = "none";
       document.querySelector("#loginSuccess").style.display = "inline";
       document.querySelector("#loginMessage").innerHTML = data['email']+"님 환영합니다.";
