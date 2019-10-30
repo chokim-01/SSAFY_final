@@ -2,7 +2,7 @@
   <v-dialog v-model="dialog" persistent max-width="500px">
     <!--Button to vue -->
     <template v-slot:activator="{ on }">
-      <v-btn min-width="80px" v-on="on">정보 수정</v-btn>
+      <v-btn class="mx-10" min-width="90px" v-on="on">정보 수정</v-btn>
     </template>
 
     <!-- User Information Edit -->

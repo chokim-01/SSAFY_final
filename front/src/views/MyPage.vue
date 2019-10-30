@@ -31,15 +31,14 @@
               </template>
             </v-simple-table>
           </v-card-text>
-
-          <v-card-actions>
-            <!-- User Information Edit -->
-            <useredit />
-
-            <!-- User Information Delete -->
-            <v-btn @click="userOut()" min-width="80px">
-              <span>회원 탈퇴</span>
-            </v-btn>
+          <v-divider></v-divider>
+          <v-card-actions class="d-flex flex-row-reverse">
+              <!-- User Information Delete -->
+              <v-btn @click="userOut()" min-width="90px" >
+                <span>회원 탈퇴</span>
+              </v-btn>
+              <!-- User Information Edit -->
+              <useredit />
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -69,18 +68,50 @@
               </template>
             </v-simple-table>
           </v-card-text>
-          <v-card-actions>
+          <v-divider></v-divider>
+          <v-card-actions class="d-flex flex-row-reverse">
+            <v-dialog v-model="history" scrollable max-width="700px">
+              <template v-slot:activator="{ on }">
+                <v-btn @click="getHistory()" min-width="90px" v-on="on">
+                  <span>결제 내역</span>
+                </v-btn>
+              </template>
+              <v-card>
+                <v-card-title>
+                  <v-layout>
+                    <v-flex>
+                      {{isuser().name}}님의 결제 내역
+                    </v-flex>
+                    <v-flex class="justify-end">
+                      <v-btn @click="history = false" text style="float: right">
+                        <v-icon>mdi mdi-close</v-icon>
+                      </v-btn>
+                    </v-flex>
+                  </v-layout>
+                </v-card-title>
+                <v-divider></v-divider>
+                <v-card-text id="historyTable" class="pt-5" style="height: 300px;">
+                  <v-data-table
+                  :headers="historyHeader"
+                  :items="paymentHistory"
+                  class="elevation-1"
+                  hide-default-footer
+                  ></v-data-table>
+                </v-card-text>
+                <v-divider></v-divider>
+                <v-card-actions class="d-flex justify-end px-5">
+                  <span>총 결제 금액 : {{totalPrice}}원</span>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
             <v-dialog v-model="dialog" width="1000">
               <template v-slot:activator="{ on }">
-                <v-btn v-on="on" min-width="90px">
-                  <span>결제</span>
+                <v-btn class="mx-10" v-on="on" min-width="90px">
+                  <span>결제하기</span>
                 </v-btn>
               </template>
               <payment />
             </v-dialog>
-            <v-btn min-width="80px">
-              <span>결제내역</span>
-            </v-btn>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -115,7 +146,24 @@ export default {
         value:"deleteurl"
       }
     ],
-    dialog:false
+    dialog: false,
+    history: false,
+    totalPrice: 0,
+    paymentHistory: [],
+    historyHeader: [
+      {
+          text:"grade",
+          value:"grade"
+      },
+      {
+        text:"payment date",
+        value: "payment_date"
+      },
+      {
+        text: "expire date",
+        value: "expire_date"
+      }
+    ]
   }),
   created(){
     let formData = new FormData();
@@ -135,9 +183,7 @@ export default {
           expire_date: result.data[0].expire_date
         };
       }
-
     })
-
   },
   components :{
     useredit: ()=>import("@/components/UserEdit"),
@@ -153,7 +199,7 @@ export default {
         email : this.$store.getters.getUser.email
       }
       Server(this.$store.state.SERVER_URL).post("/post/deleteUser",userdata).then((res)=>{
-        if(res.data.result == "true"){
+        if(res.data.message.length>0){
           alert(res.data.message)
           this.$store.dispatch("isLog",true)
           this.$store.dispatch("logout")
@@ -165,6 +211,29 @@ export default {
     getColor(str){
       if(str=="false") return "red"
       else return "green"
+    },
+    getHistory() {
+      Server(this.$store.state.SERVER_URL).post("/post/getPaymentGrade").then(gradeResults=>{
+        let formData = new FormData();
+        formData.append("email", this.$store.getters.getUser.email);
+        Server(this.$store.state.SERVER_URL).post("/post/getPaymentHistory", formData).then(result=>{
+          this.paymentHistory = [];
+          this.totalPrice = 0;
+          for(let idx in result.data){
+            this.paymentHistory.push({
+              grade: result.data[idx].grade,
+              payment_date: result.data[idx].payment_date,
+              expire_date: result.data[idx].expire_date
+            });
+
+            for(let gradeIdx in gradeResults.data) {
+              if(result.data[idx].grade == gradeResults.data[gradeIdx].grade){
+                this.totalPrice += gradeResults.data[gradeIdx].price;
+              }
+            }
+          }
+        })
+      })
     }
   }
 }
@@ -173,5 +242,11 @@ export default {
 #userName {
   font-weight: bold;
   font-size: 2em;
+}
+</style>
+
+<style>
+#historyTable tbody>tr:nth-child(1){
+  background-color: #CEECF5;
 }
 </style>
