@@ -1,13 +1,22 @@
-import os
+﻿import os
 import pymysql
 import hashlib
+import certifi
+import ssl
+import OpenSSL
 import conn.conn as conn
+from urllib3 import PoolManager, Timeout
 from datetime import datetime
 from flask_cors import CORS
 from flask import Flask, jsonify, request
 
 SALT = "SSAFY_FINAL_PJT"
 
+# Certificate check
+http = PoolManager(
+    cert_reqs="CERT_REQUIRED",
+    ca_certs=certifi.where(),
+)
 
 # Set directory path for vue.js static file
 ROOT_PATH = os.path.dirname(os.path.abspath("__file__"))
@@ -37,6 +46,148 @@ def page_not_found(e):
 
 
 ################################################
+#                  Chrome section
+################################################
+
+@app.route("/post/chrome/signIn", methods=["POST"])
+def chrome_sign_in():
+    # Get user information
+    request_data = request.form
+
+    email = request_data['email']
+    password = request_data['password'] + SALT
+    password = hashlib.sha256(password.encode()).hexdigest()
+
+    cursor = conn.db().cursor()
+    sql = "select * from User where email = %s and password = %s"
+    cursor.execute(sql, (email, password))
+
+    # Get one user
+    result = cursor.fetchone()
+
+    # If email or password does not match
+    if isinstance(result, type(None)):
+        print("fail")
+        return jsonify({"status":"failed","message": "회원정보를 다시 확인해주세요."})
+
+    # Get user's grade
+    cursor = conn.db().cursor()
+    sql = "select grade from User_Payment where email = %s";
+    cursor.execute(sql, result['email'])
+
+    user_grade = cursor.fetchone()
+
+    result['status'] = "success"
+    result['grade'] = user_grade
+    print("success")
+
+    return jsonify(result)
+
+
+@app.route("/post/chrome/siteRequest", methods=["POST"])
+def chrome_user_site_request():
+    """
+    User site request API
+    URL
+    :return: json type message
+    """
+
+    url = request_data
+
+    db = conn.db()
+    cursor = db.cursor()
+
+    sql = "insert into SiteList (url, analysisCheck, analysisResult) values (%s, 0, 0)"
+    cursor.execute(sql, url)
+
+    db.commit()
+
+    return ""
+
+@app.route("/post/chrome/xssCheck", methods=["POST"])
+def chrome_xss_check():
+
+    page_data = request
+
+    cursor = conn.db().cursor()
+
+    sql = "select * from xssList"
+
+    cursor.execute(sql)
+
+    result = cursor.fetchall()
+
+    xss_flag = False
+
+    for xss in result:
+        if xss in page_data:
+            xss_flag = True
+            break
+
+    return jsonify({"xssFlag": xss_flag})
+
+
+@app.route("/post/chrome/phishingCheck", methods=["POST"])
+def chrome_phishing_check():
+    url = request
+
+    cursor = conn.db().cursor()
+    sql = "select * from phishingList"
+    cursor.execute(sql)
+
+    result = cursor.fetchall()
+
+    phishing_flag = False
+
+    for phishing in result:
+        if url == phishing:
+            phshing_flag = True
+            break
+
+    return jsonify({"phishingFlag": phishing_flag})
+
+
+################################################
+#                  HSTS section
+################################################
+
+@app.route("/post/hsts", methods=["POST"])
+def hsts_check():
+    """
+    HSTS check API
+    url
+    :return: json type message
+    """
+
+    # Get URL
+    url = request.get_data().decode("UTF-8")
+
+    # Get host of URL
+    url = url.replace("https://", "").replace("http://", "")
+    host = url[:url.find("/")]
+
+    # Get certificate data
+    certificate = ssl.get_server_certificate((host, 443))
+    x_dot_509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, certificate)
+    ssl_info = x_dot_509.get_subject().get_components()
+
+    # HSTS check
+    http = PoolManager(timeout=Timeout(read=2.0))
+    request_of_host = http.request("GET", host, headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0)"}, timeout=2)
+    response_of_host = request_of_host.headers
+
+    # HSTS check
+    site_data = dict()
+    for ssl_data in ssl_info:
+        site_data[ssl_data[0].decode("UTF-8")] = ssl_data[1].decode("UTF-8")
+
+    if "strict-transport-security" in response_of_host:
+        site_data["hsts"] = True
+
+    return jsonify(site_data)
+
+
+################################################
 #                  User Section
 ################################################
 
@@ -63,7 +214,7 @@ def sign_up():
     db = conn.db()
     cursor = db.cursor()
 
-    sql = "insert into user (email, name, password, auth) values (%s, %s, %s, %s)"
+    sql = "insert into User (email, name, password, auth) values (%s, %s, %s, %s)"
 
     # User email existed check
     try:
@@ -94,7 +245,7 @@ def sign_in():
     password = hashlib.sha256(password.encode()).hexdigest()
 
     cursor = conn.db().cursor()
-    sql = "select * from user where email = %s and password = %s"
+    sql = "select * from User where email = %s and password = %s"
     cursor.execute(sql, (email, password))
 
     # Get one user
@@ -130,7 +281,7 @@ def edit_user():
     db = conn.db()
     cursor = db.cursor()
 
-    sql = "update user set name = %s, password = %s where email = %s"
+    sql = "update User set name = %s, password = %s where email = %s"
 
     cursor.execute(sql, (name, password, email))
 
@@ -154,7 +305,7 @@ def delete_user():
     db = conn.db()
     cursor = db.cursor()
 
-    sql = "delete * from user where email = %s"
+    sql = "delete from User where email = %s"
 
     cursor.execute(sql, email)
 
@@ -172,7 +323,7 @@ def get_user_payment():
 
     sql = "SELECT (CASE WHEN expire_date > now() THEN grade ELSE 'basic' END) as grade, \
             date_format(payment_date, '%%Y-%%m-%%d') as payment_date,  date_format(expire_date, '%%Y-%%m-%%d') as expire_date \
-            FROM user_payment WHERE email= %s ORDER BY expire_date limit 1"
+            FROM User_Payment WHERE email= %s ORDER BY expire_date limit 1"
 
     cursor.execute(sql, email)
     data = (cursor.fetchall())
@@ -227,14 +378,17 @@ def get_all_count():
 
     # Get user, request, payments, phishing site count
     sql = "select\
-            (select count(*) from user) as userCount,\
-            (select count(*) from user u, request r where r.request_date = %s and u.email = r.email) as todayCount,\
+            (select count(*) from User) as userCount,\
+            (select count(*) from User u, Request r where r.request_date = %s and u.email = r.email) as todayCount,\
             (select count(*) from User_Payment) as paymentCount,\
-            (select count(*) from sitelist) as siteCount"
+            (select count(*) from SiteList) as siteCount"
 
     cursor.execute(sql, today)
 
     result = cursor.fetchall()
+
+    print("#############################")
+    print(result)
 
     return jsonify(result)
 
@@ -248,7 +402,7 @@ def get_user_list():
 
     cursor = conn.db().cursor()
 
-    sql = "select u.*, count(r.email) as requestCount from user u LEFT OUTER JOIN request r on r.email = u.email group by `email`"
+    sql = "select u.*, count(r.email) as requestCount from User u LEFT OUTER JOIN Request r on r.email = u.email group by `email`"
 
     cursor.execute(sql)
 
@@ -269,7 +423,9 @@ def get_today_request():
 
     cursor = conn.db().cursor()
 
-    sql = "select u.name as name, r.url as url from user u, request r where r.request_date = %s and u.email = r.email"
+    sql = "select u.email as email, u.url as url, s.analysisResult as analysisResult \
+            from (select u.email as email, r.url as url from User u, Request r where r.request_date = %s and u.email = r.email) u, sitelist s \
+                where s.url=u.url"
 
     cursor.execute(sql, today)
 
@@ -306,7 +462,7 @@ def get_phishing_list():
     cursor = conn.db().cursor()
 
     sql = "select url, case analysisCheck when 1 then 'Complete' else 'in progress' END as analysis, " \
-          "case analysisResult when 1 then 'Phishing' else 'Safe' END as result from sitelist"
+          "case analysisResult when 1 then 'Phishing' else 'Safe' END as result from SiteList"
 
     cursor.execute(sql)
 
@@ -338,6 +494,25 @@ def get_one_user_request():
 
     return jsonify(result)
 
+@app.route("/post/changeAnalysisResult", methods=["POST"])
+def post_change_Analysis_Result():
+    """
+    Post change analysisResult
+    :return: json type change analysisResult
+    """
+    db = conn.db()
+    url = request.form.get("url")
+
+
+    cursor = db.cursor()
+
+
+    sql = "update sitelist set analysisResult=NOT analysisResult where url=%s"
+    cursor.execute(sql, url)
+    db.commit()
+
+
+    return jsonify()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
