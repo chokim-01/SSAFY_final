@@ -53,10 +53,10 @@ def page_not_found(e):
 @app.route("/post/chrome/signIn", methods=["POST"])
 def chrome_sign_in():
     # Get user information
-    request_data = request.form
+    request_data = request.get_json()
 
-    email = request_data['email']
-    password = request_data['password'] + SALT
+    email = request_data.get("email")
+    password = request_data.get("password") + SALT
     password = hashlib.sha256(password.encode()).hexdigest()
 
     cursor = conn.db().cursor()
@@ -119,7 +119,7 @@ def chrome_xss_check():
     xss_flag = False
 
     for xss in result:
-        if xss in page_data:
+        if xss["gadget"] in page_data:
             xss_flag = True
             break
 
@@ -132,7 +132,7 @@ def chrome_phishing_check():
     url = request.get_data().decode("UTF-8")
 
     cursor = conn.db().cursor()
-    sql = "select * from phishingList"
+    sql = "select * from StieList"
     cursor.execute(sql)
 
     result = cursor.fetchall()
