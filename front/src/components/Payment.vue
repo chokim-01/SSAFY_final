@@ -16,8 +16,17 @@
               <v-card-text>
                 <span>여기는 basic등급에 대한 내용</span>
               </v-card-text>
+
+              <!-- payment button -->
+              <v-flex offset-xs2 offset-sm5>
+                <v-btn>
+                  <span v-if="grade==='pro'|| grade==='premium'">CAN'T PAY</span>
+                  <span v-else-if="grade==='basic'">Current</span>
+                </v-btn>
+              </v-flex>
             </v-card>
           </v-flex>
+
           <!-- pro Grade -->
           <v-flex md4>
             <v-card>
@@ -27,13 +36,18 @@
               <v-card-text>
                 <span>여기는 pro등급에 대한 내용</span>
               </v-card-text>
+
+              <!-- payment button -->
               <v-flex offset-xs2 offset-sm5>
                 <v-btn>
-                  <span @click="pay('pro')">결제</span>
+                  <span v-if="grade==='basic'" @click="pay('pro')">결제</span>
+                  <span v-else-if="grade==='pro'">Current</span>
+                  <span v-else>CAN'T PAY</span>
                 </v-btn>
               </v-flex>
             </v-card>
           </v-flex>
+
           <!-- premium Grade -->
           <v-flex md4>
             <v-card>
@@ -43,9 +57,12 @@
               <v-card-text>
                 <span>여기는 premium등급에 대한 내용</span>
               </v-card-text>
+
+              <!-- payment button -->
               <v-flex offset-xs2 offset-sm5>
                 <v-btn>
-                  <span @click="pay('premium')">결제</span>
+                  <span v-if="grade==='basic' || grade==='pro'" @click="pay('premium')">결제</span>
+                  <span v-else>Current</span>
                 </v-btn>
               </v-flex>
             </v-card>
@@ -61,8 +78,12 @@
 import Server from "../server.js"
 
 export default {
+    props:{
+      grade:{
+        type:String
+      }
+    },
     data: () => ({
-      grade:"",
       price:0
     }),
     methods:{
