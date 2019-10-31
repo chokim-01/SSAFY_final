@@ -1,4 +1,4 @@
-<center>[!previewer](https://lab.ssafy.com/k3y6reak/final-pjt/raw/develop/Resource/logo.png)</center>
+<center>![previewer](https://lab.ssafy.com/k3y6reak/final-pjt/raw/develop/Resource/logo.png)</center>
 
 ---------------------------------------
 
