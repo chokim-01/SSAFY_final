@@ -6,35 +6,12 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 
 	if(url !== undefined && changeInfo.status ==="complete")
 	{
-		// Check http, https
-		urlStatus = checkURL(url);
-		// If https
-		if(urlStatus === "https")
-		{
-			chrome.browserAction.setIcon({
-				path: {"38": "/Icons/38_secure.png"},
-				tabId: currentTabId
-			});
-		}
-		// If http
-		else if(urlStatus === "http")
-		{
-			chrome.browserAction.setIcon({
-				path: {"38": "/Icons/38_warning.png"},
-				tabId: currentTabId
-			});
-		}
-		// Unkown
-		else
-		{
-			console.log("Unknown");
-			return;
-		}
-
 		// Get user input password
 		chrome.tabs.executeScript({
       code:"document.addEventListener('keyup', function(){var elements = document.querySelectorAll('input[type=password]')[0]; if(elements) { var passwordName = elements.name; var passwordValue = elements.value; chrome.storage.local.set({ passwordInfo: [passwordName, passwordValue] }); } });"
     });
+		// check & extension icon change
+		checkSite(tab);
 	}
 });
 
@@ -56,7 +33,9 @@ chrome.extension.onConnect.addListener((port) => {
           await chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
             var currTab = tabs[0];
             if(currTab && checkURL(currTab.url) !== "unknown") { // Sanity check
-              getsiteData(currTab, port);
+							xssCheck(currTab, port);
+							phishingCheck(currTab, port);
+							getsiteData(currTab, port);
             }
           });
         } else if(message[0] === "Get Session Data") {
@@ -70,6 +49,8 @@ chrome.extension.onConnect.addListener((port) => {
 					signIn(message[1], message[2], port);
 				} else if(message[0] === "Logout") {
 					sessionStorage.clear();
+				} else if(message[0] === "PhishingSite") {
+					sendSite(message[1], port);
 				}
     });
 });
@@ -93,15 +74,40 @@ var checkURL = (url) => {
 	return result;
 }
 
+var checkSite = async (tab) => {
+	chrome.storage.local.set({"iconChange":false});
+
+	// data plaintext check
+ 	if(dataTransferCheck[tab.id]) {
+	 	chrome.storage.local.set({"iconChange":true});
+ 		setIcon("warn", tab.id);
+ 	}
+  // hsts & https
+ 	await getsiteData(tab, null);
+ 	// Phishing
+ 	await phishingCheck(tab, null);
+ 	// XSS
+ 	await xssCheck(tab, null);
+
+ 	await chrome.storage.local.get(['iconChange'], (res) => {
+	 	if(res['iconChange'] !== true){
+		 	setIcon("secure",tab.id);
+	 	}
+ });
+
+ chrome.storage.local.remove(['iconChange']);
+}
+
 var signIn = async (email, password, port) => {
-  // Check HSTS, Get sslData
+	// Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
-    url: "http://localhost:5000/post/chrome/signIn",
+    url: "http://52.79.152.29:5000/post/chrome/signIn",
     data: {email:email, password:password},
     success: (data) => {
 			// sessionStorage setItem
-			sessionStorage.setItem('email',data['email'])
+			if(data['status'] === "success")
+				sessionStorage.setItem('email', data['email'])
 			port.postMessage(data)
     },
     error: (error) => {
@@ -113,17 +119,109 @@ var getsiteData = async (tab, port) => {
   // Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
-    url: "http://localhost:5000/post/hsts",
+    url: "http://52.79.152.29:5000/post/hsts",
     data: tab.url,
     success: (data) => {
-			// send to inject.js
+
 			let urlStatus = checkURL(tab.url)
-			port.postMessage([dataTransferCheck[tab.id], urlStatus, data]);
-			console.log(data);
+			if(port == null){
+				if(!data['hsts'] || urlStatus !=='https'){
+					chrome.storage.local.set({"iconChange":true})
+					setIcon("warn", tab.id);
+				}
+			}
+			else {
+				chrome.storage.local.get(['xssFlag', 'phishingFlag'], (res) => {
+					let xssFlag = res.xssFlag;
+					let phishingFlag = res.phishingFlag;
+					port.postMessage([dataTransferCheck[tab.id], urlStatus, data, xssFlag, phishingFlag]);
+				});
+			}
+		},
+    error: (error) => {
+    }
+  });
+}
+
+var xssCheck = (tab, port) => {
+	// get current tab html
+  chrome.tabs.executeScript({
+    code:"document.documentElement.innerHTML"
+  }, (result) => {
+     $.ajax({
+      type: "POST",
+      url: "http://52.79.152.29:5000/post/chrome/xssCheck",
+      data: result[0],
+      success: (data) => {
+
+				if(port == null && data['xssFlag']){
+					chrome.storage.local.set({"iconChange":true})
+					setIcon("danger",tab.id)
+				}
+				else if (port != null){
+					chrome.storage.local.set({"xssFlag":data['xssFlag']})
+				}
+      },
+      error: (error) => {
+      }
+    });
+  });
+}
+
+var phishingCheck = async (tab, port) => {
+  // Check HSTS, Get sslData
+  await $.ajax({
+    type: "POST",
+    url: "http://52.79.152.29:5000/post/chrome/phishingCheck",
+    data: tab.url,
+    success: (data) => {
+
+			if(port == null && data['phishingFlag']){
+				chrome.storage.local.set({"iconChange":true})
+				setIcon("danger", tab.id)
+			}
+			else if(port != null) {
+				chrome.storage.local.set({"phishingFlag":data['phishingFlag']})
+			}
     },
     error: (error) => {
     }
   });
+}
+
+var sendSite = (url, port) => {
+	//send Site
+	$.ajax({
+		type: "POST",
+		url: "http://52.79.152.29:5000/post/chrome/siteRequest",
+		data: url,
+		success: (data) => {
+			port.postMessage(data["message"])
+		},
+		error: (error) => {
+
+		}
+	})
+}
+
+var setIcon = (status, tabId) => {
+	// change extension Icon
+	if(status === "secure") {
+		chrome.browserAction.setIcon({
+				path: {"38": "/Icons/38_secure.png"},
+				tabId: tabId
+			});
+	} else if(status === "warn") {
+		chrome.browserAction.setIcon({
+				path: {"38": "/Icons/38_warning.png"},
+				tabId: tabId
+			});
+	} else if(status === "danger") {
+		chrome.browserAction.setIcon({
+				path: {"38": "/Icons/38_danger.png"},
+				tabId: tabId
+			});
+	}
 }
 
 var checkPassword = (requestData) => {

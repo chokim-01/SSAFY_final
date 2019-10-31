@@ -1,14 +1,17 @@
 ﻿import os
+import ssl
+import socket
 import pymysql
 import hashlib
 import certifi
-import ssl
 import OpenSSL
 import conn.conn as conn
+import requests
 from urllib3 import PoolManager, Timeout
 from datetime import datetime
 from flask_cors import CORS
 from flask import Flask, jsonify, request
+
 
 SALT = "SSAFY_FINAL_PJT"
 
@@ -54,8 +57,8 @@ def chrome_sign_in():
     # Get user information
     request_data = request.form
 
-    email = request_data['email']
-    password = request_data['password'] + SALT
+    email = request_data.get("email")
+    password = request_data.get("password") + SALT
     password = hashlib.sha256(password.encode()).hexdigest()
 
     cursor = conn.db().cursor()
@@ -67,7 +70,6 @@ def chrome_sign_in():
 
     # If email or password does not match
     if isinstance(result, type(None)):
-        print("fail")
         return jsonify({"status":"failed","message": "회원정보를 다시 확인해주세요."})
 
     # Get user's grade
@@ -79,40 +81,36 @@ def chrome_sign_in():
 
     result['status'] = "success"
     result['grade'] = user_grade
-    print("success")
 
     return jsonify(result)
 
 
 @app.route("/post/chrome/siteRequest", methods=["POST"])
 def chrome_user_site_request():
-    """
-    User site request API
-    URL
-    :return: json type message
-    """
 
-    url = request_data
+    url = request.get_data().decode("UTF-8")
+    url = url.replace("http://", "").replace("https://", "")
 
     db = conn.db()
     cursor = db.cursor()
 
     sql = "insert into SiteList (url, analysisCheck, analysisResult) values (%s, 0, 0)"
-    cursor.execute(sql, url)
 
-    db.commit()
+    try:
+        cursor.execute(sql, url)
+        db.commit()
+    except pymysql.err.IntegrityError as e:
+        return jsonify({"message": "해당 사이트가 이미 전달되었거나 올바르지 않은 url입니다."})
 
-    return ""
+    return jsonify({"message": "사이트를 전달하였습니다."})
 
 @app.route("/post/chrome/xssCheck", methods=["POST"])
 def chrome_xss_check():
 
-    page_data = request
+    page_data = request.get_data().decode("UTF-8")
 
     cursor = conn.db().cursor()
-
-    sql = "select * from xssList"
-
+    sql = "select * from XssList"
     cursor.execute(sql)
 
     result = cursor.fetchall()
@@ -120,7 +118,7 @@ def chrome_xss_check():
     xss_flag = False
 
     for xss in result:
-        if xss in page_data:
+        if xss["gadget"] in page_data:
             xss_flag = True
             break
 
@@ -129,22 +127,21 @@ def chrome_xss_check():
 
 @app.route("/post/chrome/phishingCheck", methods=["POST"])
 def chrome_phishing_check():
-    url = request
+
+    url = request.get_data().decode("UTF-8")
+
+    url = url.replace("http://", "").replace("https://", "")
 
     cursor = conn.db().cursor()
-    sql = "select * from phishingList"
-    cursor.execute(sql)
+    sql = "select * from SiteList where url = %s"
+    cursor.execute(sql, url)
 
-    result = cursor.fetchall()
+    result = cursor.fetchone()
 
-    phishing_flag = False
+    if result == None:
+        return jsonify({"phishingFlag": False})
 
-    for phishing in result:
-        if url == phishing:
-            phshing_flag = True
-            break
-
-    return jsonify({"phishingFlag": phishing_flag})
+    return jsonify({"phishingFlag": True})
 
 
 ################################################
@@ -166,10 +163,18 @@ def hsts_check():
     url = url.replace("https://", "").replace("http://", "")
     host = url[:url.find("/")]
 
+    site_data = dict()
+    ssl_info = ''
+
     # Get certificate data
-    certificate = ssl.get_server_certificate((host, 443))
-    x_dot_509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, certificate)
-    ssl_info = x_dot_509.get_subject().get_components()
+    try:
+        certificate = ssl.get_server_certificate((host, 443))
+        x_dot_509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, certificate)
+        ssl_info = x_dot_509.get_subject().get_components()
+    except ssl.SSLError as e:
+        site_data["sslfail"] = str(e)
+    except socket.gaierror as e:
+        site_data["sslfail"] = "인증서를 사용하지 않는 사이트입니다."
 
     # HSTS check
     http = PoolManager(timeout=Timeout(read=2.0))
@@ -177,9 +182,9 @@ def hsts_check():
     response_of_host = request_of_host.headers
 
     # HSTS check
-    site_data = dict()
-    for ssl_data in ssl_info:
-        site_data[ssl_data[0].decode("UTF-8")] = ssl_data[1].decode("UTF-8")
+    if ssl_info:
+        for ssl_data in ssl_info:
+            site_data[ssl_data[0].decode("UTF-8")] = ssl_data[1].decode("UTF-8")
 
     if "strict-transport-security" in response_of_host:
         site_data["hsts"] = True
@@ -201,7 +206,7 @@ def sign_up():
     """
 
     request_data = request.get_json()
-
+    print("here")
     # Get user data
     email = request_data.get("email")
     name = request_data.get("name")
@@ -234,7 +239,7 @@ def sign_in():
     emain, password
     :return: json type message
     """
-    print("로그인")
+
     request_data = request.get_json()
 
     # Get user data
@@ -277,7 +282,6 @@ def edit_user():
     password = request_data.get("password") + SALT
     password = hashlib.sha256(password.encode()).hexdigest()
 
-    print(request_data)
     db = conn.db()
     cursor = db.cursor()
 
@@ -330,34 +334,24 @@ def get_user_payment():
 
     return jsonify(data)
 
-
 @app.route("/post/getPaymentGrade", methods=["POST"])
 def get_payment_grade():
     db = conn.db()
     cursor = db.cursor()
-
     sql = "SELECT * FROM Payment"
-
     cursor.execute(sql)
     data = (cursor.fetchall())
-
     return jsonify(data)
-
 
 @app.route("/post/getPaymentHistory", methods=["POST"])
 def get_user_payment_history():
     email = request.form.get("email")
-
     db = conn.db()
     cursor = db.cursor()
-
     sql = "SELECT grade, date_format(payment_date, '%%Y-%%m-%%d') as payment_date, date_format(expire_date, '%%Y-%%m-%%d') as expire_date FROM user_payment WHERE email=%s ORDER BY expire_date DESC"
-
     cursor.execute(sql, email)
     data = (cursor.fetchall())
-
     return jsonify(data)
-
 
 ################################################
 #                  Admin Section
@@ -443,7 +437,7 @@ def get_payment_list():
     cursor = conn.db().cursor()
 
     sql = "select email, grade, date_format(payment_date, '%Y-%m-%d %r') as payment_date," \
-          "date_format(expire_date, '%Y-%m-%d %r') as expire_date from User_Payment ORDER BY expire_date DESC"
+          "date_format(expire_date, '%Y-%m-%d %r') as expire_date from User_Payment"
 
     cursor.execute(sql)
 
@@ -503,14 +497,107 @@ def post_change_Analysis_Result():
     db = conn.db()
     url = request.form.get("url")
 
-
     cursor = db.cursor()
-
 
     sql = "update sitelist set analysisResult=NOT analysisResult where url=%s"
     cursor.execute(sql, url)
     db.commit()
 
+    return jsonify()
+
+################################################
+#                  Pay Section
+################################################
+@app.route("/post/pay",methods=["POST"])
+def post_pay():
+    """
+    Post pay info
+    :return: tid, next_redirect_pc_url
+    """
+    amount=request.form.get("amount")
+    grade=request.form.get("grade")
+    print(amount)
+    url = "https://kapi.kakao.com"
+    headers = {
+        'Authorization': "KakaoAK " + "d3b28bf93c1e44abe14dcce6278f42ba",
+        'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+    }
+    params = {
+        'cid': "TC0ONETIME",
+        'partner_order_id': '1001',
+        'partner_user_id': 'test',
+        'item_name': grade,
+        'quantity': 1,
+        'total_amount': amount,
+        'vat_amount': 0,
+        'tax_free_amount': 0,
+        'approval_url': 'http://localhost:8080/payComplete',
+        'fail_url': 'http://localhost:8080',
+        'cancel_url': 'http://localhost:8080',
+    }
+    response = requests.post(url + "/v1/payment/ready", params=params, headers=headers)
+    result=response.json()
+    print(result)
+    return jsonify(result)
+
+@app.route("/post/payComplete",methods=["POST"])
+def post_pay_complete():
+    """
+    post pg_token, tid, total_amount
+    :return: payment info
+    """
+    pg_token=request.form.get("pg_token")
+    tid=request.form.get("tid")
+    total_amount=request.form.get("total_amount")
+    url = "https://kapi.kakao.com"
+    headers ={
+        'Authorization': "KakaoAK " + "d3b28bf93c1e44abe14dcce6278f42ba",
+        'Content-type': 'application / x - www - form - urlencoded;charset = utf - 8'
+    }
+    params = {
+        'cid': 'TC0ONETIME',
+        'tid': tid,
+        'partner_order_id': '1001',
+        'partner_user_id': 'test',
+        'pg_token': pg_token,
+        'total_amount' : total_amount
+    }
+    response=requests.post(url+"/v1/payment/approve",params=params,headers=headers)
+    return jsonify(response.json())
+
+@app.route("/post/price",methods=["POST"])
+def post_price():
+    """
+    post grade
+    :return: price of grade
+    """
+    grade=request.form.get("grade")
+    cursor = conn.db().cursor()
+    print(grade)
+    sql = "select price from payment where grade= %s"
+    cursor.execute(sql,grade)
+    res=cursor.fetchall()
+
+    return jsonify(res)
+
+@app.route("/post/addPay",methods=["POST"])
+def add_pay():
+    """
+    post pay history
+    :return:
+    """
+    approved_time=request.form.get("approved_time")
+    approved_time=approved_time.split("T")
+    time=approved_time[0]+" "+approved_time[1]
+    grade=request.form.get("grade")
+    email=request.form.get("email")
+    db = conn.db()
+    cursor = db.cursor()
+
+    sql= "insert into user_payment values(%s,%s,%s,date_add(%s, interval 1 month));"
+    cursor.execute(sql,(email,grade,time,time))
+
+    db.commit()
 
     return jsonify()
 

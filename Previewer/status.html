@@ -1,28 +1,32 @@
-<!DOCTYPE html>
+<!DOCTYPE html lang="ko">
 <html>
 	<head>
 		<meta charset="UTF-8">
 	</head>
 	<body>
 		<div id="loginSuccess">
-			<div id="loginMessage"></div>
-			<input id="logout" type="button" value="로그아웃" />
+      <form class="logform">
+        <img src="./Icons/64_main.png" alt="사이트 이동"/>
+        <span id="loginMessage"></span>
+        <input class="btn" id="logout" type="button" value="로그아웃"/>
+      </form>
 		</div>
 		<div id="loginTable">
-			<form name="loginForm">
-				<input id="eamil" type="text" name="eamil" placeholder="Email" />
-				<input id="pass" type="password" name="password" placeholder="password" />
-				<input class="btn" type="submit" value="LogIn" />
-			</form>
+      <form class="logform" name="loginform">
+        <img src="./Icons/64_main.png" alt="사이트 이동"/>
+        <input id="email" type="text" name="email" placeholder="Email" class="inputForm" style="width:40%" />
+        <input id="pass" type="password" name="password" placeholder="password" class="inputForm"  style="width:30%"/>
+        <input class="btn" id="login" type="button" value="로그인"/>
+      </form>
 		</div>
 
 		<div id="secureTable"></div>
 
 		<div class="urlform">
-		<form>
-			<input id="url" type="text" name="url" />
-			<input type="submit" value="submit" />
-		</form>
+      <form>
+        <input id="url" type="text" name="url" placeholder="URL을 입력하세요." />
+        <input id="sendphishing" type="button" value="요청" />
+      </form>
     </div>
 	</body>
 	<script src="inject.js"></script>
@@ -30,82 +34,135 @@
 
 <style>
 html {
-width: 500px;
+width: 600px;
 height: 500px;
 }
 
 #loginSuccess {
 	display: none;
 }
-.loginForm {
-      padding-top: 10px;
-      height: 50px;
-      margin-bottom: 0px;
-    }
-    .green {
-      background-image: url(./green.png);
-    }
-    .yellow {
-      background-image: url(./yellow.png);
-    }
-    .red {
-      background-image: url(./red.png);
-    }
-    .div1 {
-      width: 90px;
-      display: inline-block;
-    }
-    .div2 {
-      margin-top: 20px;
-      text-align: center;
-      height: 70px;
-      vertical-align: top;
-      width: 400px;
-      display: inline-block;
-      -webkit-background-clip: text;
-      white-space: nowrap;
-      font-weight: bold;
-      font-size: 20px;
-    }
-    .div2:hover {
-      transition: 0.6s 0.1s;
-      background-position: bottom right;
-    }
-    .div2:hover:before {
-      transition: 0.3s;
-      transform: translateY(-100%) scaleY(0);
-      opacity: 0;
-    }
-    .div3 {
-      display: inline-block;
-      vertical-align: top;
-    }
-    .step {
-      width: 500px;
-      height: 77px;
-    }
-    .content {
-      border-collapse: collapse;
-    }
-    .urlform {
-      width: 500px;
-      height: 50px;
-    }
-    #url {
-      padding: 12px 20px;
-      display: inline-block;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-      width: 350px;
-    }
-    input[type="submit"] {
-      width: 100px;
-      background-color: orange;
-      color: white;
-      padding: 8px 10px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
+.logform {
+    height: 50px;
+    line-height: 50px;
+    margin-bottom: 0px;
+    text-align: center;
+		width:600px;
+  }
+  .inputForm {
+    height: 35px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  .urlform {
+    width: 500px;
+    height: 50px;
+    text-align: center;
+  }
+  #url {
+    padding: 12px 20px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    width: 350px;
+    height: 40px;
+  }
+  input[type="button"] {
+    background-color: orange;
+    color: white;
+    height: 40px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .sirenTitle {
+    height: 30px;
+    display: inline-block;
+    line-height: 30px;
+  }
+  .siren {
+    display: inline-block;
+    width: 18%;
+  }
+  .historyBox {
+    border: 1px dashed gray;
+    border-radius: 10px;
+    height: 300px;
+    width: 95%;
+    margin: 10px auto;
+  }
+  .historySubBox{
+    display: inline-block;
+  }
+  .history {
+    height: 24%;
+    margin: 1% auto;
+    padding: 8px 18px;
+  }
+  .divider {
+    width: 95%;
+    border-style: ridge;
+    margin: 0 auto;
+  }
+  .leftBox {
+    width: 24%;
+  }
+  .rightBox{
+    display: inline-block;
+    width: 70%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .historyCircle {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50px;
+    border: 1px solid black;
+    margin-top:5px;
+    margin-right: 5%;
+  }
+  [data-tooltip-text]:hover {
+    position: relative;
+  }
+  [data-tooltip-text]:after {
+    -webkit-transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+    -moz-transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+    transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+    background-color: rgba(0, 0, 0, 0.8);
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+    box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-size: 12px;
+    margin-bottom: 10px;
+    padding: 7px 12px;
+    position: absolute;
+    width: auto;
+    min-width: 50px;
+    max-width: 300px;
+    word-wrap: break-word;
+    z-index: 9999;
+    opacity: 0;
+    left: -9999px;
+    top: 90%;
+    content: attr(data-tooltip-text);
+  }
+
+  [data-tooltip-text]:hover:after {
+    top: 130%;
+    left: 0;
+    opacity: 1;
+  }
+	#loginMessage {
+		display: inline-block;
+		width: 65%;
+	}
+  </style>
 </style>
