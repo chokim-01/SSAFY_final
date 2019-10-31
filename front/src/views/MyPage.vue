@@ -79,7 +79,7 @@
               <v-card>
                 <v-card-title>
                   <v-layout>
-                    <v-flex>{{isuser().name}}님의 결제 내역</v-flex>
+                    <v-flex>💲{{isuser().name}}님의 결제 내역💲</v-flex>
                     <v-flex class="justify-end">
                       <v-btn @click="history = false" text style="float: right">
                         <v-icon>mdi mdi-close</v-icon>
