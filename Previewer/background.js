@@ -191,10 +191,14 @@ var phishingCheck = async (tab, port) => {
 
 var sendSite = (url, port) => {
 	//send Site
+	let email = sessionStorage.getItem("email")
+	if(email == null)
+		email = "guest";
+
 	$.ajax({
 		type: "POST",
 		url: "http://52.79.152.29:5000/post/chrome/siteRequest",
-		data: url,
+		data: {url:url, email:email},
 		success: (data) => {
 			port.postMessage(data["message"])
 		},

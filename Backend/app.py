@@ -12,7 +12,7 @@ from datetime import datetime
 from flask_cors import CORS
 from flask import Flask, jsonify, request
 
-# User password salt 
+# User password salt
 SALT = "SSAFY_FINAL_PJT"
 
 # Certificate check
@@ -91,24 +91,28 @@ def chrome_sign_in():
 @app.route("/post/chrome/siteRequest", methods=["POST"])
 def chrome_user_site_request():
 
-    url = request.get_data().decode("UTF-8")
+    request_data = request.form
+    current_date = get_today()
+    url = request_data.get("url")
     url = url.replace("http://", "").replace("https://", "")
+    email = request_data.get("email")
 
-    email = "test"
+    if '.' not in url:
+        return jsonify({"message": "해당 사이트가 이미 전달되었거나 올바르지 않은 url입니다."})
 
     db = conn.db()
     cursor = db.cursor()
 
-    sql = "insert into RequestList (number, url, request_date, email, analysis_check) values(0, %s, %s, %s, 0)"
+    sql = "insert into RequestList (url, request_date, email, analysis_check) values(%s, %s, %s, 0)"
 
     try:
-        cursor.execute(sql, url)
+        cursor.execute(sql, (url, current_date, email))
+        db.commit()
     except pymysql.err.IntegrityError as e:
         return jsonify({"message": "해당 사이트가 이미 전달되었거나 올바르지 않은 url입니다."})
 
-    db.commit()
-
     return jsonify({"message": "사이트를 전달하였습니다."})
+
 
 @app.route("/post/chrome/xssCheck", methods=["POST"])
 def chrome_xss_check():
