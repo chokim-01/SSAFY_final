@@ -1,33 +1,33 @@
 (function() {
   document.querySelector("#secureTable").innerHTML = `
     <div style="text-align: center; margin-top: 15px;">
-      <div class="siren" id="plaintextIcon" data-tooltip-text="로그인 후 확인가능합니다.">
+      <div class="siren" id="plaintextContent" data-tooltip-text="로그인 후 확인가능합니다.">
         <span class="sirenTitle">데이터 평문</span>
-        <div id="plaintextContent">
+        <div id="plaintextIcon">
           <img src="./Icons/64_nomal.png" />
         </div>
       </div>
-      <div class="siren" id="httpIcon" data-tooltip-text="분석중 입니다.">
+      <div class="siren" id="httpContent" data-tooltip-text="분석중 입니다.">
         <span class="sirenTitle">HTTPS 여부</span>
-        <div id="httpContent">
+        <div id="httpIcon">
           <img src="./Icons/64_nomal.png" />
         </div>
       </div>
-      <div class="siren" id="hstsIcon" data-tooltip-text="분석중 입니다.">
+      <div class="siren" id="hstsContent" data-tooltip-text="분석중 입니다.">
         <span class="sirenTitle">HSTS 여부</span>
-        <div id="hstsContent">
+        <div id="hstsIcon">
           <img src="./Icons/64_nomal.png" />
         </div>
       </div>
-      <div class="siren" id="xssIcon" data-tooltip-text="분석중 입니다.">
+      <div class="siren" id="xssContent" data-tooltip-text="분석중 입니다.">
         <span class="sirenTitle">XSS 탐지</span>
-        <div id="xssContent">
+        <div id="xssIcon">
           <img src="./Icons/64_nomal.png" />
         </div>
       </div>
-      <div class="siren" id="phishingIcon" data-tooltip-text="분석중 입니다.">
+      <div class="siren" id="phishingContent" data-tooltip-text="분석중 입니다.">
         <span class="sirenTitle">피싱사이트</span>
-        <div id="phishingContent">
+        <div id="phishingIcon">
           <img src="./Icons/64_nomal.png" />
         </div>
       </div>
@@ -124,7 +124,7 @@
   // Login click
   var login = document.querySelector("#login");
   login.addEventListener('click', event => {
-    let loginForm = document.loginForm;
+    let loginForm = document.loginform;
     let email = loginForm.email.value;
     let userPassword = loginForm.password.value;
 
@@ -150,7 +150,7 @@
     //data['status'] : status, data['email'] : email, data['grade'] : grade?
     if(data['status'] === 'success') {
       document.querySelector("#loginTable").style.display = "none";
-      document.querySelector("#loginSuccess").style.display = "inline";
+      document.querySelector("#loginSuccess").style.display = "inline-block";
       document.querySelector("#loginMessage").innerHTML = data['email']+"님 환영합니다.";
     } else if(data['status'] == 'failed') {
       alert(data['message'])

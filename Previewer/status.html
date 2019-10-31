@@ -7,12 +7,12 @@
 		<div id="loginSuccess">
       <form class="logform">
         <img src="./Icons/64_main.png" alt="사이트 이동"/>
-        <div id="loginMessage"></div>
+        <span id="loginMessage"></span>
         <input class="btn" id="logout" type="button" value="로그아웃"/>
       </form>
 		</div>
 		<div id="loginTable">
-      <form class="loginform">
+      <form class="logform" name="loginform">
         <img src="./Icons/64_main.png" alt="사이트 이동"/>
         <input id="email" type="text" name="email" placeholder="Email" class="inputForm" style="width:40%" />
         <input id="pass" type="password" name="password" placeholder="password" class="inputForm"  style="width:30%"/>
@@ -46,6 +46,7 @@ height: 500px;
     line-height: 50px;
     margin-bottom: 0px;
     text-align: center;
+		width:600px;
   }
   .inputForm {
     height: 35px;
@@ -159,5 +160,9 @@ height: 500px;
     left: 0;
     opacity: 1;
   }
+	#loginMessage {
+		display: inline-block;
+		width: 65%;
+	}
   </style>
 </style>
