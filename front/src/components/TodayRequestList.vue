@@ -8,6 +8,7 @@
         <!-- AnalysisResult Change -->
         <v-chip
           @click="changeResult(item.email,item.requestUrl)"
+          :color="getResultColor(item.analysisResult)"
         >{{analysisResult(item.analysisResult)}}</v-chip>
       </template>
     </v-data-table>
@@ -67,9 +68,17 @@ export default {
           })
         })
       },
+      getResultColor (result) {
+        if (result == 1) {
+          return "#F78181";
+        }
+        else {
+          return "#BEF781";
+        }
+      },
       analysisResult(result){
-        if(result==1) return true
-        else return false
+        if(result==1) return "Valid Phishing"
+        else return "Invalid Phishing"
       }
     }
 }

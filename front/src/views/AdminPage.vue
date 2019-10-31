@@ -159,24 +159,12 @@ export default{
       Server(this.$store.state.SERVER_URL).get("/get/phishingList").then(result=>{
         this.list = []
         for(var idx = 0; idx < result.data.length; idx++) {
-          if(result.data[idx][1]=="in progress") {
-            this.list.push({
-              url: result.data[idx].url,
-              analysis:result.data[idx].analysis,
-              result: "no result"})
-            }
-            else {
-              this.list.push({
-                url: result.data[idx].url,
-                analysis:result.data[idx].analysis,
-                result: result.data[idx].result
-              })
-            }
-          }
-        })
-      }
+          this.list.push({ url: result.data[idx].url })
+        }
+      })
     }
   }
+}
 </script>
 
 <style scoped>

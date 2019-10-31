@@ -3,11 +3,10 @@
     <v-container>
       <!-- User Request URL -->
       <v-data-table :headers="headers" :items="userRequest">
-        <template v-slot:item.analysis="{ item }">
-          <v-chip :color="getAnalysisColor(item.analysis)" dark>{{ item.analysis }}</v-chip>
-        </template>
         <template v-slot:item.result="{ item }">
-          <v-chip :color="getResultColor(item.result)" dark>{{ item.result }}</v-chip>
+          <v-chip :color="getResultColor(item.result)">
+            {{ analysisResult(item.result) }}
+          </v-chip>
         </template>
       </v-data-table>
     </v-container>
@@ -35,11 +34,7 @@ export default {
         value: "date"
       },
       {
-        text: "Analysis",
-        value: "analysis"
-      },
-      {
-        text: "Result",
+        text: "Analysis Result",
         value: "result"
       }
     ],
@@ -49,23 +44,12 @@ export default {
     this.getRequests();
   },
   methods:{
-    getAnalysisColor (analysis) {
-      if (analysis == "Complete") {
-        return "blue";
-      }
-      else {
-        return "orange";
-      }
-    },
     getResultColor (result) {
-      if (result == "Phishing") {
-        return "red";
-      }
-      else if(result == "no result") {
-        return "yellow";
+      if (result == 1) {
+        return "#F78181";
       }
       else {
-        return "green";
+        return "#BEF781";
       }
     },
     getRequests() {
@@ -74,24 +58,17 @@ export default {
 
       Server(this.$store.state.SERVER_URL).post("/post/oneUserRequest", formData).then(result=>{
         for(var idx = 0; idx < result.data.length; idx++) {
-          if(result.data[idx][2]=="in progress") {
-            this.userRequest.push({
-              url: result.data[idx].url,
-              date: result.data[idx].request_date,
-              analysis: result.data[idx].analysis,
-              result: "no result"
-            })
-          }
-          else {
-            this.userRequest.push({
-              url: result.data[idx].url,
-              date: result.data[idx].request_date,
-              analysis: result.data[idx].analysis,
-              result: result.data[idx].result
-            })
-          }
+          this.userRequest.push({
+            url: result.data[idx].url,
+            date: result.data[idx].request_date,
+            result: result.data[idx].result
+          })
         }
       })
+    },
+    analysisResult(result) {
+      if(result==1) return "Valid Phishing"
+      else return "Invalid Phishing"
     }
   }
 }

@@ -373,9 +373,9 @@ def get_all_count():
     # Get user, request, payments, phishing site count
     sql = "select\
             (select count(*) from User) as userCount,\
-            (select count(*) from User u, Request r where r.request_date = %s and u.email = r.email) as todayCount,\
+            (select count(*) from User u, RequestList r where r.request_date = %s and u.email = r.email) as todayCount,\
             (select count(*) from User_Payment) as paymentCount,\
-            (select count(*) from SiteList) as siteCount"
+            (select count(*) from RequestList where analysis_check=1) as siteCount"
 
     cursor.execute(sql, today)
 
@@ -396,7 +396,7 @@ def get_user_list():
 
     cursor = conn.db().cursor()
 
-    sql = "select u.*, count(r.email) as requestCount from User u LEFT OUTER JOIN Request r on r.email = u.email group by `email`"
+    sql = "select u.*, count(r.email) as requestCount from User u LEFT OUTER JOIN RequestList r on r.email = u.email group by email"
 
     cursor.execute(sql)
 
@@ -417,9 +417,7 @@ def get_today_request():
 
     cursor = conn.db().cursor()
 
-    sql = "select u.email as email, u.url as url, s.analysisResult as analysisResult \
-            from (select u.email as email, r.url as url from User u, Request r where r.request_date = %s and u.email = r.email) u, sitelist s \
-                where s.url=u.url"
+    sql = "select email, url, analysis_check as analysisResult from RequestList where request_date = %s"
 
     cursor.execute(sql, today)
 
@@ -455,8 +453,7 @@ def get_phishing_list():
 
     cursor = conn.db().cursor()
 
-    sql = "select url, case analysisCheck when 1 then 'Complete' else 'in progress' END as analysis, " \
-          "case analysisResult when 1 then 'Phishing' else 'Safe' END as result from SiteList"
+    sql = "select url from RequestList where analysis_check=1"
 
     cursor.execute(sql)
 
@@ -476,11 +473,9 @@ def get_one_user_request():
 
     cursor = conn.db().cursor()
 
-    sql = "select r.url, date_format(r.request_date, '%%Y-%%m-%%d') as request_date,\
-              case s.analysisCheck when 1 then 'Complete' else 'in progress' END as analysis,\
-              case s.analysisResult when 1 then 'Phishing' else 'Safe' END as result\
-              from Request r, SiteList s \
-              where r.email = %s and r.url = s.url order by request_date desc"
+    sql = "select url, date_format(request_date, '%%Y-%%m-%%d') as request_date, analysis_check as result\
+            from RequestList \
+            where email = %s order by request_date desc"
 
     cursor.execute(sql, email)
 
@@ -499,7 +494,7 @@ def post_change_Analysis_Result():
 
     cursor = db.cursor()
 
-    sql = "update sitelist set analysisResult=NOT analysisResult where url=%s"
+    sql = "update RequestList set analysis_check=NOT analysis_check where url=%s"
     cursor.execute(sql, url)
     db.commit()
 
