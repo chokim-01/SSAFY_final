@@ -4,7 +4,7 @@ import Home from "./views/Home.vue";
 import MyPage from "./views/MyPage.vue";
 import AdminPage from "./views/AdminPage.vue";
 import UserRequest from "./views/UserRequest.vue";
-import payComplete from "./views/payComplete.vue";
+import PayComplete from "./views/PayComplete.vue";
 import store from "./store";
 Vue.use(Router);
 
@@ -54,7 +54,7 @@ export default new Router({
     {
       path: "/payComplete",
       name: "payComplete",
-      component: payComplete
+      component: PayComplete
     }
   ]
 });
