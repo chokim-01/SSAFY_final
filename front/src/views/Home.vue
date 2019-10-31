@@ -6,17 +6,15 @@
           🚥PREVIEWER
         </div>
       </v-flex>
-      <v-flex class="px-10" xs12>
-        <h3>
-          previewer는 가나다라가나다라가나다라가나다라가나다라가나다라가나다라가나다라가나다라 서비스입니다.
-        </h3>
+      <v-flex class="px-10 introTitle" xs12>
+        previewer는 인터넷 사용시 발생할 수 있는 위협을 탐지 및 차단하는 서비스 입니다.
       </v-flex>
       <v-flex class="px-10" xs12>
-        <p>
-          ❤️ previewer는 가나다라가나다라가나다라가나다라가나다라가나다라가나다라가나다라가나다라 서비스입니다.<br />
-          💛 previewer는 가나다라가나다라가나다라가나다라가나다라가나다라가나다라가나다라가나다라 서비스입니다.<br />
-          💚 previewer는 가나다라가나다라가나다라가나다라가나다라가나다라가나다라가나다라가나다라 서비스입니다.<br />
-        </p>
+          <p class="introText" >
+            ❤️ previewer는 피싱 사이트, Cross Site Script를 탐지하고 차단합니다.<br />
+            💛 previewer는 로그인 시 평문으로 전송되는지 탐지하고 차단합니다.<br />
+            💚 previewer는 HTTP, HTTPS, HSTS 를 탐지합니다.<br />
+          </p>
       </v-flex>
       <v-flex xs12>
         <v-btn class="my-12" text x-large>
@@ -87,19 +85,31 @@ export default {
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css?family=Do+Hyeon&display=swap");
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap');
 
 .mainPage {
   height:95vh;
   background-image: url("https://image.freepik.com/free-vector/_1055-3147.jpg");
   background-size: cover;
-  font-family: 'Do Hyeon', sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   text-align: center;
   color: black;
 }
 
 .projectName {
   font-size: 60px;
+}
+
+.introTitle {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.introText {
+  text-align: left;
+  margin: 0 auto;
+  width: fit-content;
+  font-size: 24px;
 }
 
 .moveButton {
@@ -115,5 +125,17 @@ export default {
 .stepImage {
   width:300px;
   height: 300px;
+}
+
+@media screen and (max-width: 768px) {
+  .projectName {
+    font-size: 40px;
+  }
+  .introTitle {
+    font-size: 24px;
+  }
+  .introText {
+    font-size: 15px;
+  }
 }
 </style>

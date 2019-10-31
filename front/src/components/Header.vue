@@ -1,7 +1,7 @@
 <template>
   <v-app-bar app>
     <v-toolbar-title class="headline text-uppercase" xs12>
-      <router-link class="moveHome" to="/">Previewer</router-link>
+      <router-link class="moveHome" to="/"><img class="mt-2" src="@/assets/logo_1.png" alt="Logo Image" width="200px"/></router-link>
     </v-toolbar-title>
 
     <v-spacer />
@@ -9,7 +9,7 @@
     <div v-if="check()">
       <v-dialog v-model="dialog" persistent max-width="500px">
         <template v-slot:activator="{ on }">
-          <v-btn text v-on="on">Log In</v-btn>
+          <v-btn v-on="on" text>Log In</v-btn>
         </template>
 
         <v-card class="text-center">
@@ -55,38 +55,29 @@
 
     <!-- After Login -->
     <div v-else text-center>
-      <v-menu offset-y>
+      <v-menu offset-y transition="slide-y-transition">
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on">
+          <v-btn v-on="on" text>
             <v-icon>mdi-account</v-icon>
           </v-btn>
         </template>
 
         <!-- User Name -->
-        <v-card width="250">
-          <v-flex xs8>
-            <v-card-text>
-              <h2>{{isuser().name}}</h2>
-              <br />
-            </v-card-text>
-
+        <v-card style="background-color: #ffffff00;" flat text>
+          <v-flex xs12>
             <!-- User Activate -->
-            <v-card-text>
-              <v-btn @click="signOut()" color="error">
-                <v-icon>mdi-logout</v-icon>
-              </v-btn>
-
-              <v-btn color="success" to="mypage">
-                <v-icon>mdi-account-edit</v-icon>
-              </v-btn>
-            </v-card-text>
+            <v-btn class="accountButton pt-4" to="mypage" color="success" fab >
+              <v-icon>mdi-account-edit</v-icon>
+            </v-btn>
 
             <!-- Admin Page -->
-            <v-card-text>
-              <v-list v-if="isuser().auth=='admin'" class="text-center">
-                <v-btn to="/adminpage" color="warning">관리자페이지</v-btn>
-              </v-list>
-            </v-card-text>
+            <v-btn v-if="isuser().auth=='admin'" class="accountButton pt-4" to="/adminpage" color="warning" fab>
+              <v-icon>mdi-key-variant</v-icon>
+            </v-btn>
+
+            <v-btn class="accountButton" @click="signOut()" color="error" fab>
+              <v-icon>mdi-logout</v-icon>
+            </v-btn>
           </v-flex>
         </v-card>
       </v-menu>
@@ -159,5 +150,17 @@ export default {
 .moveHome {
   text-decoration: none;
   color: black;
+}
+
+.accountButton{
+  display: block;
+  line-height: 56px;
+  margin: 20px auto;
+}
+</style>
+
+<style>
+.v-menu__content{
+  -webkit-box-shadow: none !important;
 }
 </style>

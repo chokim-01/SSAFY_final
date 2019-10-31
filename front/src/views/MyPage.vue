@@ -35,7 +35,7 @@
           <v-card-actions class="d-flex flex-row-reverse">
             <!-- User Information Delete -->
             <v-btn @click="userOut()" min-width="90px">
-              <span>회원 탈퇴</span>
+              <span class="red--text">회원 탈퇴</span>
             </v-btn>
             <!-- User Information Edit -->
             <useredit />
