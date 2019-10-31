@@ -1,4 +1,4 @@
-<center>[!previewer](./logo.png)</center>
+<center>[!previewer](https://lab.ssafy.com/k3y6reak/final-pjt/raw/develop/Resource/logo.png)</center>
 
 ---------------------------------------
 
@@ -13,7 +13,7 @@
 
 ### 사용방법
 1. [PREVIEWER](http://naver.com) 사이트에서 회원가입을 합니다.
-2. *차단 기능*을 사용하려면 결제가 필요합니다.
+2. `차단 기능`을 사용하려면 결제가 필요합니다.
 3. [크롬 확장 프로그램](http://naver.com)을 설치합니다.
 4. 웹 사이트를 이용합니다.
 
