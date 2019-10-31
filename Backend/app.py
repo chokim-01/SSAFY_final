@@ -55,6 +55,17 @@ def page_not_found(e):
 #                  Chrome section
 ################################################
 
+@app.route("/get/chrome/siteRequest", methods=["GET"])
+def chrome_get_site():
+    cursor = conn.db().cursor()
+    sql = "select url from RequestList where analysis_check = 1"
+    cursor.execute(sql)
+
+    result = cursor.fetchall()
+
+    return jsonify(result)
+
+
 @app.route("/post/chrome/signIn", methods=["POST"])
 def chrome_sign_in():
     # Get user information
