@@ -58,6 +58,11 @@
       name: "Data Communication"
   });
 
+  // Create sendPhishingSite port
+  var portSendSite = chrome.extension.connect({
+      name: "SendPhishing Communication"
+  })
+
   // Get session data & site Data
   portSession.postMessage(["Get Session Data",])
   portGetData.postMessage(["GET Site Data",]);
@@ -92,7 +97,6 @@
       document.querySelector("#plaintextContent").innerHTML = `<div class="div2 green">데이터가 안전하게 전송되었습니다.</div>`
     }
 
-
     if(httpStatus !== "https"){
       document.querySelector('#httpIcon').innerHTML = iconWarning;
       document.querySelector("#httpContent").innerHTML = `<div class="div2 yellow">HTTPS를 사용하지 않습니다.</div>`
@@ -101,7 +105,6 @@
       document.querySelector("#httpContent").innerHTML = `<div class="div2 green">HTTPS를 사용하고 있습니다.</div>`
     }
 
-
     if(hstsData) {
       document.querySelector("#hstsIcon").innerHTML = iconSecure;
       document.querySelector("#hstsContent").innerHTML = `<div class="div2 green">HSTS를 사용하고 있습니다.</div>`
@@ -109,7 +112,6 @@
       document.querySelector('#hstsIcon').innerHTML = iconWarning;
       document.querySelector("#hstsContent").innerHTML = `<div class="div2 yellow">HSTS를 사용하지 않습니다.</div>`
     }
-
 
     if(xss) {
       document.querySelector("#xssIcon").innerHTML = iconDanger;
@@ -135,7 +137,21 @@
     let loginForm = document.loginForm;
     let email = loginForm.email.value;
     let userPassword = loginForm.password.value;
+
+    if(email === "") {
+      alert("이메일을 입력해주세요");
+      return;
+    }
+    if(userPassword === "") {
+      alert("비밀번호를 입력해주세요");
+      return;
+    }
+
+    loginForm.email.value = "";
+    loginForm.password.value = "";
+
     portLogin.postMessage(["Login", email, userPassword]);
+
   });
 
   // Login Listener
@@ -157,6 +173,20 @@
     document.querySelector("#loginTable").style.display = "block";
     document.querySelector("#loginSuccess").style.display = "none";
     portLogin.postMessage(["Logout",])
+  });
+
+  // Send phishing Site click
+  var sendPhishingSite = document.querySelector("#sendphishing");
+  sendPhishingSite.addEventListener('click', event => {
+    urlDocument = document.querySelector("#url")
+    let url = urlDocument.value
+    urlDocument.value = ""
+
+    portSendSite.postMessage(["PhishingSite", url]);
+  });
+
+  portSendSite.onMessage.addListener((data) => {
+    alert(data);
   });
 
 })();

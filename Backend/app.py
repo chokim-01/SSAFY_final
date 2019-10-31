@@ -53,7 +53,7 @@ def page_not_found(e):
 @app.route("/post/chrome/signIn", methods=["POST"])
 def chrome_sign_in():
     # Get user information
-    request_data = request.get_json()
+    request_data = request.form
 
     email = request_data.get("email")
     password = request_data.get("password") + SALT
@@ -68,7 +68,6 @@ def chrome_sign_in():
 
     # If email or password does not match
     if isinstance(result, type(None)):
-        print("fail")
         return jsonify({"status":"failed","message": "회원정보를 다시 확인해주세요."})
 
     # Get user's grade
@@ -80,30 +79,28 @@ def chrome_sign_in():
 
     result['status'] = "success"
     result['grade'] = user_grade
-    print("success")
 
     return jsonify(result)
 
 
 @app.route("/post/chrome/siteRequest", methods=["POST"])
 def chrome_user_site_request():
-    """
-    User site request API
-    URL
-    :return: json type message
-    """
 
-    url = request_data
+    url = request.get_data().decode("UTF-8")
+    url = url.replace("http://", "").replace("https://", "")
 
     db = conn.db()
     cursor = db.cursor()
 
     sql = "insert into SiteList (url, analysisCheck, analysisResult) values (%s, 0, 0)"
-    cursor.execute(sql, url)
 
-    db.commit()
+    try:
+        cursor.execute(sql, url)
+        db.commit()
+    except pymysql.err.IntegrityError as e:
+        return jsonify({"message": "해당 사이트가 이미 전달되었거나 올바르지 않은 url입니다."})
 
-    return ""
+    return jsonify({"message": "사이트를 전달하였습니다."})
 
 @app.route("/post/chrome/xssCheck", methods=["POST"])
 def chrome_xss_check():
@@ -111,7 +108,7 @@ def chrome_xss_check():
     page_data = request.get_data().decode("UTF-8")
 
     cursor = conn.db().cursor()
-    sql = "select * from xssList"
+    sql = "select * from XssList"
     cursor.execute(sql)
 
     result = cursor.fetchall()
@@ -131,20 +128,18 @@ def chrome_phishing_check():
 
     url = request.get_data().decode("UTF-8")
 
+    url = url.replace("http://", "").replace("https://", "")
+
     cursor = conn.db().cursor()
-    sql = "select * from StieList"
-    cursor.execute(sql)
+    sql = "select * from SiteList where url = %s"
+    cursor.execute(sql, url)
 
-    result = cursor.fetchall()
+    result = cursor.fetchone()
 
-    phishing_flag = False
+    if result == None:
+        return jsonify({"phishingFlag": False})
 
-    for phishing in result:
-        if url == phishing:
-            phshing_flag = True
-            break
-
-    return jsonify({"phishingFlag": phishing_flag})
+    return jsonify({"phishingFlag": True})
 
 
 ################################################
@@ -285,7 +280,6 @@ def edit_user():
     password = request_data.get("password") + SALT
     password = hashlib.sha256(password.encode()).hexdigest()
 
-    print(request_data)
     db = conn.db()
     cursor = db.cursor()
 
@@ -326,8 +320,6 @@ def delete_user():
 def get_user_payment():
     email = request.form.get("email")
 
-    print(email)
-
     db = conn.db()
     cursor = db.cursor()
 
@@ -357,8 +349,6 @@ def get_all_count():
     today = get_today()
 
     cursor = conn.db().cursor()
-    print(today)
-
 
     # Get user, request, payments, phishing site count
     sql = "select\
