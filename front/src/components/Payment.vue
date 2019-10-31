@@ -6,9 +6,9 @@
           <span>결제</span>
         </v-card-title>
         <!-- Payment Grade List -->
-        <v-layout>
+        <v-layout xs12>
           <!-- basic Grade -->
-          <v-flex md4>
+          <v-flex xs12>
             <v-card>
               <v-card-title class="justify-center">
                 <span>basic</span>
@@ -18,17 +18,17 @@
               </v-card-text>
 
               <!-- payment button -->
-              <v-flex offset-xs2 offset-sm5>
+              <v-flex>
                 <v-btn>
                   <span v-if="grade==='pro'|| grade==='premium'">CAN'T PAY</span>
-                  <span v-else-if="grade==='basic'">Current</span>
+                  <span v-else>Current</span>
                 </v-btn>
               </v-flex>
             </v-card>
           </v-flex>
 
           <!-- pro Grade -->
-          <v-flex md4>
+          <v-flex xs12>
             <v-card>
               <v-card-title class="justify-center">
                 <span>pro</span>
@@ -40,7 +40,7 @@
               <!-- payment button -->
               <v-flex offset-xs2 offset-sm5>
                 <v-btn>
-                  <span v-if="grade==='basic'" @click="pay('pro')">결제</span>
+                  <span v-if="grade==='Basic'" @click="pay('pro')">결제</span>
                   <span v-else-if="grade==='pro'">Current</span>
                   <span v-else>CAN'T PAY</span>
                 </v-btn>
@@ -49,8 +49,8 @@
           </v-flex>
 
           <!-- premium Grade -->
-          <v-flex md4>
-            <v-card>
+          <v-flex xs12>
+            <v-card xs12>
               <v-card-title class="justify-center">
                 <span>premium</span>
               </v-card-title>
@@ -61,7 +61,7 @@
               <!-- payment button -->
               <v-flex offset-xs2 offset-sm5>
                 <v-btn>
-                  <span v-if="grade==='basic' || grade==='pro'" @click="pay('premium')">결제</span>
+                  <span v-if="grade==='Basic' || grade==='pro'" @click="pay('premium')">결제</span>
                   <span v-else>Current</span>
                 </v-btn>
               </v-flex>
