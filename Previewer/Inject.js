@@ -146,7 +146,6 @@
 
   // Login Listener
   portLogin.onMessage.addListener((data) => {
-      console.log(data['status'])
     //data['status'] : status, data['email'] : email, data['grade'] : grade?
     if(data['status'] === 'success') {
       document.querySelector("#loginTable").style.display = "none";

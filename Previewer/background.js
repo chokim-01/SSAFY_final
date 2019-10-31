@@ -105,7 +105,6 @@ var signIn = async (email, password, port) => {
     url: "http://52.79.152.29:5000/post/chrome/signIn",
     data: {email:email, password:password},
     success: (data) => {
-			console.log(data);
 			// sessionStorage setItem
 			if(data['status'] === "success")
 				sessionStorage.setItem('email', data['email'])
