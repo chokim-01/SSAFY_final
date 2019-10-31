@@ -49,6 +49,8 @@ chrome.extension.onConnect.addListener((port) => {
 					signIn(message[1], message[2], port);
 				} else if(message[0] === "Logout") {
 					sessionStorage.clear();
+				} else if(message[0] === "PhishingSite") {
+					sendSite(message[1], port);
 				}
     });
 });
@@ -104,7 +106,7 @@ var signIn = async (email, password, port) => {
     data: {email:email, password:password},
     success: (data) => {
 			// sessionStorage setItem
-			if(data['success'] === true)
+			if(data['status'] === "success")
 				sessionStorage.setItem('email', data['email'])
 			port.postMessage(data)
     },
@@ -185,6 +187,21 @@ var phishingCheck = async (tab, port) => {
     error: (error) => {
     }
   });
+}
+
+var sendSite = (url, port) => {
+	//send Site
+	$.ajax({
+		type: "POST",
+		url: "http://52.79.152.29:5000/post/chrome/siteRequest",
+		data: url,
+		success: (data) => {
+			port.postMessage(data["message"])
+		},
+		error: (error) => {
+
+		}
+	})
 }
 
 var setIcon = (status, tabId) => {
