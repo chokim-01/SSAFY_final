@@ -332,7 +332,7 @@ def get_user_payment():
     cursor = db.cursor()
 
     sql = "SELECT (CASE WHEN expire_date > now() THEN grade ELSE 'basic' END) as grade, \
-            date_format(payment_date, '%%Y-%%m-%%d') as payment_date,  date_format(expire_date, '%%Y-%%m-%%d') as expire_date \
+            date_format(payment_date, '%%Y년%%m월%%d일 %%H시 %%i분') as payment_date,  date_format(expire_date, '%%Y년%%m월%%d일 %%H시 %%i분') as expire_date \
             FROM User_Payment WHERE email= %s ORDER BY expire_date limit 1"
 
     cursor.execute(sql, email)
@@ -354,7 +354,7 @@ def get_user_payment_history():
     email = request.form.get("email")
     db = conn.db()
     cursor = db.cursor()
-    sql = "SELECT grade, date_format(payment_date, '%%Y-%%m-%%d') as payment_date, date_format(expire_date, '%%Y-%%m-%%d') as expire_date FROM user_payment WHERE email=%s ORDER BY expire_date DESC"
+    sql = "SELECT grade, date_format(payment_date, '%%Y년%%m월%%d일 %%H시 %%i분') as payment_date, date_format(expire_date, '%%Y년%%m월%%d일 %%H시 %%i분') as expire_date FROM user_payment WHERE email=%s ORDER BY expire_date DESC"
     cursor.execute(sql, email)
     data = (cursor.fetchall())
     return jsonify(data)

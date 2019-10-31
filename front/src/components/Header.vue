@@ -9,7 +9,7 @@
     <div v-if="check()">
       <v-dialog v-model="dialog" persistent max-width="500px">
         <template v-slot:activator="{ on }">
-          <v-btn text v-on="on">Log In</v-btn>
+          <v-btn v-on="on" text>Log In</v-btn>
         </template>
 
         <v-card class="text-center">
@@ -57,16 +57,16 @@
     <div v-else text-center>
       <v-menu offset-y>
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on">
+          <v-btn v-on="on" text>
             <v-icon>mdi-account</v-icon>
           </v-btn>
         </template>
 
         <!-- User Name -->
         <v-card width="250">
-          <v-flex xs8>
+          <v-flex xs12>
             <v-card-text>
-              <h2>{{isuser().name}}</h2>
+              <h3>{{isuser().name}}님 환영합니다.</h3>
               <br />
             </v-card-text>
 
