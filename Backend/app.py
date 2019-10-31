@@ -6,10 +6,12 @@ import hashlib
 import certifi
 import OpenSSL
 import conn.conn as conn
+import requests
 from urllib3 import PoolManager, Timeout
 from datetime import datetime
 from flask_cors import CORS
 from flask import Flask, jsonify, request
+
 
 SALT = "SSAFY_FINAL_PJT"
 
@@ -204,7 +206,7 @@ def sign_up():
     """
 
     request_data = request.get_json()
-
+    print("here")
     # Get user data
     email = request_data.get("email")
     name = request_data.get("name")
@@ -477,16 +479,50 @@ def post_change_Analysis_Result():
     db = conn.db()
     url = request.form.get("url")
 
-
     cursor = db.cursor()
-
 
     sql = "update sitelist set analysisResult=NOT analysisResult where url=%s"
     cursor.execute(sql, url)
     db.commit()
 
-
     return jsonify()
+
+################################################
+#                  Pay Section
+################################################
+@app.route("/post/pay",methods=["POST"])
+def post_pay():
+    """
+    Post pay info
+    :return: tid, next_redirect_pc_url
+    """
+    amount=request.form.get("amount")
+    grade=request.form.get("grade")
+    print(amount)
+    url = "https://kapi.kakao.com"
+    headers = {
+        'Authorization': "KakaoAK " + "d3b28bf93c1e44abe14dcce6278f42ba",
+        'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+    }
+    params = {
+        'cid': "TC0ONETIME",
+        'partner_order_id': '1001',
+        'partner_user_id': 'test',
+        'item_name': grade,
+        'quantity': 1,
+        'total_amount': amount,
+        'vat_amount': 0,
+        'tax_free_amount': 0,
+        'approval_url': 'http://localhost:8080/payComplete',
+        'fail_url': 'http://localhost:8080',
+        'cancel_url': 'http://localhost:8080',
+    }
+    response = requests.post(url + "/v1/payment/ready", params=params, headers=headers)
+    result=response.json()
+    print(result)
+    return jsonify(result)
+
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
