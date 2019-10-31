@@ -1,18 +1,18 @@
-﻿import os
+import os
 import ssl
 import socket
 import pymysql
 import hashlib
 import certifi
 import OpenSSL
-import conn.conn as conn
 import requests
+import conn.conn as conn
 from urllib3 import PoolManager, Timeout
 from datetime import datetime
 from flask_cors import CORS
 from flask import Flask, jsonify, request
 
-
+# User password salt 
 SALT = "SSAFY_FINAL_PJT"
 
 # Certificate check
@@ -25,7 +25,6 @@ http = PoolManager(
 ROOT_PATH = os.path.dirname(os.path.abspath("__file__"))
 STATIC_PATH = os.path.join(ROOT_PATH, "dist")
 
-
 # Flask run at STATIC_PATH
 app = Flask("__name__", static_folder=STATIC_PATH, static_url_path='')
 
@@ -35,6 +34,10 @@ cors = CORS(app, resources={
 
 
 def get_today():
+    """
+    Get today
+    :return: YYYYMMDD
+    """
     return datetime.today().strftime('%Y-%m-%d')
 
 
@@ -91,16 +94,19 @@ def chrome_user_site_request():
     url = request.get_data().decode("UTF-8")
     url = url.replace("http://", "").replace("https://", "")
 
+    email = "test"
+
     db = conn.db()
     cursor = db.cursor()
 
-    sql = "insert into SiteList (url, analysisCheck, analysisResult) values (%s, 0, 0)"
+    sql = "insert into RequestList (number, url, request_date, email, analysis_check) values(0, %s, %s, %s, 0)"
 
     try:
         cursor.execute(sql, url)
-        db.commit()
     except pymysql.err.IntegrityError as e:
         return jsonify({"message": "해당 사이트가 이미 전달되었거나 올바르지 않은 url입니다."})
+
+    db.commit()
 
     return jsonify({"message": "사이트를 전달하였습니다."})
 
@@ -133,7 +139,7 @@ def chrome_phishing_check():
     url = url.replace("http://", "").replace("https://", "")
 
     cursor = conn.db().cursor()
-    sql = "select * from SiteList where url = %s"
+    sql = "select * from RequestList where url = %s and analysis_check = 1"
     cursor.execute(sql, url)
 
     result = cursor.fetchone()
