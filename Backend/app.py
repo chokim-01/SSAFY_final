@@ -522,6 +522,31 @@ def post_pay():
     print(result)
     return jsonify(result)
 
+@app.route("/post/payComplete",methods=["POST"])
+def post_pay_complete():
+    """
+    post pg_token, tid, total_amount
+    :return: payment info
+    """
+    pg_token=request.form.get("pg_token")
+    tid=request.form.get("tid")
+    total_amount=request.form.get("total_amount")
+    url = "https://kapi.kakao.com"
+    headers ={
+        'Authorization': "KakaoAK " + "d3b28bf93c1e44abe14dcce6278f42ba",
+        'Content-type': 'application / x - www - form - urlencoded;charset = utf - 8'
+    }
+    params = {
+        'cid': 'TC0ONETIME',
+        'tid': tid,
+        'partner_order_id': '1001',
+        'partner_user_id': 'test',
+        'pg_token': pg_token,
+        'total_amount' : total_amount
+    }
+    response=requests.post(url+"/v1/payment/approve",params=params,headers=headers)
+    return jsonify(response.json())
+
 
 
 if __name__ == "__main__":
