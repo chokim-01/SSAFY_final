@@ -547,6 +547,20 @@ def post_pay_complete():
     response=requests.post(url+"/v1/payment/approve",params=params,headers=headers)
     return jsonify(response.json())
 
+@app.route("/post/price",methods=["POST"])
+def post_price():
+    """
+    post grade
+    :return: price of grade
+    """
+    grade=request.form.get("grade")
+    cursor = conn.db().cursor()
+    print(grade)
+    sql = "select price from payment where grade= %s"
+    cursor.execute(sql,grade)
+    res=cursor.fetchall()
+
+    return jsonify(res)
 
 
 if __name__ == "__main__":
