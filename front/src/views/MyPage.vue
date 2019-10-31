@@ -33,12 +33,12 @@
           </v-card-text>
           <v-divider></v-divider>
           <v-card-actions class="d-flex flex-row-reverse">
-              <!-- User Information Delete -->
-              <v-btn @click="userOut()" min-width="90px" >
-                <span>회원 탈퇴</span>
-              </v-btn>
-              <!-- User Information Edit -->
-              <useredit />
+            <!-- User Information Delete -->
+            <v-btn @click="userOut()" min-width="90px">
+              <span>회원 탈퇴</span>
+            </v-btn>
+            <!-- User Information Edit -->
+            <useredit />
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -79,9 +79,7 @@
               <v-card>
                 <v-card-title>
                   <v-layout>
-                    <v-flex>
-                      {{isuser().name}}님의 결제 내역
-                    </v-flex>
+                    <v-flex>{{isuser().name}}님의 결제 내역</v-flex>
                     <v-flex class="justify-end">
                       <v-btn @click="history = false" text style="float: right">
                         <v-icon>mdi mdi-close</v-icon>
@@ -92,10 +90,10 @@
                 <v-divider></v-divider>
                 <v-card-text id="historyTable" class="pt-5" style="height: 300px;">
                   <v-data-table
-                  :headers="historyHeader"
-                  :items="paymentHistory"
-                  class="elevation-1"
-                  hide-default-footer
+                    :headers="historyHeader"
+                    :items="paymentHistory"
+                    class="elevation-1"
+                    hide-default-footer
                   ></v-data-table>
                 </v-card-text>
                 <v-divider></v-divider>
@@ -110,7 +108,7 @@
                   <span>결제하기</span>
                 </v-btn>
               </template>
-              <payment />
+              <payment :grade="userPaymentInfo.grade" />
             </v-dialog>
           </v-card-actions>
         </v-card>
@@ -150,6 +148,7 @@ export default {
     history: false,
     totalPrice: 0,
     paymentHistory: [],
+    paymentGrade:"",
     historyHeader: [
       {
           text:"grade",
@@ -246,7 +245,7 @@ export default {
 </style>
 
 <style>
-#historyTable tbody>tr:nth-child(1){
-  background-color: #CEECF5;
+#historyTable tbody > tr:nth-child(1) {
+  background-color: #ceecf5;
 }
 </style>
