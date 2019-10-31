@@ -18,7 +18,9 @@ export default new Vuex.Store({
     userCount: 0,
     todayCount: 0,
     paymentCount: 0,
-    phishingCount: 0
+    phishingCount: 0,
+    tid: "",
+    total_amount: ""
   },
   getters: {
     getUser: state => {
@@ -26,6 +28,12 @@ export default new Vuex.Store({
     },
     getisLog: state => {
       return state.isLog;
+    },
+    getTid: state => {
+      return state.tid;
+    },
+    getTotalAmount: state => {
+      return state.total_amount;
     }
   },
   mutations: {
@@ -37,6 +45,12 @@ export default new Vuex.Store({
     },
     logout(state) {
       state.user = null;
+    },
+    tid(state, tid) {
+      state.tid = tid;
+    },
+    total_amount(state, total_amount) {
+      state.total_amount = total_amount;
     }
   },
   actions: {
@@ -48,6 +62,12 @@ export default new Vuex.Store({
     },
     logout({ commit }) {
       commit("logout");
+    },
+    tid({ commit }, tid) {
+      commit("tid", tid);
+    },
+    total_amount({ commit }, total_amount) {
+      commit("total_amount", total_amount);
     }
   }
 });
