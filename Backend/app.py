@@ -562,6 +562,26 @@ def post_price():
 
     return jsonify(res)
 
+@app.route("/post/addPay",methods=["POST"])
+def add_pay():
+    """
+    post pay history
+    :return:
+    """
+    approved_time=request.form.get("approved_time")
+    approved_time=approved_time.split("T")
+    time=approved_time[0]+" "+approved_time[1]
+    grade=request.form.get("grade")
+    email=request.form.get("email")
+    db = conn.db()
+    cursor = db.cursor()
+
+    sql= "insert into user_payment values(%s,%s,%s,date_add(%s, interval 1 month));"
+    cursor.execute(sql,(email,grade,time,time))
+
+    db.commit()
+
+    return jsonify()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
