@@ -18,7 +18,7 @@
               </v-card-text>
 
               <!-- payment button -->
-              <v-flex>
+              <v-flex offset-xs2 offset-sm5>
                 <v-btn>
                   <span v-if="grade==='pro'|| grade==='premium'">CAN'T PAY</span>
                   <span v-else>Current</span>
