@@ -1,10 +1,16 @@
 var dataTransferCheck = {};
+var phishingSite = [];
+
+chrome.tabs.onCreated.addListener((tab) => {
+	getSite();
+});
 
 chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 	// Get User access url ex) https://naver.com
 	url = tab.url;
+	exception_url = url.indexOf("chrome://")
 
-	if(url !== undefined && changeInfo.status ==="complete")
+	if(exception_url !== 0 && changeInfo.status ==="complete")
 	{
 		// Get user input password
 		chrome.tabs.executeScript({
@@ -17,6 +23,15 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 
 chrome.webRequest.onBeforeRequest.addListener((requestData) => {
 	// Request method check
+	let urlBeforeConnect = requestData.url.replace("http://", "").replace("https://", "")
+	for(data of phishingSite) {
+		if(urlBeforeConnect == data.url || urlBeforeConnect == data.url+"/") {
+			let flagPhishing = confirm("피싱사이트로 탐지되었습니다. 정말로 연결하시겠습니까?")
+			if(!flagPhishing) {
+				return {cancel: true}
+			}
+		}
+	}
 	if(requestData.method == "POST")
 	{
 		checkPassword(requestData);
@@ -201,6 +216,21 @@ var sendSite = (url, port) => {
 		data: {url:url, email:email},
 		success: (data) => {
 			port.postMessage(data["message"])
+		},
+		error: (error) => {
+
+		}
+	})
+}
+
+var getSite = () => {
+	// get Site
+	$.ajax({
+		type: "GET",
+		url: "http://52.79.152.29:5000/get/chrome/siteRequest",
+		async: false,
+		success: (data) => {
+			phishingSite = data;
 		},
 		error: (error) => {
 
