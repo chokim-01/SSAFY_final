@@ -334,6 +334,24 @@ def get_user_payment():
 
     return jsonify(data)
 
+@app.route("/post/getPaymentGrade", methods=["POST"])
+def get_payment_grade():
+    db = conn.db()
+    cursor = db.cursor()
+    sql = "SELECT * FROM Payment"
+    cursor.execute(sql)
+    data = (cursor.fetchall())
+    return jsonify(data)
+
+@app.route("/post/getPaymentHistory", methods=["POST"])
+def get_user_payment_history():
+    email = request.form.get("email")
+    db = conn.db()
+    cursor = db.cursor()
+    sql = "SELECT grade, date_format(payment_date, '%%Y-%%m-%%d') as payment_date, date_format(expire_date, '%%Y-%%m-%%d') as expire_date FROM user_payment WHERE email=%s ORDER BY expire_date DESC"
+    cursor.execute(sql, email)
+    data = (cursor.fetchall())
+    return jsonify(data)
 
 ################################################
 #                  Admin Section
