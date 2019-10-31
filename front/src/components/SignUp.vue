@@ -70,7 +70,8 @@ export default {
 
       }
       Server(this.$store.state.SERVER_URL).post("/post/signUp",userdata).then((res)=>{
-        if(res.data.result === "가입완료."){
+        console.log(res)
+        if(res.data.message.length>0){
           alert(res.data.message)
           
         

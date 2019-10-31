@@ -6,10 +6,12 @@ import hashlib
 import certifi
 import OpenSSL
 import conn.conn as conn
+import requests
 from urllib3 import PoolManager, Timeout
 from datetime import datetime
 from flask_cors import CORS
 from flask import Flask, jsonify, request
+
 
 SALT = "SSAFY_FINAL_PJT"
 
@@ -204,7 +206,7 @@ def sign_up():
     """
 
     request_data = request.get_json()
-
+    print("here")
     # Get user data
     email = request_data.get("email")
     name = request_data.get("name")
@@ -332,6 +334,24 @@ def get_user_payment():
 
     return jsonify(data)
 
+@app.route("/post/getPaymentGrade", methods=["POST"])
+def get_payment_grade():
+    db = conn.db()
+    cursor = db.cursor()
+    sql = "SELECT * FROM Payment"
+    cursor.execute(sql)
+    data = (cursor.fetchall())
+    return jsonify(data)
+
+@app.route("/post/getPaymentHistory", methods=["POST"])
+def get_user_payment_history():
+    email = request.form.get("email")
+    db = conn.db()
+    cursor = db.cursor()
+    sql = "SELECT grade, date_format(payment_date, '%%Y-%%m-%%d') as payment_date, date_format(expire_date, '%%Y-%%m-%%d') as expire_date FROM user_payment WHERE email=%s ORDER BY expire_date DESC"
+    cursor.execute(sql, email)
+    data = (cursor.fetchall())
+    return jsonify(data)
 
 ################################################
 #                  Admin Section
@@ -477,14 +497,107 @@ def post_change_Analysis_Result():
     db = conn.db()
     url = request.form.get("url")
 
-
     cursor = db.cursor()
-
 
     sql = "update sitelist set analysisResult=NOT analysisResult where url=%s"
     cursor.execute(sql, url)
     db.commit()
 
+    return jsonify()
+
+################################################
+#                  Pay Section
+################################################
+@app.route("/post/pay",methods=["POST"])
+def post_pay():
+    """
+    Post pay info
+    :return: tid, next_redirect_pc_url
+    """
+    amount=request.form.get("amount")
+    grade=request.form.get("grade")
+    print(amount)
+    url = "https://kapi.kakao.com"
+    headers = {
+        'Authorization': "KakaoAK " + "d3b28bf93c1e44abe14dcce6278f42ba",
+        'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+    }
+    params = {
+        'cid': "TC0ONETIME",
+        'partner_order_id': '1001',
+        'partner_user_id': 'test',
+        'item_name': grade,
+        'quantity': 1,
+        'total_amount': amount,
+        'vat_amount': 0,
+        'tax_free_amount': 0,
+        'approval_url': 'http://localhost:8080/payComplete',
+        'fail_url': 'http://localhost:8080',
+        'cancel_url': 'http://localhost:8080',
+    }
+    response = requests.post(url + "/v1/payment/ready", params=params, headers=headers)
+    result=response.json()
+    print(result)
+    return jsonify(result)
+
+@app.route("/post/payComplete",methods=["POST"])
+def post_pay_complete():
+    """
+    post pg_token, tid, total_amount
+    :return: payment info
+    """
+    pg_token=request.form.get("pg_token")
+    tid=request.form.get("tid")
+    total_amount=request.form.get("total_amount")
+    url = "https://kapi.kakao.com"
+    headers ={
+        'Authorization': "KakaoAK " + "d3b28bf93c1e44abe14dcce6278f42ba",
+        'Content-type': 'application / x - www - form - urlencoded;charset = utf - 8'
+    }
+    params = {
+        'cid': 'TC0ONETIME',
+        'tid': tid,
+        'partner_order_id': '1001',
+        'partner_user_id': 'test',
+        'pg_token': pg_token,
+        'total_amount' : total_amount
+    }
+    response=requests.post(url+"/v1/payment/approve",params=params,headers=headers)
+    return jsonify(response.json())
+
+@app.route("/post/price",methods=["POST"])
+def post_price():
+    """
+    post grade
+    :return: price of grade
+    """
+    grade=request.form.get("grade")
+    cursor = conn.db().cursor()
+    print(grade)
+    sql = "select price from payment where grade= %s"
+    cursor.execute(sql,grade)
+    res=cursor.fetchall()
+
+    return jsonify(res)
+
+@app.route("/post/addPay",methods=["POST"])
+def add_pay():
+    """
+    post pay history
+    :return:
+    """
+    approved_time=request.form.get("approved_time")
+    approved_time=approved_time.split("T")
+    time=approved_time[0]+" "+approved_time[1]
+    grade=request.form.get("grade")
+    email=request.form.get("email")
+    db = conn.db()
+    cursor = db.cursor()
+
+    sql= "insert into user_payment values(%s,%s,%s,date_add(%s, interval 1 month));"
+    cursor.execute(sql,(email,grade,time,time))
+
+    db.commit()
 
     return jsonify()
 
