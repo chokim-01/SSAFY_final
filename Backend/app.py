@@ -76,7 +76,7 @@ def chrome_sign_in():
     password = hashlib.sha256(password.encode()).hexdigest()
 
     cursor = conn.db().cursor()
-    sql = "select * from User where email = %s and password = %s"
+    sql = "select email,grade from User where email = %s and password = %s"
     cursor.execute(sql, (email, password))
 
     # Get one user
@@ -86,15 +86,8 @@ def chrome_sign_in():
     if isinstance(result, type(None)):
         return jsonify({"status":"failed","message": "회원정보를 다시 확인해주세요."})
 
-    # Get user's grade
-    cursor = conn.db().cursor()
-    sql = "select grade from User_Payment where email = %s";
-    cursor.execute(sql, result['email'])
-
-    user_grade = cursor.fetchone()
-
     result['status'] = "success"
-    result['grade'] = user_grade
+    result['grade'] = result['grade']
 
     return jsonify(result)
 
@@ -150,7 +143,6 @@ def chrome_xss_check():
 def chrome_phishing_check():
 
     url = request.get_data().decode("UTF-8")
-
     url = url.replace("http://", "").replace("https://", "")
 
     cursor = conn.db().cursor()
@@ -186,7 +178,7 @@ def hsts_check():
 
     site_data = dict()
     ssl_info = ''
-    site_data["hsts"] = False
+    site_data['hsts'] = False
 
     # Get certificate data
     try:
@@ -241,7 +233,7 @@ def sign_up():
     db = conn.db()
     cursor = db.cursor()
 
-    sql = "insert into User (email, name, password, auth, grade) values (%s, %s, %s, %s, 'BASIC')"
+    sql = "insert into User (email, name, password, auth,grade) values (%s, %s, %s, %s,'basic')"
 
     # User email existed check
     try:
@@ -611,8 +603,10 @@ def add_pay():
     db = conn.db()
     cursor = db.cursor()
 
-    sql= "insert into user_payment values(%s,%s,%s,date_add(%s, interval 1 month));"
+    sql= "insert into user_payment values(%s,%s,%s,date_add(%s, interval 1 month)); "
+    usersql = "update user set grade=%s where email=%s"
     cursor.execute(sql,(email,grade,time,time))
+    cursor.execute(usersql, (grade, email))
 
     db.commit()
 

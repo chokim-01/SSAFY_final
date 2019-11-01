@@ -144,9 +144,10 @@ var signIn = async (email, password, port) => {
     data: {email:email, password:password},
     success: (data) => {
 			// sessionStorage setItem
-			if(data['status'] === "success")
-			sessionStorage.setItem('email', data['email'])
-			sessionStorage.setItem('email', data['grade'])
+			if(data['status'] === "success") {
+				sessionStorage.setItem('email', data['email'])
+				sessionStorage.setItem('grade', data['grade'])
+			}
 			port.postMessage(data)
     },
     error: (error) => {
@@ -234,10 +235,16 @@ function size() {
 
 var phishingCheck = async (tab, port) => {
   // Check HSTS, Get sslData
+	url = tab.url;
+	let lastUrl = url.charAt(url.length-1);
+	if(lastUrl === "/"){
+		url = url.slice(0, -1);
+	}
+
   await $.ajax({
     type: "POST",
     url: "http://52.79.152.29:5000/post/chrome/phishingCheck",
-    data: tab.url,
+    data: url,
     success: (data) => {
 			chrome.storage.local.set({"data5":data['phishingFlag']});
 			if(port == null && data['phishingFlag']){
