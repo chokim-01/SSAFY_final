@@ -240,7 +240,7 @@ def sign_up():
     db = conn.db()
     cursor = db.cursor()
 
-    sql = "insert into User (email, name, password, auth) values (%s, %s, %s, %s)"
+    sql = "insert into User (email, name, password, auth,grade) values (%s, %s, %s, %s,'basic')"
 
     # User email existed check
     try:
@@ -610,8 +610,10 @@ def add_pay():
     db = conn.db()
     cursor = db.cursor()
 
-    sql= "insert into user_payment values(%s,%s,%s,date_add(%s, interval 1 month));"
+    sql= "insert into user_payment values(%s,%s,%s,date_add(%s, interval 1 month)); "
+    usersql = "update user set grade=%s where email=%s"
     cursor.execute(sql,(email,grade,time,time))
+    cursor.execute(usersql, (grade, email))
 
     db.commit()
 
