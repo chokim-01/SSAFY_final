@@ -64,7 +64,8 @@
 
     document.querySelector("#loginTable").style.display = "none";
     document.querySelector("#loginSuccess").style.display = "inline";
-    document.querySelector("#loginMessage").innerHTML = email+"님 환영합니다.";
+    document.querySelector("#loginMessage").innerHTML = email+"님";
+    document.querySelector("#UserGrade").innerHTML = grade;
   });
 
   var iconSecure = "<img src='./Icons/64_secure.png' />"
@@ -149,8 +150,9 @@
     //data['status'] : status, data['email'] : email, data['grade'] : grade?
     if(data['status'] === 'success') {
       document.querySelector("#loginTable").style.display = "none";
-      document.querySelector("#loginSuccess").style.display = "inline-block";
-      document.querySelector("#loginMessage").innerHTML = data['email']+"님 환영합니다.";
+      document.querySelector("#loginSuccess").style.display = "inline";
+      document.querySelector("#loginMessage").innerHTML = data['email']+"님";
+      document.querySelector("#UserGrade").innerHTML = data['grade'];
     } else if(data['status'] == 'failed') {
       alert(data['message'])
     }
@@ -177,5 +179,76 @@
   portSendSite.onMessage.addListener((data) => {
     alert(data);
   });
+
+  chrome.storage.local.get(["tabHistory"], res => {
+    let historyArray = res.tabHistory;
+    historyArray = historyArray.reverse()
+    for(let history of historyArray){
+      inputHistory(history);
+    }
+  });
+
+  var inputHistory = (history) => {
+    let plaintext = "./Icons/38_secure.png";
+    let httpsStatus = "./Icons/38_secure.png";
+    let hstsStatus = "./Icons/38_secure.png";
+    let xssStatus = "./Icons/38_secure.png";
+    let phishingStatus = "./Icons/38_secure.png";
+
+    if(history.data1) {
+      plaintext = "./Icons/38_warning.png";
+    }
+    if(history.data2 === "http") {
+      httpsStatus = "./Icons/38_warning.png";
+    }
+    if(!history.data3) {
+      hstsStatus = "./Icons/38_warning.png";
+    }
+    if(history.data4) {
+      xssStatus = "./Icons/38_danger.png";
+    }
+    if(history.data5) {
+      phishingStatus = "./Icons/38_danger.png";
+    }
+    if(history.url.length > 60) {
+      history.url = history.url.slice(0,60)+"..."
+    }
+    document.querySelector("#history").innerHTML +=
+    `<div class="his" id="history_2">
+        <p class="text-center"> `+history.url+` </p>
+        <div class="mb-2" style="text-align: center; margin-top: 15px;">
+            <div class="siren">
+                <span class="sirenTitle">데이터 평문</span>
+                <div id="plaintextIcon">
+                    <img src=`+plaintext+` />
+                </div>
+            </div>
+            <div class="siren">
+                <span class="sirenTitle">HTTPS 여부</span>
+                <div id="httpIcon">
+                    <img src=`+httpsStatus+` />
+                </div>
+            </div>
+            <div class="siren">
+                <span class="sirenTitle">HSTS 여부</span>
+                <div id="hstsIcon">
+                    <img src=`+hstsStatus+` />
+                </div>
+            </div>
+            <div class="siren">
+                <span class="sirenTitle">XSS 탐지</span>
+                <div id="xssIcon">
+                    <img src=`+xssStatus+` />
+                </div>
+            </div>
+            <div class="siren">
+                <span class="sirenTitle">피싱사이트</span>
+                <div id="phishingIcon">
+                    <img src=`+phishingStatus+` />
+                </div>
+            </div>
+        </div>
+    </div>`
+  }
 
 })();

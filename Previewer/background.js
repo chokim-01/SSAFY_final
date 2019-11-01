@@ -1,9 +1,6 @@
 var dataTransferCheck = {};
 var phishingSite = [];
-
-chrome.tabs.onCreated.addListener((tab) => {
-	getSite();
-});
+var tabHistory = new Queue();
 
 chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 	// Get User access url ex) https://naver.com
@@ -23,12 +20,15 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 
 chrome.webRequest.onBeforeRequest.addListener((requestData) => {
 	// Request method check
-	let urlBeforeConnect = requestData.url.replace("http://", "").replace("https://", "")
-	for(data of phishingSite) {
-		if(urlBeforeConnect == data.url || urlBeforeConnect == data.url+"/") {
-			let flagPhishing = confirm("피싱사이트로 탐지되었습니다. 정말로 연결하시겠습니까?")
-			if(!flagPhishing) {
-				return {cancel: true}
+	let grade = sessionStorage.getItem("grade");
+	if(grade === "premium") {
+		let urlBeforeConnect = requestData.url.replace("http://", "").replace("https://", "")
+		for(data of phishingSite) {
+			if(urlBeforeConnect == data.url || urlBeforeConnect == data.url+"/") {
+				let flagPhishing = confirm("피싱사이트로 탐지되었습니다. 정말로 연결하시겠습니까?")
+				if(!flagPhishing) {
+					return {cancel: true}
+				}
 			}
 		}
 	}
@@ -61,6 +61,7 @@ chrome.extension.onConnect.addListener((port) => {
 						port.postMessage([email, grade]);
 					}
 				} else if(message[0] === "Login") {
+					getSite();
 					signIn(message[1], message[2], port);
 				} else if(message[0] === "Logout") {
 					sessionStorage.clear();
@@ -91,14 +92,20 @@ var checkURL = (url) => {
 
 var checkSite = async (tab) => {
 	chrome.storage.local.set({"iconChange":false});
+	let stringTab = String(tab.id)
 
 	// data plaintext check
  	if(dataTransferCheck[tab.id]) {
-	 	chrome.storage.local.set({"iconChange":true});
+		chrome.storage.local.set({"iconChange":true});
  		setIcon("warn", tab.id);
- 	}
-  // hsts & https
+ 	} else {
+		dataTransferCheck[tab.id] = false;
+	}
+	chrome.storage.local.set({"data1":dataTransferCheck[tab.id]});
+
+	// hsts & https
  	await getsiteData(tab, null);
+
  	// Phishing
  	await phishingCheck(tab, null);
  	// XSS
@@ -108,6 +115,22 @@ var checkSite = async (tab) => {
 	 	if(res['iconChange'] !== true){
 		 	setIcon("secure",tab.id);
 	 	}
+	chrome.storage.local.get("tabHistory", (res) => {
+
+		chrome.storage.local.get(['data1','data2','data3','data4','data5'], (res) => {
+				let datas = {'url': tab.url, 'data1': res.data1,'data2': res.data2,'data3': res.data3,'data4': res.data4,'data5': res.data5}
+
+				if(tabHistory.size() >= 4) {
+					tabHistory.dequeue();
+					tabHistory.enqueue(datas);
+				} else {
+					tabHistory.enqueue(datas);
+				}
+				chrome.storage.local.set({"tabHistory": tabHistory.getStore()})
+
+			chrome.storage.local.remove(['data1','data2','data3','data4','data5']);
+		});
+	});
  });
 
  chrome.storage.local.remove(['iconChange']);
@@ -121,8 +144,10 @@ var signIn = async (email, password, port) => {
     data: {email:email, password:password},
     success: (data) => {
 			// sessionStorage setItem
-			if(data['status'] === "success")
+			if(data['status'] === "success") {
 				sessionStorage.setItem('email', data['email'])
+				sessionStorage.setItem('grade', data['grade'])
+			}
 			port.postMessage(data)
     },
     error: (error) => {
@@ -137,8 +162,10 @@ var getsiteData = async (tab, port) => {
     url: "http://52.79.152.29:5000/post/hsts",
     data: tab.url,
     success: (data) => {
+			let urlStatus = checkURL(tab.url);
+			chrome.storage.local.set({"data2":urlStatus});
+			chrome.storage.local.set({"data3":data['hsts']});
 
-			let urlStatus = checkURL(tab.url)
 			if(port == null){
 				if(!data['hsts'] || urlStatus !=='https'){
 					chrome.storage.local.set({"iconChange":true})
@@ -150,6 +177,7 @@ var getsiteData = async (tab, port) => {
 					let xssFlag = res.xssFlag;
 					let phishingFlag = res.phishingFlag;
 					port.postMessage([dataTransferCheck[tab.id], urlStatus, data, xssFlag, phishingFlag]);
+					chrome.storage.local.remove(['xssFlag','phishingFlag']);
 				});
 			}
 		},
@@ -163,34 +191,42 @@ var xssCheck = (tab, port) => {
   chrome.tabs.executeScript({
     code:"document.documentElement.innerHTML"
   }, (result) => {
-     $.ajax({
-      type: "POST",
-      url: "http://52.79.152.29:5000/post/chrome/xssCheck",
-      data: result[0],
-      success: (data) => {
-
-				if(port == null && data['xssFlag']){
-					chrome.storage.local.set({"iconChange":true})
-					setIcon("danger",tab.id)
-				}
-				else if (port != null){
-					chrome.storage.local.set({"xssFlag":data['xssFlag']})
-				}
-      },
-      error: (error) => {
-      }
-    });
-  });
+		if(result) {
+     		$.ajax({
+      		type: "POST",
+      		url: "http://52.79.152.29:5000/post/chrome/xssCheck",
+      		data: result[0],
+      		success: (data) => {
+						chrome.storage.local.set({"data4":data['xssFlag']});
+						if(port == null && data['xssFlag']){
+							chrome.storage.local.set({"iconChange":true})
+							setIcon("danger",tab.id)
+						}
+						else if (port != null){
+							chrome.storage.local.set({"xssFlag":data['xssFlag']})
+						}
+      	},
+      	error: (error) => {
+      	}
+    	});
+		}
+	});
 }
 
 var phishingCheck = async (tab, port) => {
   // Check HSTS, Get sslData
+	url = tab.url;
+	let lastUrl = url.charAt(url.length-1);
+	if(lastUrl === "/"){
+		url = url.slice(0, -1);
+	}
+
   await $.ajax({
     type: "POST",
     url: "http://52.79.152.29:5000/post/chrome/phishingCheck",
-    data: tab.url,
+    data: url,
     success: (data) => {
-
+			chrome.storage.local.set({"data5":data['phishingFlag']});
 			if(port == null && data['phishingFlag']){
 				chrome.storage.local.set({"iconChange":true})
 				setIcon("danger", tab.id)
@@ -228,7 +264,6 @@ var getSite = () => {
 	$.ajax({
 		type: "GET",
 		url: "http://52.79.152.29:5000/get/chrome/siteRequest",
-		async: false,
 		success: (data) => {
 			phishingSite = data;
 		},
@@ -285,3 +320,27 @@ var checkPassword = (requestData) => {
 		}
 	});
 };
+
+function Queue() {
+	this.dataStore = [];
+	this.enqueue = enqueue;
+	this.dequeue = dequeue;
+	this.getStore = getStore;
+	this.size = size;
+}
+
+function enqueue(element) {
+	this.dataStore.push(element);
+}
+
+function dequeue() {
+	this.dataStore.shift();
+}
+
+function getStore() {
+	return this.dataStore.slice(0, -1);
+}
+
+function size() {
+	return this.dataStore.length;
+}
