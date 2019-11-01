@@ -9,7 +9,7 @@
 
 		<div class="text-center" id="loginSuccess">
       <form class="logform">
-        <label class="text-white align-middle mr-2" id="loginMessage"></label>
+        <label class="text-white align-middle mr-2" id="loginMessage">t</label>
         <button type="button" class="btn btn-outline-light align-middle mr-2" id="UserGrade"></button>
         <input class="btn btn-warning" type="button" id="logout" value="로그아웃" />
       </form>
@@ -37,7 +37,7 @@
       </form>
     </div>
 
-		<div id="history"></div> 
+		<div id="history"></div>
 
 	</body>
 	<script src="inject.js"></script>
@@ -71,7 +71,7 @@ p {
 }
 
 #loginMessage {
-    font-size: 30pt;
+    font-size: 18pt;
 }
 
 .secure-card {
@@ -119,6 +119,12 @@ p {
     left: -9999px;
     top: 10%;
     content: attr(data-tooltip-text);
+}
+
+.his {
+    color: white;
+    border: 1px solid #FFFFFF;
+    margin-bottom: 20px;
 }
 
 [data-tooltip-text]:hover:after {

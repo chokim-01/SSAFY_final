@@ -191,17 +191,19 @@ def hsts_check():
         site_data["sslfail"] = "인증서를 사용하지 않는 사이트입니다."
 
     # HSTS check
-    http = PoolManager(timeout=Timeout(read=2.0))
-    request_of_host = http.request("GET", host, headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0)"}, timeout=2)
-    response_of_host = request_of_host.headers
+    try:
+        http = PoolManager(timeout=Timeout(read=2.0))
+        request_of_host = http.request("GET", host, headers={"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0)"}, timeout=2)
+        response_of_host = request_of_host.headers
+        if "strict-transport-security" in response_of_host:
+            site_data["hsts"] = True
+    except Exception as e:
+        print(e)
 
     # HSTS check
     if ssl_info:
         for ssl_data in ssl_info:
             site_data[ssl_data[0].decode("UTF-8")] = ssl_data[1].decode("UTF-8")
-
-    if "strict-transport-security" in response_of_host:
-        site_data["hsts"] = True
 
     return jsonify(site_data)
 
@@ -220,7 +222,6 @@ def sign_up():
     """
 
     request_data = request.get_json()
-    print("here")
     # Get user data
     email = request_data.get("email")
     name = request_data.get("name")
@@ -387,16 +388,11 @@ def get_all_count():
     # Get user, request, payments, phishing site count
     sql = "select\
             (select count(*) from User) as userCount,\
-            (select count(*) from User u, RequestList r where r.request_date = %s and u.email = r.email) as todayCount,\
-            (select count(*) from User_Payment) as paymentCount,\
+            (select count(*) from User u, RequestList r where r.request_date = %s and u.email = r.email) as todayCount,\            (select count(*) from User_Payment) as paymentCount,\
             (select count(*) from RequestList where analysis_check=1) as siteCount"
 
     cursor.execute(sql, today)
-
     result = cursor.fetchall()
-
-    print("#############################")
-    print(result)
 
     return jsonify(result)
 
@@ -525,7 +521,6 @@ def post_pay():
     """
     amount=request.form.get("amount")
     grade=request.form.get("grade")
-    print(amount)
     url = "https://kapi.kakao.com"
     headers = {
         'Authorization': "KakaoAK " + "d3b28bf93c1e44abe14dcce6278f42ba",
@@ -546,7 +541,7 @@ def post_pay():
     }
     response = requests.post(url + "/v1/payment/ready", params=params, headers=headers)
     result=response.json()
-    print(result)
+
     return jsonify(result)
 
 @app.route("/post/payComplete",methods=["POST"])
@@ -582,7 +577,6 @@ def post_price():
     """
     grade=request.form.get("grade")
     cursor = conn.db().cursor()
-    print(grade)
     sql = "select price from payment where grade= %s"
     cursor.execute(sql,grade)
     res=cursor.fetchall()

@@ -150,7 +150,7 @@
     //data['status'] : status, data['email'] : email, data['grade'] : grade?
     if(data['status'] === 'success') {
       document.querySelector("#loginTable").style.display = "none";
-      document.querySelector("#loginSuccess").style.display = "inline-block";
+      document.querySelector("#loginSuccess").style.display = "inline";
       document.querySelector("#loginMessage").innerHTML = data['email']+"님";
       document.querySelector("#UserGrade").innerHTML = data['grade'];
     } else if(data['status'] == 'failed') {
@@ -181,7 +181,7 @@
   });
 
   chrome.storage.local.get(["tabHistory"], res => {
-    let historyArray = res.tabHistory.dataStore;
+    let historyArray = res.tabHistory;
     historyArray = historyArray.reverse()
     for(let history of historyArray){
       inputHistory(history);
@@ -209,6 +209,9 @@
     }
     if(history.data5) {
       phishingStatus = "./Icons/38_danger.png";
+    }
+    if(history.url.length > 60) {
+      history.url = history.url.slice(0,60)+"..."
     }
     document.querySelector("#history").innerHTML +=
     `<div class="his" id="history_2">
