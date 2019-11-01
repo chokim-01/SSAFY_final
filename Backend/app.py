@@ -186,6 +186,7 @@ def hsts_check():
 
     site_data = dict()
     ssl_info = ''
+    site_data["hsts"] = False
 
     # Get certificate data
     try:
@@ -240,7 +241,7 @@ def sign_up():
     db = conn.db()
     cursor = db.cursor()
 
-    sql = "insert into User (email, name, password, auth) values (%s, %s, %s, %s)"
+    sql = "insert into User (email, name, password, auth, grade) values (%s, %s, %s, %s, 'BASIC')"
 
     # User email existed check
     try:

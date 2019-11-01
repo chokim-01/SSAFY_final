@@ -64,7 +64,8 @@
 
     document.querySelector("#loginTable").style.display = "none";
     document.querySelector("#loginSuccess").style.display = "inline";
-    document.querySelector("#loginMessage").innerHTML = email+"님 환영합니다.";
+    document.querySelector("#loginMessage").innerHTML = email+"님";
+    document.querySelector("#UserGrade").innerHTML = grade;
   });
 
   var iconSecure = "<img src='./Icons/64_secure.png' />"
@@ -177,5 +178,49 @@
   portSendSite.onMessage.addListener((data) => {
     alert(data);
   });
+
+  chrome.storage.local.get(["tabHistory"], res => {
+    let history = res.tabHistory;
+    console.log(history);
+  });
+
+  var inputhistory = (object) => {
+    document.querySelector("history").innerHTML +=
+    `<div class="his" id="history_2">
+        <p class="text-center"> https://edu.ssafy.com </p>
+        <div class="mb-2" style="text-align: center; margin-top: 15px;">
+            <div class="siren">
+                <span class="sirenTitle">데이터 평문</span>
+                <div id="plaintextIcon">
+                    <img src="./Icons/38_warning.png" />
+                </div>
+            </div>
+            <div class="siren">
+                <span class="sirenTitle">HTTPS 여부</span>
+                <div id="httpIcon">
+                    <img src="./Icons/38_warning.png" />
+                </div>
+            </div>
+            <div class="siren">
+                <span class="sirenTitle">HSTS 여부</span>
+                <div id="hstsIcon">
+                    <img src="./Icons/38_warning.png" />
+                </div>
+            </div>
+            <div class="siren">
+                <span class="sirenTitle">XSS 탐지</span>
+                <div id="xssIcon">
+                    <img src="./Icons/38_secure.png" />
+                </div>
+            </div>
+            <div class="siren">
+                <span class="sirenTitle">피싱사이트</span>
+                <div id="phishingIcon">
+                    <img src="./Icons/38_secure.png" />
+                </div>
+            </div>
+        </div>
+    </div>`
+  }
 
 })();

@@ -1,5 +1,6 @@
 var dataTransferCheck = {};
 var phishingSite = [];
+var tabHistory = new Queue();
 
 chrome.tabs.onCreated.addListener((tab) => {
 	getSite();
@@ -18,6 +19,7 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
     });
 		// check & extension icon change
 		checkSite(tab);
+		console.log(tabHistory)
 	}
 });
 
@@ -91,23 +93,44 @@ var checkURL = (url) => {
 
 var checkSite = async (tab) => {
 	chrome.storage.local.set({"iconChange":false});
+	let stringTab = String(tab.id)
 
 	// data plaintext check
  	if(dataTransferCheck[tab.id]) {
-	 	chrome.storage.local.set({"iconChange":true});
+		chrome.storage.local.set({"iconChange":true});
  		setIcon("warn", tab.id);
- 	}
-  // hsts & https
- 	await getsiteData(tab, null);
+ 	} else {
+		dataTransferCheck[tab.id] = false;
+	}
+	chrome.storage.local.set({"data1":dataTransferCheck[tab.id]});
+
  	// Phishing
  	await phishingCheck(tab, null);
  	// XSS
  	await xssCheck(tab, null);
+	// hsts & https
+ 	await getsiteData(tab, null);
 
  	await chrome.storage.local.get(['iconChange'], (res) => {
 	 	if(res['iconChange'] !== true){
 		 	setIcon("secure",tab.id);
 	 	}
+	chrome.storage.local.get("tabHistory", (res) => {
+
+		chrome.storage.local.get(['data1','data2','data3','data4','data5'], (res) => {
+				let datas = {'url': tab.url, 'data1': res.data1,'data2': res.data2,'data3': res.data3,'data4': res.data4,'data5': res.data5}
+
+				if(tabHistory.size() >= 3) {
+					tabHistory.dequeue();
+					tabHistory.enqueue(datas);
+				} else {
+					tabHistory.enqueue(datas);
+				}
+				chrome.storage.local.set({"tabHistory": tabHistory})
+
+			chrome.storage.local.remove(['data1','data2','data3','data4','data5']);
+		});
+	});
  });
 
  chrome.storage.local.remove(['iconChange']);
@@ -122,7 +145,8 @@ var signIn = async (email, password, port) => {
     success: (data) => {
 			// sessionStorage setItem
 			if(data['status'] === "success")
-				sessionStorage.setItem('email', data['email'])
+			sessionStorage.setItem('email', data['email'])
+			sessionStorage.setItem('email', data['grade'])
 			port.postMessage(data)
     },
     error: (error) => {
@@ -137,8 +161,10 @@ var getsiteData = async (tab, port) => {
     url: "http://52.79.152.29:5000/post/hsts",
     data: tab.url,
     success: (data) => {
+			let urlStatus = checkURL(tab.url);
+			chrome.storage.local.set({"data2":urlStatus});
+			chrome.storage.local.set({"data3":data['hsts']});
 
-			let urlStatus = checkURL(tab.url)
 			if(port == null){
 				if(!data['hsts'] || urlStatus !=='https'){
 					chrome.storage.local.set({"iconChange":true})
@@ -150,6 +176,7 @@ var getsiteData = async (tab, port) => {
 					let xssFlag = res.xssFlag;
 					let phishingFlag = res.phishingFlag;
 					port.postMessage([dataTransferCheck[tab.id], urlStatus, data, xssFlag, phishingFlag]);
+					chrome.storage.local.remove(['xssFlag','phishingFlag']);
 				});
 			}
 		},
@@ -163,24 +190,46 @@ var xssCheck = (tab, port) => {
   chrome.tabs.executeScript({
     code:"document.documentElement.innerHTML"
   }, (result) => {
-     $.ajax({
-      type: "POST",
-      url: "http://52.79.152.29:5000/post/chrome/xssCheck",
-      data: result[0],
-      success: (data) => {
+		if(result[0]) {
+     		$.ajax({
+      		type: "POST",
+      		url: "http://52.79.152.29:5000/post/chrome/xssCheck",
+      		data: result[0],
+					async: false,
+      		success: (data) => {
+						chrome.storage.local.set({"data4":data['xssFlag']});
+						if(port == null && data['xssFlag']){
+							chrome.storage.local.set({"iconChange":true})
+							setIcon("danger",tab.id)
+						}
+						else if (port != null){
+							chrome.storage.local.set({"xssFlag":data['xssFlag']})
+						}
+      	},
+      	error: (error) => {
+      	}
+    	});
+		}
+	});
+}
 
-				if(port == null && data['xssFlag']){
-					chrome.storage.local.set({"iconChange":true})
-					setIcon("danger",tab.id)
-				}
-				else if (port != null){
-					chrome.storage.local.set({"xssFlag":data['xssFlag']})
-				}
-      },
-      error: (error) => {
-      }
-    });
-  });
+function Queue() {
+	this.dataStore = [];
+	this.enqueue = enqueue;
+	this.dequeue = dequeue;
+	this.size = size;
+}
+
+function enqueue(element) {
+	this.dataStore.push(element);
+}
+
+function dequeue() {
+	this.dataStore.shift();
+}
+
+function size() {
+	return this.dataStore.length;
 }
 
 var phishingCheck = async (tab, port) => {
@@ -190,7 +239,7 @@ var phishingCheck = async (tab, port) => {
     url: "http://52.79.152.29:5000/post/chrome/phishingCheck",
     data: tab.url,
     success: (data) => {
-
+			chrome.storage.local.set({"data5":data['phishingFlag']});
 			if(port == null && data['phishingFlag']){
 				chrome.storage.local.set({"iconChange":true})
 				setIcon("danger", tab.id)
