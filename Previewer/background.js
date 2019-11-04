@@ -1,6 +1,7 @@
 var dataTransferCheck = {};
 var phishingSite = [];
 var tabHistory = new Queue();
+var plaintextInfo = [];
 
 chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 	// Get User access url ex) https://naver.com
@@ -11,16 +12,15 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 	{
 		// Get user input password
 		chrome.tabs.executeScript({
-      code:"document.addEventListener('keyup', function(){var elements = document.querySelectorAll('input[type=password]')[0]; if(elements) { var passwordName = elements.name; var passwordValue = elements.value; chrome.storage.local.set({ passwordInfo: [passwordName, passwordValue] }); } });"
-    });
+      code:"document.addEventListener('keyup', function(){var elements = document.querySelectorAll('input[type=password]')[0];if(elements) { var passwordName = elements.name;var passwordValue = elements.value;let passwordInfo = [passwordName, passwordValue]; chrome.runtime.sendMessage({ 'plaintextInfo': passwordInfo }); }; });"
 		// check & extension icon change
+		});
 		checkSite(tab);
 	}
 });
 
 chrome.webRequest.onBeforeRequest.addListener((requestData) => {
 	// Request method check
-	let tabId = requestData.tabId;
 	let grade = sessionStorage.getItem("grade");
 	if(grade === "premium") {
 		let urlBeforeConnect = requestData.url.replace("http://", "").replace("https://", "")
@@ -32,9 +32,17 @@ chrome.webRequest.onBeforeRequest.addListener((requestData) => {
 				}
 			}
 		}
-		if(requestData.method == "POST")
-		{
-			checkPassword(requestData, tabId);
+	}
+
+	if(requestData.method == "POST")
+	{
+		let checkPasswordFlag = checkPassword(requestData, grade, requestData.tabId);
+		if(grade === "premium" && checkPasswordFlag) {
+			let confirmflag = confirm("로그인 데이터가 평문으로 전송되고 있습니다. 로그인하시겠습니까?");
+			if(!confirmflag) {
+				chrome.tabs.remove(requestData.tabId);
+				return {cancel: true}
+			}
 		}
 	}
 },
@@ -71,6 +79,9 @@ chrome.extension.onConnect.addListener((port) => {
 				}
     });
 });
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+		plaintextInfo = request.plaintextInfo;
+});
 
 var checkURL = (url) => {
 	// Find "http" word in userAccessURL
@@ -106,6 +117,7 @@ var checkSite = async (tab) => {
 
 	// hsts & https
  	await getsiteData(tab, null);
+
  	// Phishing
  	await phishingCheck(tab, null);
  	// XSS
@@ -293,31 +305,28 @@ var setIcon = (status, tabId) => {
 	}
 }
 
-var checkPassword = (requestData, tabId) => {
+var checkPassword = (requestData, grade, tabId) => {
 	// Get user password parameter name and value in chrome local storage
-	chrome.storage.local.get("passwordInfo", async (data) => {
-		if(data["passwordInfo"])
+		if(plaintextInfo !== null)
 		{
 			// If user send password to server
 			let requestBody = requestData.requestBody;
-			let passwordParameterName = data["passwordInfo"][0];
-			let passwordValue = data["passwordInfo"][1];
+			let passwordParameterName = plaintextInfo[0];
+			let passwordValue = plaintextInfo[1];
+			plaintextInfo = [];
 
-			chrome.storage.local.remove("passwordInfo");
 			// Compare send server value and local storage value
 			if(requestBody && requestBody.formData && requestBody.formData[passwordParameterName])
 			{
 				if(requestBody.formData[passwordParameterName] == passwordValue)
 				{
 					dataTransferCheck[tabId] = true;
-					let confirmflag = confirm("로그인 데이터가 평문으로 전송되고 있습니다. 전송하시겠습니까?");
-					if(!confirmflag) {
-						chrome.tabs.remove(tabId);
-					}
+					console.log("Un Secure");
+					return true;
 				}
 			}
 		}
-	});
+		return false;
 };
 
 function Queue() {
