@@ -7,7 +7,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   plugins: [createPersistedState()],
   state: {
-    SERVER_URL: "http://52.79.152.29//",
+    SERVER_URL: "http://52.79.152.29/",
 
     isLog: true,
     user: {
