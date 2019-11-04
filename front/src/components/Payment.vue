@@ -13,8 +13,12 @@
               <v-card-title class="justify-center">
                 <span>basic</span>
               </v-card-title>
-              <v-card-text>
-                <span>여기는 basic등급에 대한 내용</span>
+              <v-card-text class="box">
+                <span>
+                  다양한 웹 위협을 탐지할 수 있습니다.
+                  <br />
+                  <br />0원
+                </span>
               </v-card-text>
 
               <!-- payment button -->
@@ -33,8 +37,11 @@
               <v-card-title class="justify-center">
                 <span>pro</span>
               </v-card-title>
-              <v-card-text>
-                <span>여기는 pro등급에 대한 내용</span>
+              <v-card-text class="box">
+                <span>
+                  다양한 웹 위협을 탐지하고 차단할 수 있습니다.
+                  <br />기간 1개월
+                  <br />3000원
               </v-card-text>
 
               <!-- payment button -->
@@ -54,8 +61,12 @@
               <v-card-title class="justify-center">
                 <span>premium</span>
               </v-card-title>
-              <v-card-text>
-                <span>여기는 premium등급에 대한 내용</span>
+              <v-card-text class="box">
+                <span>
+                  댜양한 웹 위협을 탐지하고 차단할 수 있습니다.
+                  <br />기간 2개월
+                  <br />5000원
+                </span>
               </v-card-text>
 
               <!-- payment button -->
@@ -113,3 +124,9 @@ export default {
     }
 }
 </script>
+
+<style>
+.box {
+  text-align: center;
+}
+</style>
