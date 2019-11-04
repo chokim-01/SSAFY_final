@@ -363,7 +363,7 @@ def get_user_payment_history():
     email = request.form.get("email")
     db = conn.db()
     cursor = db.cursor()
-    sql = "SELECT grade, date_format(payment_date, '%%Y년%%m월%%d일 %%H시 %%i분') as payment_date, date_format(expire_date, '%%Y년%%m월%%d일 %%H시 %%i분') as expire_date FROM user_payment WHERE email=%s ORDER BY expire_date DESC"
+    sql = "SELECT grade, date_format(payment_date, '%%Y년%%m월%%d일 %%H시 %%i분') as payment_date, date_format(expire_date, '%%Y년%%m월%%d일 %%H시 %%i분') as expire_date FROM User_Payment WHERE email=%s ORDER BY expire_date DESC"
     cursor.execute(sql, email)
     data = (cursor.fetchall())
     return jsonify(data)
@@ -386,10 +386,7 @@ def get_all_count():
     cursor = conn.db().cursor()
 
     # Get user, request, payments, phishing site count
-    sql = "select\
-            (select count(*) from User) as userCount,\
-            (select count(*) from User u, RequestList r where r.request_date = %s and u.email = r.email) as todayCount,\            (select count(*) from User_Payment) as paymentCount,\
-            (select count(*) from RequestList where analysis_check=1) as siteCount"
+    sql = "select (select count(*) from User) as userCount, (select count(*) from User u, RequestList r where r.request_date = %s and u.email = r.email) as todayCount, (select count(*) from User_Payment) as paymentCount, (select count(*) from RequestList where analysis_check=1) as siteCount"
 
     cursor.execute(sql, today)
     result = cursor.fetchall()
@@ -535,12 +532,14 @@ def post_pay():
         'total_amount': amount,
         'vat_amount': 0,
         'tax_free_amount': 0,
-        'approval_url': 'http://localhost:8080/payComplete',
-        'fail_url': 'http://localhost:8080',
-        'cancel_url': 'http://localhost:8080',
+        'approval_url': 'http://52.79.152.29:5000/payComplete',
+        'fail_url': 'http://52.79.152.29:5000/',
+        'cancel_url': 'http://52.79.152.29:5000/',
     }
     response = requests.post(url + "/v1/payment/ready", params=params, headers=headers)
     result=response.json()
+
+    print(result)
 
     return jsonify(result)
 
@@ -577,7 +576,7 @@ def post_price():
     """
     grade=request.form.get("grade")
     cursor = conn.db().cursor()
-    sql = "select price from payment where grade= %s"
+    sql = "select price from Payment where grade= %s"
     cursor.execute(sql,grade)
     res=cursor.fetchall()
 
@@ -597,8 +596,8 @@ def add_pay():
     db = conn.db()
     cursor = db.cursor()
 
-    sql= "insert into user_payment values(%s,%s,%s,date_add(%s, interval 1 month)); "
-    usersql = "update user set grade=%s where email=%s"
+    sql= "insert into User_Payment values(%s,%s,%s,date_add(%s, interval 1 month)); "
+    usersql = "update User set grade=%s where email=%s"
     cursor.execute(sql,(email,grade,time,time))
     cursor.execute(usersql, (grade, email))
 
