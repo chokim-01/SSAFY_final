@@ -40,10 +40,10 @@ chrome.webRequest.onBeforeRequest.addListener((requestData) => {
 		if(grade === "premium" && checkPasswordFlag) {
 			let confirmflag = confirm("로그인 데이터가 평문으로 전송되고 있습니다. 로그인하시겠습니까?");
 			if(!confirmflag) {
-				chrome.tabs.remove(requestData.tabId);
 				return {cancel: true}
 			}
 		}
+		plaintextInfo = [];
 	}
 },
 {urls: ["<all_urls>"]},
@@ -313,7 +313,6 @@ var checkPassword = (requestData, grade, tabId) => {
 			let requestBody = requestData.requestBody;
 			let passwordParameterName = plaintextInfo[0];
 			let passwordValue = plaintextInfo[1];
-			plaintextInfo = [];
 
 			// Compare send server value and local storage value
 			if(requestBody && requestBody.formData && requestBody.formData[passwordParameterName])
