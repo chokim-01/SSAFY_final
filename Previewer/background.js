@@ -1,4 +1,4 @@
-var dataTransferCheck = {};
+﻿var dataTransferCheck = {};
 var phishingSite = [];
 var tabHistory = new Queue();
 var plaintextInfo = [];
@@ -152,7 +152,7 @@ var signIn = async (email, password, port) => {
 	// Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
-    url: "http://52.79.152.29:5000/post/chrome/signIn",
+    url: "http://52.79.152.29/post/chrome/signIn",
     data: {email:email, password:password},
     success: (data) => {
 			// sessionStorage setItem
@@ -171,7 +171,7 @@ var getsiteData = async (tab, port) => {
   // Check HSTS, Get sslData
   await $.ajax({
     type: "POST",
-    url: "http://52.79.152.29:5000/post/hsts",
+    url: "http://52.79.152.29/post/hsts",
     data: tab.url,
     success: (data) => {
 			let urlStatus = checkURL(tab.url);
@@ -206,7 +206,7 @@ var xssCheck = (tab, port) => {
 		if(result) {
      		$.ajax({
       		type: "POST",
-      		url: "http://52.79.152.29:5000/post/chrome/xssCheck",
+      		url: "http://52.79.152.29/post/chrome/xssCheck",
       		data: result[0],
       		success: (data) => {
 						chrome.storage.local.set({"data4":data['xssFlag']});
@@ -235,7 +235,7 @@ var phishingCheck = async (tab, port) => {
 
   await $.ajax({
     type: "POST",
-    url: "http://52.79.152.29:5000/post/chrome/phishingCheck",
+    url: "http://52.79.152.29/post/chrome/phishingCheck",
     data: url,
     success: (data) => {
 			chrome.storage.local.set({"data5":data['phishingFlag']});
@@ -260,7 +260,7 @@ var sendSite = (url, port) => {
 
 	$.ajax({
 		type: "POST",
-		url: "http://52.79.152.29:5000/post/chrome/siteRequest",
+		url: "http://52.79.152.29/post/chrome/siteRequest",
 		data: {url:url, email:email},
 		success: (data) => {
 			port.postMessage(data["message"])
@@ -271,11 +271,16 @@ var sendSite = (url, port) => {
 	})
 }
 
+setInterval( () => {
+	// get Site
+	getSite();
+}, 10000);
+
 var getSite = () => {
 	// get Site
 	$.ajax({
 		type: "GET",
-		url: "http://52.79.152.29:5000/get/chrome/siteRequest",
+		url: "http://52.79.152.29/get/chrome/siteRequest",
 		success: (data) => {
 			phishingSite = data;
 		},
