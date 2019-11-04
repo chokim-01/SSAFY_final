@@ -125,7 +125,7 @@
   // Go to Our page
   var gotoPage = document.querySelector("#gotopage");
   gotoPage.addEventListener('click', event => {
-    chrome.tabs.create({ url: 'http://52.79.152.29:5000' });
+    chrome.tabs.create({ url: 'http://52.79.152.29' });
   })
 
   // Login click
