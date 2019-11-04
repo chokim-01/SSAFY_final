@@ -122,6 +122,12 @@
 
   });
 
+  // Go to Our page
+  var gotoPage = document.querySelector("#gotopage");
+  gotoPage.addEventListener('click', event => {
+    chrome.tabs.create({ url: 'http://52.79.152.29:5000' });
+  })
+
   // Login click
   var login = document.querySelector("#login");
   login.addEventListener('click', event => {
@@ -182,9 +188,11 @@
 
   chrome.storage.local.get(["tabHistory"], res => {
     let historyArray = res.tabHistory;
-    historyArray = historyArray.reverse()
-    for(let history of historyArray){
-      inputHistory(history);
+    if(historyArray) {
+      historyArray = historyArray.reverse()
+      for(let history of historyArray){
+        inputHistory(history);
+      }
     }
   });
 
