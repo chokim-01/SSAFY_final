@@ -20,6 +20,7 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 
 chrome.webRequest.onBeforeRequest.addListener((requestData) => {
 	// Request method check
+	let tabId = requestData.tabId;
 	let grade = sessionStorage.getItem("grade");
 	if(grade === "premium") {
 		let urlBeforeConnect = requestData.url.replace("http://", "").replace("https://", "")
@@ -31,10 +32,10 @@ chrome.webRequest.onBeforeRequest.addListener((requestData) => {
 				}
 			}
 		}
-	}
-	if(requestData.method == "POST")
-	{
-		checkPassword(requestData);
+		if(requestData.method == "POST")
+		{
+			checkPassword(requestData, tabId);
+		}
 	}
 },
 {urls: ["<all_urls>"]},
@@ -105,7 +106,6 @@ var checkSite = async (tab) => {
 
 	// hsts & https
  	await getsiteData(tab, null);
-
  	// Phishing
  	await phishingCheck(tab, null);
  	// XSS
@@ -293,7 +293,7 @@ var setIcon = (status, tabId) => {
 	}
 }
 
-var checkPassword = (requestData) => {
+var checkPassword = (requestData, tabId) => {
 	// Get user password parameter name and value in chrome local storage
 	chrome.storage.local.get("passwordInfo", async (data) => {
 		if(data["passwordInfo"])
@@ -303,20 +303,19 @@ var checkPassword = (requestData) => {
 			let passwordParameterName = data["passwordInfo"][0];
 			let passwordValue = data["passwordInfo"][1];
 
+			chrome.storage.local.remove("passwordInfo");
 			// Compare send server value and local storage value
 			if(requestBody && requestBody.formData && requestBody.formData[passwordParameterName])
 			{
 				if(requestBody.formData[passwordParameterName] == passwordValue)
 				{
-					await chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-						var currTab = tabs[0];
-						dataTransferCheck[currTab.id] = true;
-					});
-					console.log("Un Secure");
+					dataTransferCheck[tabId] = true;
+					let confirmflag = confirm("로그인 데이터가 평문으로 전송되고 있습니다. 전송하시겠습니까?");
+					if(!confirmflag) {
+						chrome.tabs.remove(tabId);
+					}
 				}
 			}
-
-			chrome.storage.local.remove("passwordInfo");
 		}
 	});
 };

@@ -2,7 +2,7 @@
   document.querySelector("#secureTable").innerHTML = `
     <div style="text-align: center; margin-top: 15px;">
       <div class="siren" id="plaintextContent" data-tooltip-text="로그인 후 확인가능합니다.">
-        <span class="sirenTitle">데이터 평문</span>
+        <span class="sirenTitle">로그인 평문</span>
         <div id="plaintextIcon">
           <img src="./Icons/64_nomal.png" />
         </div>
@@ -218,7 +218,7 @@
         <p class="text-center"> `+history.url+` </p>
         <div class="mb-2" style="text-align: center; margin-top: 15px;">
             <div class="siren">
-                <span class="sirenTitle">데이터 평문</span>
+                <span class="sirenTitle">로그인 평문</span>
                 <div id="plaintextIcon">
                     <img src=`+plaintext+` />
                 </div>
