@@ -309,12 +309,11 @@ var checkPassword = (requestData, tabId) => {
 			{
 				if(requestBody.formData[passwordParameterName] == passwordValue)
 				{
-
-						dataTransferCheck[tabId] = true;
-						let confirmflag = confirm("로그인 데이터가 평문으로 전송되고 있습니다. 전송하시겠습니까?");
-						if(!confirmflag) {
-							chrome.tabs.remove(tabId);
-						}
+					dataTransferCheck[tabId] = true;
+					let confirmflag = confirm("로그인 데이터가 평문으로 전송되고 있습니다. 전송하시겠습니까?");
+					if(!confirmflag) {
+						chrome.tabs.remove(tabId);
+					}
 				}
 			}
 		}
