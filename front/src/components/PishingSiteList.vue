@@ -7,23 +7,18 @@
 
 <script>
 export default {
-    data: () => ({
-        headers:[
-            {
-                text:"url",
-                value:"url"
-            },
-            {
-                text:"result",
-                value:"result"
-            }
-        ],
-        pishingsitelist:[
-            {
-                url:"https://google.com",
-                result:"true"
-            }
-        ]
-    })
+  props:{
+    pishingsitelist:{
+      type:Array
+    }
+  },
+  data: () => ({
+    headers:[
+      {
+        text: "url",
+        value: "url"
+      }
+    ]
+  })
 }
 </script>

@@ -1,35 +1,48 @@
 <template>
-  <v-card class="widget-card">
-    <v-card-text class="pa-0">
+  <div class="widget-card pa-1 mb-3" :style="{ borderColor: color}">
       <v-container class="pa-0">
-        <div class="layout row ma-0" :style="{ backgroundColor: color }">
+        <div class="layout row ma-0" >
           <div class="sm3 xs3 flex marginright">
             <!-- Widget Icon -->
             <div class="layout column ma-0 justify-center align-center">
-              <v-icon size="76px" color="white" style="opacity: 0.8;">{{icon}}</v-icon>
+              <v-icon size="50px" :style="{ color: color}" style="opacity: 0.8; margin-top: 5px">
+                {{icon}}
+              </v-icon>
             </div>
           </div>
 
-          <!-- SubTitle / Title / SupTitle -->
-          <div class="layout column ma-0" style="color: white;">
-            <span class="caption">{{ subTitle }}</span>
-            <div class="headline">{{ title }}</div>
-            <span class="headline">{{ supTitle }}</span>
+          <!-- Title / SupTitle -->
+          <div class="layout column ma-0">
+            <span class="caption">
+              {{ title }}
+            </span>
+            <div class="headline font-weight-bold iCountUp" :style="{ color: color}">
+              <ICountUp
+              :delay="delay"
+              :endVal="setEndValue"
+              :options="options"
+              />
+              {{ unit }}
+            </div>
           </div>
         </div>
       </v-container>
-    </v-card-text>
-  </v-card>
+  </div>
 </template>
 
 <script>
+import ICountUp from "vue-countup-v2";
+
 export default {
+  components: {
+    ICountUp
+  },
   props: {
-    supTitle: {
+    widgetValue: {
       type: String,
       required: false
     },
-    subTitle: {
+    widgetTitle: {
       type: String,
       required: false
     },
@@ -44,21 +57,54 @@ export default {
     color: {
       type: String,
       required: false
+    },
+    unit: {
+      type: String,
+      required: false
     }
   },
-
   data() {
     return {
+      delay: 1000,
+      options: {
+        useEasing: false,
+        useGrouping: true,
+        separator: "" ,
+        decimal: ".",
+        prefix: "",
+        suffix: ""
+      }
     }
+  },
+  created() {
+  },
+  computed: {
+    setEndValue() {
+      let count = 0;
+      if(this.widgetValue == "user") {
+        count = this.$store.state.userCount;
+      }
+      else if(this.widgetValue == "today") {
+        count = this.$store.state.todayCount;
+      }
+      else if(this.widgetValue == "payment") {
+        count = this.$store.state.paymentCount;
+      }
+      else {
+        count = this.$store.state.phishingCount;
+      }
+      return count;
+    }
+  },
+  methods: {
   }
 }
 </script>
 
 <style>
 .widget-card {
-  border-radius: 5%;
-  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.21);
-  background-color: transparent;
+  border-radius: 10px ;
+  border: 2px dashed;
   margin-right: 1.5em;
   margin-left: 1.5em;
 }

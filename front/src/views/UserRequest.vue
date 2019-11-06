@@ -1,55 +1,35 @@
 <template>
-  <v-layout>
-    <v-container>
-      <v-flex mb-10>
-        <span>Email : {{email}}</span>
+  <v-container>
+    <v-layout row wrap>
+      <v-flex xs8>
+        <router-link class="moveAdmin" to="/adminpage">돌아가기</router-link>
       </v-flex>
-
-      <!-- User Request URL -->
-      <v-data-table :headers="headers" :items="userRequest">
-        <template v-slot:item.request="{item}">
-          <v-chip :color="getColor(item.request)" dark>{{item.request}}</v-chip>
-        </template>
-      </v-data-table>
-    </v-container>
-  </v-layout>
+      <v-flex xs4 mb-10>
+        <span>Email : {{sendEmail}}</span>
+      </v-flex>
+    </v-layout>
+    <OneUserRequest :email="sendEmail" />
+  </v-container>
 </template>
+
 <script>
 export default {
   name : "UserRequest",
-    data: () => ({
-      email : "",
-      selected: [],
-      headers: [
-        {
-          text: "SiteAddress",
-          value: "siteAddress",
-        },
-        {
-          text:"Request",
-          value:"request"
-          }
-        ],
-        userRequest:[
-          {
-            siteAddress : "https://edu.ssafy.com",
-            request : "Approve"
-          },
-          {
-            siteAddress : "https://ssafy.com",
-            request : "Reject"
-
-          }
-        ]
-    }),
-    mounted(){
-      this.email = this.$route.params.id
-    },
-    methods:{
-          getColor(str){
-              if(str=="Reject") return "red"
-              else return "green"
-          }
-      }
+  data: () => ({
+    sendEmail : "",
+  }),
+  components :{
+    OneUserRequest : () => import("@/components/OneUserRequest"),
+  },
+  created(){
+    this.sendEmail = this.$route.params.id;
+  },
 }
 </script>
+<style scoped>
+.moveAdmin {
+  text-decoration: none;
+  color: orange;
+  font-size: 23px;
+}
+</style>

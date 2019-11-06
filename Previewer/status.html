@@ -1,0 +1,135 @@
+<!DOCTYPE html lang="ko">
+<html>
+	<head>
+		<meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	</head>
+	<body>
+    <img src="./Icons/logo.png" class="img-fluid mx-auto d-block my-3" id="gotopage" alt="Previewer logo">
+
+		<div class="text-center" id="loginSuccess">
+      <form class="logform">
+        <label class="text-white align-middle mr-2" id="loginMessage">t</label>
+        <button type="button" class="btn btn-outline-light align-middle mr-2" id="UserGrade"></button>
+        <input class="btn btn-warning" type="button" id="logout" value="로그아웃" />
+      </form>
+		</div>
+
+		<div class="text-center" id="loginTable">
+      <form class="logform row col justify-content-center" name="loginform">
+        <input class="form-control col-sm-4 mr-2" id="email" type="text" name="email" placeholder="Email" />
+        <input class="form-control col-sm-4 mr-2" id="pass" type="password" name="password" placeholder="Password">
+        <input class="btn btn-primary" id="login" type="button"  value="로그인" />
+      </form>
+		</div>
+
+		<div class="mb-3" id="secureTable"></div>
+
+    <div class="col-sm-12 mb-3" id="historyTable"></div>
+
+		<div id="history"></div>
+
+		<div class="urlform">
+			<p class="text-center"> 피싱 사이트 요청 </p>
+			<form class="col row ml-4">
+				<input id="url" name="url" type="text" class="form-control col-sm-9" placeholder="URL을 입력하세요.">
+				<div class="input-group-append col-sm-3">
+					<input class="btn btn-warning" id="sendphishing" type="button" value="요청" />
+				</div>
+			</form>
+		</div>
+
+	</body>
+	<script src="inject.js"></script>
+</html>
+
+<style>
+html {
+  width: 600px;
+  height: 860px;
+  margin: 0 0 0 0;
+}
+
+body {
+  width: 600px;
+  height: 860px;
+  background-color: #0B3861;
+}
+
+p {
+    color: white;
+}
+
+#loginSuccess {
+  display: none;
+}
+
+.his {
+    color: white;
+    border: 1px solid #FFFFFF;
+    margin-bottom: 20px;
+}
+
+#loginMessage {
+    font-size: 18pt;
+}
+
+.secure-card {
+    opacity: 1.0;
+}
+
+.sirenTitle {
+    height: 30px;
+    color: white;
+    font-weight: bold;
+    display: inline-block;
+    line-height: 30px;
+}
+.siren {
+    display: inline-block;
+    width: 18%;
+}
+
+[data-tooltip-text]:hover {
+    position: relative;
+}
+
+[data-tooltip-text]:after {
+    -webkit-transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+    -moz-transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+    transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+    background-color: #7d8bf5;
+    -webkit-box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+    -moz-box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+    box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-size: 12px;
+    margin-bottom: 10px;
+    padding: 7px 12px;
+    position: absolute;
+    width: auto;
+    min-width: 30px;
+    max-width: 300px;
+    word-wrap: break-word;
+    z-index: 9999;
+    opacity: 0;
+    left: -9999px;
+    top: 10%;
+    content: attr(data-tooltip-text);
+}
+
+.his {
+    color: white;
+    border: 1px solid #FFFFFF;
+    margin-bottom: 20px;
+}
+
+[data-tooltip-text]:hover:after {
+    top: 110%;
+    left: 0;
+    opacity: 1;
+}
+</style>

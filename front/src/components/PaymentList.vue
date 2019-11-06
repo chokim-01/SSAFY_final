@@ -7,29 +7,30 @@
 
 <script>
 export default {
-    data: () => ({
-        headers:[
-            {
-                text:"name",
-                value:"username"
-            },
-            {
-                text:"grade",
-                value:"paymentgrade"
-            },
-            {
-                text:"date",
-                value:"paymentdate"
-            }
-        ],
-        //test data
-        paymentlist:[
-            {
-                username:"홍길동",
-                paymentgrade:"pro",
-                paymentdate:"2019.10.11"
-            }
-        ]
-    })
+  props:{
+    paymentlist:{
+      type:Array
+    }
+  },
+  data: () => ({
+    headers:[
+      {
+        text: "email",
+        value: "email"
+      },
+      {
+        text: "grade",
+        value: "grade"
+      },
+      {
+        text: "payment_date",
+        value: "payment_date"
+      },
+      {
+        text: "expire_date",
+        value: "expire_date"
+      }
+    ]
+  })
 }
 </script>

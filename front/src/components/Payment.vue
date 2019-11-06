@@ -5,61 +5,80 @@
         <v-card-title class="headline grey lighten-2 justify-center" primary-title>
           <span>결제</span>
         </v-card-title>
-
         <!-- Payment Grade List -->
-        <v-layout>
+        <v-layout xs12>
           <!-- basic Grade -->
-          <v-flex md4>
+          <v-flex xs12>
             <v-card>
               <v-card-title class="justify-center">
                 <span>basic</span>
               </v-card-title>
-              <v-card-text>
-                <span>여기는 basic등급에 대한 내용</span>
+              <v-card-text class="box">
+                <span>
+                  다양한 웹 위협을 탐지할 수 있습니다.
+                  <br />
+                  <br />0원
+                </span>
               </v-card-text>
+
+              <!-- payment button -->
               <v-flex offset-xs2 offset-sm5>
                 <v-btn>
-                  <span>결제</span>
+                  <span v-if="grade==='pro'|| grade==='premium'">CAN'T PAY</span>
+                  <span v-else>Current</span>
                 </v-btn>
               </v-flex>
             </v-card>
           </v-flex>
 
           <!-- pro Grade -->
-          <v-flex md4>
+          <v-flex xs12>
             <v-card>
               <v-card-title class="justify-center">
                 <span>pro</span>
               </v-card-title>
-              <v-card-text>
-                <span>여기는 pro등급에 대한 내용</span>
+              <v-card-text class="box">
+                <span>
+                  다양한 웹 위협을 탐지하고 차단할 수 있습니다.
+                  <br />기간 1개월
+                  <br />3000원
               </v-card-text>
+
+              <!-- payment button -->
               <v-flex offset-xs2 offset-sm5>
                 <v-btn>
-                  <span>결제</span>
+                  <span v-if="grade==='Basic'" @click="pay('pro')">결제</span>
+                  <span v-else-if="grade==='pro'">Current</span>
+                  <span v-else>CAN'T PAY</span>
                 </v-btn>
               </v-flex>
             </v-card>
           </v-flex>
 
           <!-- premium Grade -->
-          <v-flex md4>
-            <v-card>
+          <v-flex xs12>
+            <v-card xs12>
               <v-card-title class="justify-center">
                 <span>premium</span>
               </v-card-title>
-              <v-card-text>
-                <span>여기는 premium등급에 대한 내용</span>
+              <v-card-text class="box">
+                <span>
+                  댜양한 웹 위협을 탐지하고 차단할 수 있습니다.
+                  <br />기간 2개월
+                  <br />5000원
+                </span>
               </v-card-text>
+
+              <!-- payment button -->
               <v-flex offset-xs2 offset-sm5>
                 <v-btn>
-                  <span>결제</span>
+                  <span v-if="grade==='Basic' || grade==='pro'" @click="pay('premium')">결제</span>
+                  <span v-else>Current</span>
                 </v-btn>
               </v-flex>
             </v-card>
           </v-flex>
         </v-layout>
-
         <v-divider />
       </v-card>
     </div>
@@ -67,9 +86,47 @@
 </template>
 
 <script>
+import Server from "../server.js"
+
 export default {
+    props:{
+      grade:{
+        type:String
+      }
+    },
     data: () => ({
-        
-    })
+      price:0
+    }),
+    methods:{
+      async pay(grade){
+            let gradeForm = new FormData()
+            gradeForm.append('grade',grade)
+
+            // post price with gradeForm(grade)
+            await Server(this.$store.state.SERVER_URL).post("/post/price",gradeForm).then(res=>{
+              this.price=res.data[0].price
+            })
+
+
+            let form = new FormData()
+            form.append('amount', this.price)
+            form.append('grade',grade)
+
+            // post pay with form(grand, price)
+            Server(this.$store.state.SERVER_URL).post("/post/pay",form).then(res=>{
+                let payUrl = res.data.next_redirect_pc_url
+                let tid=res.data.tid
+                this.$store.dispatch("tid",tid)
+                this.$store.dispatch("total_amount",this.price)
+                location.href=payUrl
+            })
+        }
+    }
 }
 </script>
+
+<style>
+.box {
+  text-align: center;
+}
+</style>

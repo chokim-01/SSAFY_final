@@ -1,0 +1,31 @@
+﻿{
+    "name": "Previewer",
+    "version": "0.0.1",
+    "manifest_version": 2,
+    "description": "Detect threat",
+    "background": {
+        "scripts": [
+          "Vue.js",
+          "background.js",
+          "jQuery/jquery-3.4.1.js"
+        ],
+        "pages": [
+          "status.html"
+        ],
+        "persistent": true
+    },
+    "browser_action": {
+        "default_title": "default",
+        "default_icon": "/Icons/secure.png",
+        "default_popup": "status.html"
+    },
+    "permissions": [
+        "https://*/*",
+        "http://*/*",
+        "tabs",
+        "storage",
+        "webRequest",
+        "webRequestBlocking",
+        "http://localhost/"
+    ]
+}

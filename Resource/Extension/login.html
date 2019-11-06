@@ -1,0 +1,252 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        <img src="./logo.png" class="img-fluid mx-auto d-block my-3" alt="Previewer logo">
+
+        <div class="text-center" id="loginTable">
+            <form class="logform row col justify-content-center" name="loginform">
+                <input class="form-control col-sm-4 mr-2" id="email" type="text" name="email" placeholder="Email" />
+                <input class="form-control col-sm-4 mr-2" id="pass" type="password" name="password" placeholder="Password">
+                <input class="btn btn-primary" type="button"  value="로그인" />
+            </form>
+        </div>
+
+        <div class="mb-3" id="secureTable">
+            <div class="mb-3" style="text-align: center; margin-top: 15px;">
+                <div class="siren" id="plaintextContent" data-tooltip-text="로그인 후 확인가능합니다.">
+                    <span class="sirenTitle">데이터 평문</span>
+                    <div id="plaintextIcon">
+                        <img src="./Icons/64_danger.png" />
+                    </div>
+                </div>
+                <div class="siren" id="httpContent" data-tooltip-text="분석중 입니다.">
+                    <span class="sirenTitle">HTTPS 여부</span>
+                    <div id="httpIcon">
+                        <img src="./Icons/64_warning.png" />
+                    </div>
+                </div>
+                <div class="siren" id="hstsContent" data-tooltip-text="분석중 입니다.">
+                    <span class="sirenTitle">HSTS 여부</span>
+                    <div id="hstsIcon">
+                        <img src="./Icons/64_secure.png" />
+                    </div>
+                </div>
+                <div class="siren" id="xssContent" data-tooltip-text="분석중 입니다.">
+                    <span class="sirenTitle">XSS 탐지</span>
+                    <div id="xssIcon">
+                        <img src="./Icons/64_secure.png" />
+                    </div>
+                </div>
+                <div class="siren" id="phishingContent" data-tooltip-text="분석중 입니다.">
+                    <span class="sirenTitle">피싱사이트</span>
+                    <div id="phishingIcon">
+                        <img src="./Icons/64_nomal.png" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-sm-12 mb-3" id="history" style="display:none">
+            <div class="his" id="history_1">
+                <p class="text-center"> https://naver.com </p>
+                <div class="mb-2" style="text-align: center; margin-top: 15px;">
+                    <div class="siren">
+                        <span class="sirenTitle">데이터 평문</span>
+                        <div id="plaintextIcon">
+                            <img src="./Icons/38_secure.png" />
+                        </div>
+                    </div>
+                    <div class="siren">
+                        <span class="sirenTitle">HTTPS 여부</span>
+                        <div id="httpIcon">
+                            <img src="./Icons/38_secure.png" />
+                        </div>
+                    </div>
+                    <div class="siren">
+                        <span class="sirenTitle">HSTS 여부</span>
+                        <div id="hstsIcon">
+                            <img src="./Icons/38_secure.png" />
+                        </div>
+                    </div>
+                    <div class="siren">
+                        <span class="sirenTitle">XSS 탐지</span>
+                        <div id="xssIcon">
+                            <img src="./Icons/38_secure.png" />
+                        </div>
+                    </div>
+                    <div class="siren">
+                        <span class="sirenTitle">피싱사이트</span>
+                        <div id="phishingIcon">
+                            <img src="./Icons/38_secure.png" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="his" id="history_2">
+                <p class="text-center"> https://edu.ssafy.com </p>
+                <div class="mb-2" style="text-align: center; margin-top: 15px;">
+                    <div class="siren">
+                        <span class="sirenTitle">데이터 평문</span>
+                        <div id="plaintextIcon">
+                            <img src="./Icons/38_warning.png" />
+                        </div>
+                    </div>
+                    <div class="siren">
+                        <span class="sirenTitle">HTTPS 여부</span>
+                        <div id="httpIcon">
+                            <img src="./Icons/38_warning.png" />
+                        </div>
+                    </div>
+                    <div class="siren">
+                        <span class="sirenTitle">HSTS 여부</span>
+                        <div id="hstsIcon">
+                            <img src="./Icons/38_warning.png" />
+                        </div>
+                    </div>
+                    <div class="siren">
+                        <span class="sirenTitle">XSS 탐지</span>
+                        <div id="xssIcon">
+                            <img src="./Icons/38_secure.png" />
+                        </div>
+                    </div>
+                    <div class="siren">
+                        <span class="sirenTitle">피싱사이트</span>
+                        <div id="phishingIcon">
+                            <img src="./Icons/38_secure.png" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="his" id="history_3">
+                <p class="text-center"> https://test.com </p>
+                <div class="mb-2" style="text-align: center; margin-top: 15px;">
+                    <div class="siren">
+                        <span class="sirenTitle">데이터 평문</span>
+                        <div id="plaintextIcon">
+                            <img src="./Icons/38_secure.png" />
+                        </div>
+                    </div>
+                    <div class="siren">
+                        <span class="sirenTitle">HTTPS 여부</span>
+                        <div id="httpIcon">
+                            <img src="./Icons/38_warning.png" />
+                        </div>
+                    </div>
+                    <div class="siren">
+                        <span class="sirenTitle">HSTS 여부</span>
+                        <div id="hstsIcon">
+                            <img src="./Icons/38_warning.png" />
+                        </div>
+                    </div>
+                    <div class="siren">
+                        <span class="sirenTitle">XSS 탐지</span>
+                        <div id="xssIcon">
+                            <img src="./Icons/38_danger.png" />
+                        </div>
+                    </div>
+                    <div class="siren">
+                        <span class="sirenTitle">피싱사이트</span>
+                        <div id="phishingIcon">
+                            <img src="./Icons/38_danger.png" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-center "> 피싱 사이트 요청 </p>
+        <form class="col-md-3">
+            <div class="input-group mb-3">
+                <input id="url" name="url" type="text" class="form-control" placeholder="URL을 입력하세요.">
+                <div class="input-group-append">
+                    <button class="btn btn-warning" type="button" id="sendphishing" >요청</button>
+                </div>
+            </div>
+        </form>
+
+
+    </body>
+
+    <style type="text/css">
+body {
+    border: 4px #000000;
+    width: 600px;
+    height: 860px;
+    background-color: #0B3861;
+}
+
+p {
+    color: white;
+}
+
+.his {
+    color: white;
+    border: 1px solid #FFFFFF;
+    margin-bottom: 20px;
+}
+
+#loginMessage {
+    font-size: 30pt;
+}
+
+.secure-card {
+    opacity: 1.0;
+}
+
+  .sirenTitle {
+      height: 30px;
+      color: white;
+      font-weight: bold;
+      display: inline-block;
+      line-height: 30px;
+  }
+  .siren {
+      display: inline-block;
+      width: 18%;
+  }
+
+  [data-tooltip-text]:hover {
+      position: relative;
+  }
+
+  [data-tooltip-text]:after {
+      -webkit-transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+      -moz-transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+      transition: bottom .3s ease-in-out, opacity .3s ease-in-out;
+      background-color: #7d8bf5;
+      -webkit-box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+      -moz-box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+      box-shadow: 0px 0px 3px 1px rgba(50, 50, 50, 0.4);
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+      color: #FFFFFF;
+      font-size: 12px;
+      margin-bottom: 10px;
+      padding: 7px 12px;
+      position: absolute;
+      width: auto;
+      min-width: 30px;
+      max-width: 300px;
+      word-wrap: break-word;
+      z-index: 9999;
+      opacity: 0;
+      left: -9999px;
+      top: 10%;
+      content: attr(data-tooltip-text);
+  }
+
+  [data-tooltip-text]:hover:after {
+      top: 110%;
+      left: 0;
+      opacity: 1;
+  }
+
+
+    </style>
+
+</html>

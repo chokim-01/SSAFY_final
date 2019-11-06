@@ -4,15 +4,12 @@
       <template v-slot:activator="{ on }">
         <v-btn v-on="on" color="green darken-1" text>Sign Up</v-btn>
       </template>
-
       <v-card>
         <v-card-title class="headline">
           <span>Sign Up Below</span>
         </v-card-title>
-
         <v-card-text>
           <v-text-field v-model="name" type="text" label="Name" :rules="[rule.required]" required />
-
           <v-text-field
             label="Email"
             type="email"
@@ -20,23 +17,20 @@
             :rules="[rule.required, rule.email]"
             required
           />
-
           <v-text-field
             label="Password"
             type="password"
             v-model="password"
-            :rules="[rule.required, rule.minLength(0), rule.maxLength(20)]"
+            :rules="[rule.required, rule.minLength(0), rule.maxLength(70)]"
             required
           />
+          <v-text-field v-model="grade" label="Grade" value="Basic" readonly />
         </v-card-text>
-
         <v-card-actions>
           <v-spacer />
-
           <v-btn color="darken-1" text @click="clear()">
             <span>close</span>
           </v-btn>
-
           <v-btn color="darken-1" text @click="signUp()">
             <span>sign_up</span>
           </v-btn>
@@ -47,7 +41,7 @@
 </template>
 
 <script>
-
+import Server from "../server.js"
 export default {
   name: "signUp",
   data () {
@@ -56,6 +50,7 @@ export default {
       name: "",
       email: "",
       password: "",
+      grade: "Basic",
       rule: {
         required: v => !!v || "필수항목",
         email: v => /.+@.+/.test(v) || "이메일 형식입력",
@@ -68,18 +63,24 @@ export default {
     signUp(){
       this.dialog = false
       let userdata = {
-        userName : this.name,
+        name : this.name,
         email : this.email,
-        password : this.password
+        password : this.password,
+        auth : "member"
+
       }
-      this.$http.post("/signUp",userdata).then((res)=>{
-        // if(res.data.success == true){
-        //   alert(res.data.message)
-        //   this.$router.push("/signUp")
-        // }
-        // if(res.data.success == false){
-        //   alert(res.data.message)
-        // }
+      Server(this.$store.state.SERVER_URL).post("/post/signUp",userdata).then((res)=>{
+        console.log(res)
+        if(res.data.message.length>0){
+          alert(res.data.message)
+          
+        
+        }else{
+          alert(res.data.message)
+          this.name = ""
+          this.email = ""
+          this.password = ""
+        }
       })
     },
     clear () {
