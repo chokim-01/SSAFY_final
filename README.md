@@ -33,3 +33,7 @@ Previews is chrome extension that detect and block various threats that can occu
 2. If you use `Blocking` required payment.
 3. Install [Chrome Extension](http://naver.com)
 4. Use web browser.
+
+
+### 기능 설명
+<p align="center"><img src="https://lab.ssafy.com/k3y6reak/final-pjt/raw/develop/Resource/UI.png" alt="Previewer logo"></p>
