@@ -5,81 +5,30 @@
         <v-card-title class="headline grey lighten-2 justify-center" primary-title>
           <span>결제</span>
         </v-card-title>
-        <!-- Payment Grade List -->
-        <v-layout xs12>
-          <!-- basic Grade -->
-          <v-flex xs12>
-            <v-card>
-              <v-card-title class="justify-center">
-                <span>basic</span>
-              </v-card-title>
-              <v-card-text class="box">
-                <span>
-                  다양한 웹 위협을 탐지할 수 있습니다.
+        <v-row>
+          <v-flex v-for="(item, i) in items" :index="i" :key="i">
+            <v-col cols="12" align="center" justify="center">
+              <v-hover v-slot:default="{ hover }">
+                <v-card :elevation="hover ? 12 : 2" height="400" width="200">
+                  <v-card-title class="title">
+                    <span>{{item.name}}</span>
+                    <span>{{item.month}}</span>
+                  </v-card-title>
+                  <v-img :src="getImg(item.step1)" max-width="40" max-height="40" class="row" />
+                  <span>{{item.ex1}}</span>
+                  <v-img :src="getImg(item.step2)" max-width="40" max-height="40" class="row" />
+                  <span>{{item.ex2}}</span>
+                  <v-img :src="getImg(item.step3)" max-width="40" max-height="40" class="row" />
+                  <span>{{item.ex3}}</span>
                   <br />
-                  <br />0원
-                </span>
-              </v-card-text>
-
-              <!-- payment button -->
-              <v-flex offset-xs2 offset-sm5>
-                <v-btn>
-                  <span v-if="grade==='pro'|| grade==='premium'">CAN'T PAY</span>
-                  <span v-else>Current</span>
-                </v-btn>
-              </v-flex>
-            </v-card>
+                  <v-btn @click="pay(item.name,grade)" class="row">
+                    <span>PAY</span>
+                  </v-btn>
+                </v-card>
+              </v-hover>
+            </v-col>
           </v-flex>
-
-          <!-- pro Grade -->
-          <v-flex xs12>
-            <v-card>
-              <v-card-title class="justify-center">
-                <span>pro</span>
-              </v-card-title>
-              <v-card-text class="box">
-                <span>
-                  다양한 웹 위협을 탐지하고 차단할 수 있습니다.
-                  <br />기간 1개월
-                  <br />3000원
-              </v-card-text>
-
-              <!-- payment button -->
-              <v-flex offset-xs2 offset-sm5>
-                <v-btn>
-                  <span v-if="grade==='Basic'" @click="pay('pro')">결제</span>
-                  <span v-else-if="grade==='pro'">Current</span>
-                  <span v-else>CAN'T PAY</span>
-                </v-btn>
-              </v-flex>
-            </v-card>
-          </v-flex>
-
-          <!-- premium Grade -->
-          <v-flex xs12>
-            <v-card xs12>
-              <v-card-title class="justify-center">
-                <span>premium</span>
-              </v-card-title>
-              <v-card-text class="box">
-                <span>
-                  댜양한 웹 위협을 탐지하고 차단할 수 있습니다.
-                  <br />기간 2개월
-                  <br />5000원
-                </span>
-              </v-card-text>
-
-              <!-- payment button -->
-              <v-flex offset-xs2 offset-sm5>
-                <v-btn>
-                  <span v-if="grade==='Basic' || grade==='pro'" @click="pay('premium')">결제</span>
-                  <span v-else>Current</span>
-                </v-btn>
-              </v-flex>
-            </v-card>
-          </v-flex>
-        </v-layout>
-        <v-divider />
+        </v-row>
       </v-card>
     </div>
   </v-container>
@@ -94,32 +43,94 @@ export default {
         type:String
       }
     },
-    data: () => ({
-      price:0
-    }),
+    data () {
+    return {
+      price:0,
+      items: [
+        {
+          name: "BASIC",
+          step1: "detect.png",
+          ex1:"탐지가능",
+          step2: "noblock.png",
+          ex2:"차단불가능",
+          step3: "noalarm.png",
+          ex3:"알람불가능",
+        }
+        ,
+        {
+          name: "PRO",
+          month :"(30Day)",
+          step1: "detect.png",
+          ex1:"탐지가능",
+          step2: "block.png",
+          ex2:"차단가능",
+          step3: "alarm.png",
+          ex3:"알람가능"
+        },
+        {
+          name: "PREMIUM",
+          month:"(60Day)",
+          step1: "detect.png",
+          ex1:"탐지가능",
+          step2: "block.png",
+          ex2:"차단가능",
+          step3: "alarm.png",
+          ex3:"알람가능",
+        }
+      ]
+    }
+  },
     methods:{
-      async pay(grade){
-            let gradeForm = new FormData()
-            gradeForm.append('grade',grade)
+    getImg (fileName) {
+      return require("../assets/" + fileName)
+    },
+      async pay(grade,paygrade){
+            let gradeWeight=0
+            let payGradeWeight=0
+            if(paygrade==="basic"){
+              gradeWeight=0
+            }
+            else if(paygrade==="pro"){
+              gradeWeight=1
+            }
+            else{
+              gradeWeight=2
+            }
+            if(grade==="BASIC"){
+              payGradeWeight=0
+            }
+            else if(grade==="PRO"){
+              payGradeWeight=1
+            }
+            else{
+              payGradeWeight=2
+            }
+            if(gradeWeight<payGradeWeight){
+              let gradeForm = new FormData()
+              gradeForm.append('grade',grade)
 
-            // post price with gradeForm(grade)
-            await Server(this.$store.state.SERVER_URL).post("/post/price",gradeForm).then(res=>{
-              this.price=res.data[0].price
-            })
+              // post price with gradeForm(grade)
+              await Server(this.$store.state.SERVER_URL).post("/post/price",gradeForm).then(res=>{
+                this.price=res.data[0].price
+              })
 
 
-            let form = new FormData()
-            form.append('amount', this.price)
-            form.append('grade',grade)
+              let form = new FormData()
+              form.append('amount', this.price)
+              form.append('grade',grade)
 
-            // post pay with form(grand, price)
-            Server(this.$store.state.SERVER_URL).post("/post/pay",form).then(res=>{
-                let payUrl = res.data.next_redirect_pc_url
-                let tid=res.data.tid
-                this.$store.dispatch("tid",tid)
-                this.$store.dispatch("total_amount",this.price)
-                location.href=payUrl
-            })
+              // post pay with form(grand, price)
+              Server(this.$store.state.SERVER_URL).post("/post/pay",form).then(res=>{
+                  let payUrl = res.data.next_redirect_pc_url
+                  let tid=res.data.tid
+                  this.$store.dispatch("tid",tid)
+                  this.$store.dispatch("total_amount",this.price)
+                  location.href=payUrl
+              })
+            }
+            else{
+              alert("결제가 불가능 합니다")
+            }
         }
     }
 }
@@ -128,5 +139,8 @@ export default {
 <style>
 .box {
   text-align: center;
+}
+.row {
+  margin-top: 20px;
 }
 </style>

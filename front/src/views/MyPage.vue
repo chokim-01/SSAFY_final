@@ -170,7 +170,7 @@ export default {
     Server(this.$store.state.SERVER_URL).post("/post/getPayment", formData).then(result=>{
       if(result.data.length == 0) {
         this.userPaymentInfo = {
-          grade: "Basic",
+          grade: "basic",
           payment_date: "결제 내역이 없습니다.",
           expire_date: ""
         }
