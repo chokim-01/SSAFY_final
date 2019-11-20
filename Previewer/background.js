@@ -17,12 +17,13 @@ chrome.tabs.onUpdated.addListener((currentTabId, changeInfo, tab) => {
 		});
 		checkSite(tab);
 	}
+
 });
 
 chrome.webRequest.onBeforeRequest.addListener((requestData) => {
 	// Request method check
 	let grade = sessionStorage.getItem("grade");
-	if(grade === "premium") {
+	if(grade === "PREMIUM" || grade === "PRO") {
 		let urlBeforeConnect = requestData.url.replace("http://", "").replace("https://", "")
 		for(data of phishingSite) {
 			if(urlBeforeConnect == data.url || urlBeforeConnect == data.url+"/") {
@@ -37,7 +38,7 @@ chrome.webRequest.onBeforeRequest.addListener((requestData) => {
 	if(requestData.method == "POST")
 	{
 		let checkPasswordFlag = checkPassword(requestData, grade, requestData.tabId);
-		if(grade === "premium" && checkPasswordFlag) {
+		if((grade === "PRO" || grade === "PREMIUM") && checkPasswordFlag) {
 			let confirmflag = confirm("로그인 데이터가 평문으로 전송되고 있습니다. 로그인하시겠습니까?");
 			if(!confirmflag) {
 				return {cancel: true}
@@ -45,6 +46,7 @@ chrome.webRequest.onBeforeRequest.addListener((requestData) => {
 		}
 		plaintextInfo = [];
 	}
+
 },
 {urls: ["<all_urls>"]},
 ["blocking", "requestBody"]
@@ -117,7 +119,6 @@ var checkSite = async (tab) => {
 
 	// hsts & https
  	await getsiteData(tab, null);
-
  	// Phishing
  	await phishingCheck(tab, null);
  	// XSS
@@ -188,8 +189,29 @@ var getsiteData = async (tab, port) => {
 				chrome.storage.local.get(['xssFlag', 'phishingFlag'], (res) => {
 					let xssFlag = res.xssFlag;
 					let phishingFlag = res.phishingFlag;
-					port.postMessage([dataTransferCheck[tab.id], urlStatus, data, xssFlag, phishingFlag]);
+					let score = 100;
+					let warnFlag = false;
+					if(dataTransferCheck[tab.id]) {
+						score -= 10;
+					}
+					if(urlStatus == "http") {
+						score -= 10;
+					}
+					if(!data['hsts']) {
+						score -= 10;
+					}
+					if(xssFlag) {
+						score -=30;
+						warnFlag = true;
+					}
+					if(phishingFlag) {
+						score -=30;
+						warnFlag = true;
+					}
+
+					port.postMessage([dataTransferCheck[tab.id], urlStatus, data, xssFlag, phishingFlag, score, warnFlag]);
 					chrome.storage.local.remove(['xssFlag','phishingFlag']);
+					dataTransferCheck[tab.id] = false;
 				});
 			}
 		},
@@ -205,17 +227,24 @@ var xssCheck = (tab, port) => {
   }, (result) => {
 		if(result) {
      		$.ajax({
-      		type: "POST",
-      		url: "http://52.79.152.29/post/chrome/xssCheck",
-      		data: result[0],
-      		success: (data) => {
-						chrome.storage.local.set({"data4":data['xssFlag']});
-						if(port == null && data['xssFlag']){
+      		type: "GET",
+      		url: "http://52.79.152.29/get/chrome/xssGet",
+      		success: (xssData) => {
+						let flag = false;
+						for(let data of xssData) {
+							let match = result[0].indexOf(data['gadget'])
+							if(match != -1 && data['gadget']) {
+								flag = true;
+								break;
+							}
+						}
+						chrome.storage.local.set({"data4":flag});
+						if(port == null && flag){
 							chrome.storage.local.set({"iconChange":true})
 							setIcon("danger",tab.id)
 						}
 						else if (port != null){
-							chrome.storage.local.set({"xssFlag":data['xssFlag']})
+							chrome.storage.local.set({"xssFlag":flag})
 						}
       	},
       	error: (error) => {

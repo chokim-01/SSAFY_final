@@ -2,31 +2,31 @@
   document.querySelector("#secureTable").innerHTML = `
     <div style="text-align: center; margin-top: 15px;">
       <div class="siren" id="plaintextContent" data-tooltip-text="로그인 후 확인가능합니다.">
-        <span class="sirenTitle">로그인 평문</span>
+        <span class="sirenTitle mb-2">로그인 평문</span>
         <div id="plaintextIcon">
           <img src="./Icons/64_nomal.png" />
         </div>
       </div>
       <div class="siren" id="httpContent" data-tooltip-text="분석중 입니다.">
-        <span class="sirenTitle">HTTPS 여부</span>
+        <span class="sirenTitle mb-2">HTTPS 여부</span>
         <div id="httpIcon">
           <img src="./Icons/64_nomal.png" />
         </div>
       </div>
       <div class="siren" id="hstsContent" data-tooltip-text="분석중 입니다.">
-        <span class="sirenTitle">HSTS 여부</span>
+        <span class="sirenTitle mb-2">HSTS 여부</span>
         <div id="hstsIcon">
           <img src="./Icons/64_nomal.png" />
         </div>
       </div>
       <div class="siren" id="xssContent" data-tooltip-text="분석중 입니다.">
-        <span class="sirenTitle">XSS 탐지</span>
+        <span class="sirenTitle mb-2">XSS 탐지</span>
         <div id="xssIcon">
           <img src="./Icons/64_nomal.png" />
         </div>
       </div>
       <div class="siren" id="phishingContent" data-tooltip-text="분석중 입니다.">
-        <span class="sirenTitle">피싱사이트</span>
+        <span class="sirenTitle mb-2">피싱사이트</span>
         <div id="phishingIcon">
           <img src="./Icons/64_nomal.png" />
         </div>
@@ -66,6 +66,9 @@
     document.querySelector("#loginSuccess").style.display = "inline";
     document.querySelector("#loginMessage").innerHTML = email+"님";
     document.querySelector("#UserGrade").innerHTML = grade;
+    if(grade === 'PREMIUM') {
+      document.querySelector("#totalInfo").style.display = "inline";
+    }
   });
 
   var iconSecure = "<img src='./Icons/64_secure.png' />"
@@ -73,7 +76,7 @@
   var iconDanger = "<img src='./Icons/64_danger.png' />"
 
   // Get Data
-  portGetData.onMessage.addListener(([data1, data2, data3, data4, data5]) => {
+  portGetData.onMessage.addListener(([data1, data2, data3, data4, data5, score, warnFlag]) => {
     let dataTransferCheck = data1;
     let httpStatus = data2;
     let hstsData = data3['hsts'];
@@ -120,6 +123,24 @@
       document.getElementById("phishingContent").setAttribute("data-tooltip-text", "피싱 사이트 아닙니다.");
     }
 
+    if(warnFlag) {
+      document.querySelector("#securePercent").innerHTML="0%";
+      document.querySelector("#secureResult").innerHTML = "위험한 사이트입니다!"
+      document.getElementById("secureCircle").setAttribute("class","c100 center red p100");
+    } else {
+      document.querySelector("#securePercent").innerHTML=score+"%";
+      if(score >= 90) {
+        document.querySelector("#secureResult").innerHTML = "안전한 사이트입니다."
+        document.getElementById("secureCircle").setAttribute("class","c100 center green p"+score);}
+      else if(score >= 70 && score < 90) {
+        document.querySelector("#secureResult").innerHTML = "사이트 이용에 주의하세요!"
+        document.getElementById("secureCircle").setAttribute("class","c100 center orange p"+score);
+      }
+      else {
+        document.querySelector("#secureResult").innerHTML = "위험한 사이트입니다!"
+        document.getElementById("secureCircle").setAttribute("class","c100 center red p"+score);
+      }
+    }
   });
 
   // Go to Our page
@@ -155,6 +176,10 @@
   portLogin.onMessage.addListener((data) => {
     //data['status'] : status, data['email'] : email, data['grade'] : grade?
     if(data['status'] === 'success') {
+      console.log(data['grade'])
+      if(data['grade'] === 'PREMIUM') {
+        document.querySelector("#totalInfo").style.display = "inline";
+      }
       document.querySelector("#loginTable").style.display = "none";
       document.querySelector("#loginSuccess").style.display = "inline";
       document.querySelector("#loginMessage").innerHTML = data['email']+"님";
@@ -190,8 +215,20 @@
     let historyArray = res.tabHistory;
     if(historyArray) {
       historyArray = historyArray.reverse()
+      let historyCount = 0;
+
+      if(historyArray.length != 0) {
+        document.getElementById("historyBox").style.display = 'block';
+      }
+
       for(let history of historyArray){
         inputHistory(history);
+        historyCount += 1;
+
+        if(historyCount != historyArray.length) {
+          document.querySelector("#history").innerHTML +=
+          `<hr style="width: 90%; border: 1px dashed white;"/>`;
+        }
       }
     }
   });
@@ -223,22 +260,22 @@
     }
     document.querySelector("#history").innerHTML +=
     `<div class="his" id="history_2">
-        <p class="text-center"> `+history.url+` </p>
+        <p class="text-center" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding: 0 20px;"> `+history.url+` </p>
         <div class="mb-2" style="text-align: center; margin-top: 15px;">
             <div class="siren">
-                <span class="sirenTitle">로그인 평문</span>
+                <span class="sirenTitle">로그인평문</span>
                 <div id="plaintextIcon">
                     <img src=`+plaintext+` />
                 </div>
             </div>
             <div class="siren">
-                <span class="sirenTitle">HTTPS 여부</span>
+                <span class="sirenTitle">HTTPS</span>
                 <div id="httpIcon">
                     <img src=`+httpsStatus+` />
                 </div>
             </div>
             <div class="siren">
-                <span class="sirenTitle">HSTS 여부</span>
+                <span class="sirenTitle">HSTS</span>
                 <div id="hstsIcon">
                     <img src=`+hstsStatus+` />
                 </div>
